@@ -1,0 +1,1 @@
+<p><?php echo $this->H(__('Sorry, there were no items that matched your criteria.', 'directories'));?></p>

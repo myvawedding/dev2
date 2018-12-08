@@ -1,0 +1,5 @@
+{
+    "require": {
+        "smartlook/webapi": "^1.0"
+    }
+}

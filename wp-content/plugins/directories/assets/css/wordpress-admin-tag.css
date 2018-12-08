@@ -1,0 +1,18 @@
+.form-field .drts-bs-form-text,
+.form-field .drts-entity-form-field > label {
+    display: none;
+}
+
+#addtag .form-field > .drts-form-field,
+#edittag .form-field > td > .drts-form-field {
+    width: 95%;
+}
+
+.form-field .drts-form-field input.drts-bs-form-control,
+.form-field .drts-form-field textarea.drts-bs-form-control {
+    width: 100%;
+}
+
+.form-field .drts-form-field input.wp-color-picker {
+    width: 90px;
+}

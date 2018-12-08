@@ -1,0 +1,33 @@
+.drts-form-buttons .drts-bs-btn:last-child {
+    margin-right: auto !important;
+    margin-left: 0 !important;
+}
+
+.drts button.drts-form-field-remove {
+    right: 0;
+    left: auto;
+}
+
+span.drts-form-field-prefix {
+    margin-right: 0;
+    margin-left: 0.3em;
+}
+
+span.drts-form-field-required {
+    margin-left: 0;
+    margin-right: 4px;
+}
+
+div.drts-form-field-radio-option-description {
+    padding: 0 1.5em 0.75em 0;
+}
+
+input.drts-form-type-textfield-with-clear {
+    padding-left: 20px !important;
+    padding-right: auto;
+}
+
+.drts .drts-form-colorpalette-btn-white:hover {
+    border-right: 0;
+    border-left: 1px solid #eee;
+}

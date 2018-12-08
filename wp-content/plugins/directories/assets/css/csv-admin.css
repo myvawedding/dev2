@@ -1,0 +1,7 @@
+.drts-csv-table {
+    margin-bottom: 20px;
+}
+
+.drts-csv-table td {
+    word-break: break-all;
+}

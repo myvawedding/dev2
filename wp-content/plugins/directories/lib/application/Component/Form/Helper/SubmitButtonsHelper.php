@@ -1,0 +1,54 @@
+<?php
+namespace SabaiApps\Directories\Component\Form\Helper;
+
+use SabaiApps\Directories\Application;
+
+class SubmitButtonsHelper
+{    
+    public function help(Application $application, array $buttons = null, array $options = [])
+    {
+        if (!isset($buttons)) {
+            $buttons = array(array('#btn_label' => __('Submit', 'directories'), '#btn_color' => 'primary'));
+        } else {
+            if (empty($buttons)) return;
+        }
+        
+        $submits = array(
+            '#tree' => true,
+            '#weight' => 99999,
+            '#group' => false,
+            '#prefix' => '<div class="drts-form-buttons ' . DRTS_BS_PREFIX . 'form-inline ' . DRTS_BS_PREFIX . 'mt-5">',
+            '#suffix' => '</div>',
+        );
+        
+        // Add submit button and cancel link
+        foreach ($buttons as $name => $button) {
+            if (!isset($button['#attributes'])) {
+                $button['#attributes'] = [];
+            }
+            $submits[$name] = $button + array('#type' => 'submit', '#value' => $name);
+            if ($submits[$name]['#type'] !== 'submit') {
+                if (!isset($submits[$name]['#tree'])) {
+                    // Do not prefix with FORM_SUBMIT_BUTTON_NAME
+                    $submits[$name]['#tree'] = false;
+                }
+                if (!isset($submits[$name]['#class'])) $submits[$name]['#class'] = '';
+                $submits[$name]['#class'] .= ' ' . DRTS_BS_PREFIX . 'mr-3';
+                continue;
+            }
+            if (!isset($submits[$name]['#attributes']['class'])) $submits[$name]['#attributes']['class'] = '';
+            $submits[$name]['#attributes']['class'] .= ' ' . DRTS_BS_PREFIX . 'mr-3';
+            if (isset($options['default_callback']) && !isset($submits[$name]['#submit'])) {
+                $submits[$name]['#submit'] = array(
+                    10 => array( // weight
+                        $options['default_callback'],
+                    ),
+                );
+                // Prevent callback called more than once
+                unset($options['default_callback']);
+            }
+            
+        }
+        return $submits;
+    }
+}

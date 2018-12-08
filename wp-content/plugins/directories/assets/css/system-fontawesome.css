@@ -1,0 +1,43 @@
+@font-face {
+    font-family: 'Font Awesome 5 Brands - drts';
+    src: url("../vendor/webfonts/fa-brands-400.eot");
+    src: url("../vendor/webfonts/fa-brands-400.eot?#iefix") format("embedded-opentype"), url("../vendor/webfonts/fa-brands-400.woff2") format("woff2"), url("../vendor/webfonts/fa-brands-400.woff") format("woff"), url("../vendor/webfonts/fa-brands-400.ttf") format("truetype"), url("../vendor/webfonts/fa-brands-400.svg#fontawesome") format("svg");
+}
+
+.drts .fab,
+.drts-fab {
+    font-family: 'Font Awesome 5 Brands - drts' !important;
+    font-style: normal;
+    font-weight: normal;
+    display: inline-block !important;
+}
+
+@font-face {
+    font-family: 'Font Awesome 5 Regular - drts';
+  src: url("../vendor/webfonts/fa-regular-400.eot");
+  src: url("../vendor/webfonts/fa-regular-400.eot?#iefix") format("embedded-opentype"), url("../vendor/webfonts/fa-regular-400.woff2") format("woff2"), url("../vendor/webfonts/fa-regular-400.woff") format("woff"), url("../vendor/webfonts/fa-regular-400.ttf") format("truetype"), url("../vendor/webfonts/fa-regular-400.svg#fontawesome") format("svg");
+}
+
+.drts .far,
+.drts-far {
+    font-family: 'Font Awesome 5 Regular - drts' !important;
+    font-style: normal;
+    font-weight: 400;
+    display: inline-block !important;
+}
+
+@font-face {
+    font-family: 'Font Awesome 5 Free - drts';
+  src: url("../vendor/webfonts/fa-solid-900.eot");
+  src: url("../vendor/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("../vendor/webfonts/fa-solid-900.woff2") format("woff2"), url("../vendor/webfonts/fa-solid-900.woff") format("woff"), url("../vendor/webfonts/fa-solid-900.ttf") format("truetype"), url("../vendor/webfonts/fa-solid-900.svg#fontawesome") format("svg");
+}
+
+.drts .fa,
+.drts-fa,
+.drts .fas,
+.drts-fas {
+    font-family: 'Font Awesome 5 Free - drts' !important;
+    font-style: normal;
+    font-weight: 900;
+    display: inline-block !important;
+}

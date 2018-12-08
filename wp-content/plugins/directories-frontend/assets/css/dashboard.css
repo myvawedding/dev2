@@ -1,0 +1,52 @@
+.drts-dashboard {
+    display: flex;
+}
+
+.drts-dashboard-aside {
+    flex: 1;
+    margin-right: 1em;
+}
+
+.drts-dashboard-main {
+    flex: 3;
+}
+
+@media (max-width: 768px) {
+    .drts-dashboard {
+        display: block;
+    }
+}
+
+.drts-dashboard-aside .drts-bs-card-header button {
+    width: 100%;
+    text-align: left;
+    position: relative;
+    padding: 0.75em 1.25em;
+    padding-right: calc(20px + 1.25em);
+    font-weight: 600;
+}
+
+.drts-dashboard-aside .drts-bs-card-header {
+    padding: 0;
+}
+
+.drts-dashboard-main td {
+    vertical-align: top !important;
+}
+
+.drts-dashboard-aside .drts-bs-card-header button:before {
+    content: '\f107';
+    position: absolute;
+    font-family: 'Font Awesome 5 Free - drts';
+    right: 1.25em;
+    transform: rotate(0deg);
+    transition: all 0.5s;
+}
+
+.drts-dashboard-aside .drts-bs-card-header button.drts-bs-collapsed:before {
+    transform: rotate(180deg);
+}
+
+.drts-dashboard-orderhistory > .drts-form-field {
+    margin-bottom: 0 !important;
+}

@@ -1,0 +1,144 @@
+.drts-search-form {
+    position: relative;
+    margin: 0 !important;
+    z-index: 3;
+    text-align: left;
+}
+
+.drts-rtl .drts-search-form {
+    text-align: right;
+}
+
+.drts-search-form-field {
+    margin-bottom: 1em !important;
+}
+
+.drts-search-form-field:last-child {
+    margin-bottom: 0 !important;
+}
+
+.drts-search-form-field:last-child {
+    margin-bottom: 0;
+}
+
+.drts-search-form-buttons {
+    width: 100%;
+}
+
+.drts-search-form-submit {
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+
+.drts-search-form-field input[type=text] {
+    padding-left: 37px;
+    box-shadow: none;
+}
+
+.drts-rtl .drts-search-form-field input[type=text] {
+    padding-right: 37px;
+    padding-left: 0.75em;
+}
+
+.drts-search-form-field .drts-form-type-textfield input[type=text],
+.drts-search-form-field .select2-container .select2-selection--single {
+    background-color: #fff;
+    white-space: nowrap;
+    vertical-align: middle;
+    max-width: none !important;
+    margin: 0 !important;
+    border: 0 !important;
+    box-shadow: inset 0 0 1px #666;
+    border-radius: 3px;
+}
+
+.drts-search-form-field label {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 10px;
+    margin: 0;
+    left: 0;
+    font-size: 16px;
+    width: 36px;
+    text-align: center;
+    z-index: 9;
+    color: #666;
+}
+
+.drts-rtl .drts-search-form-field label {
+    left: auto;
+    right: 0;
+}
+
+.drts-search-form-field input[type=text]:focus {
+    box-shadow: inset 0 0 1px #666;
+}
+
+.drts-search-form-field input[type=text],
+.drts-search-form-submit,
+.drts-search-form-field .select2-container .select2-selection--single .select2-selection__rendered {
+    width: 100% !important;
+}
+
+.drts-search-form-field input[type=text],
+.drts-search-form-submit,
+.drts-search-form-field .select2-container .select2-selection--single .select2-selection__rendered,
+.drts-search-form-field .select2-container .select2-selection--single .select2-selection__arrow {
+    height: 38px !important;
+}
+
+.drts-search-form-lg .drts-search-form-field input[type=text],
+.drts-search-form-lg .drts-search-form-submit,
+.drts-search-form-lg .drts-search-form-field .select2-container .select2-selection--single .select2-selection__rendered,
+.drts-search-form-lg .drts-search-form-field .select2-container .select2-selection--single .select2-selection__arrow {
+    height: 50px !important;
+}
+
+.drts-search-form-field .select2-container .select2-selection--single .select2-selection__rendered > * {
+    position: absolute;
+    top: calc(50% + 0.5px);
+    transform: translateY(-50%);
+}
+
+.drts-search-form-field.\:container\(width\>480px\) {
+    margin-bottom: 0 !important;
+}
+
+.drts-search-form-field.\:container\(width\>480px\) input[type=text],
+.drts-search-form-field.\:container\(width\>480px\) .select2-container .select2-selection--single,
+.drts-search-form-field.\:container\(width\>480px\) .drts-search-form-submit {
+    border-radius: 0;
+}
+
+.drts-search-form-field.\:container\(width\>480px\):first-child input[type=text],
+.drts-search-form-field.\:container\(width\>480px\):first-child .select2-container .select2-selection--single,
+.drts-search-form-field.\:container\(width\>480px\):first-child .drts-search-form-submit {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.drts-search-form-field.\:container\(width\>480px\):last-child input[type=text],
+.drts-search-form-field.\:container\(width\>480px\):last-child .select2-container .select2-selection--single,
+.drts-search-form-field.\:container\(width\>480px\):last-child .drts-search-form-submit {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.drts-rtl .drts-search-form-field.\:container\(width\>480px\):first-child input[type=text],
+.drts-rtl .drts-search-form-field.\:container\(width\>480px\):first-child .select2-container .select2-selection--single,
+.drts-rtl .drts-search-form-field.\:container\(width\>480px\):first-child .drts-search-form-submit {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.drts-rtl .drts-search-form-field.\:container\(width\>480px\):last-child input[type=text],
+.drts-rtl .drts-search-form-field.\:container\(width\>480px\):last-child .select2-container .select2-selection--single,
+.drts-rtl .drts-search-form-field.\:container\(width\>480px\):last-child .drts-search-form-submit {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}

@@ -1,0 +1,64 @@
+.drts-map-map .cluster {
+    background-color: rgba(170, 170, 170, 0.5);
+    border-radius: 50%;
+}
+
+.drts-map-map .cluster > div {
+    border-radius: 50%;
+    height: 60%;
+    width: 60%;
+    background-color: #aaa;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+}
+
+.drts-map-map .cluster > div > span {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.drts-map-marker-bounce {
+    animation: drts-map-marker-bounce 0.5s infinite ease-in;
+    -webkit-animation: drts-map-marker-bounce 0.5s infinite ease-in;
+}
+
+@keyframes drts-map-marker-bounce {
+    0% {
+        transform: translate(-50%, -130%) rotate(-45deg);
+    }
+
+    25%, 75% {
+        transform: translate(-50%, -160%) rotate(-45deg);
+    }
+
+    50% {
+        transform: translate(-50%, -190%) rotate(-45deg);
+    }
+
+    100% {
+        transform: translate(-50%, -100%) rotate(-45deg);
+    }
+}
+
+@-webkit-keyframes drts-map-marker-bounce {
+    0% {
+        -webkit-transform: translate(-50%, -130%) rotate(-45deg);
+    }
+
+    25%, 75% {
+        -webkit-transform: translate(-50%, -160%) rotate(-45deg);
+    }
+
+    50% {
+        -webkit-transform: translate(-50%, -190%) rotate(-45deg);
+    }
+
+    100% {
+        -webkit-transform: translate(-50%, -100%) rotate(-45deg);
+    }
+}
