@@ -186,7 +186,7 @@ class LocationFakerGenerator extends Faker\Generator\AbstractGenerator
                         'address' => $faker->address(),
                         'street' => $faker->streetAddress(),
                         'city' => $faker->city(),
-                        'province' => $faker->state(),
+                        'province' => method_exists($faker, 'state') ? $faker->state() : '',
                         'zip' => $faker->postcode(),
                         'country' => $faker->country(),
                         'term_id' => isset($id) ? $id : null,

@@ -8,25 +8,25 @@ return array (
       'type' => 'entity',
       'data' => 
       array (
-        'css' => '.drts-display--detailed .directory-listing-rating,
-.drts-display--detailed .directory-listing-labels,
-.drts-display--detailed .directory-listing-terms {
+        'css' => '%class% .directory-listing-rating,
+%class% .directory-listing-labels,
+%class% .directory-listing-terms {
   margin-bottom: 0.5em;
 }
-.drts-display--detailed .directory-listing-info {
+%class% .directory-listing-info {
   margin-bottom: 1em;
 }
-.drts-display--detailed .directory-listing-description {
+%class% .directory-listing-description {
   margin-bottom: 2em;
 }
-.drts-display--detailed .directory-listing-buttons {
+%class% .directory-listing-buttons {
   margin-top: 2em;
 }
-.drts-display--detailed .directory-listing-review-rating {
+%class% .directory-listing-review-rating {
   font-size:1.2em; 
   margin-bottom:1em;
 }
-.drts-display--detailed .directory-listing-review-ratings {
+%class% .directory-listing-review-ratings {
   margin-bottom:1.5em;
 }',
       ),
@@ -1628,12 +1628,12 @@ return array (
       'type' => 'entity',
       'data' => 
       array (
-        'css' => '.drts-display--dashboard-row .directory-listing-title {
+        'css' => '%class% .directory-listing-title {
     font-size: 1em;
     font-weight: bold;
     margin-bottom: 0.5em;
 }
-.drts-display--dashboard-row .directory-listing-title a {
+%class% .directory-listing-title a {
     white-space: normal;
 }',
       ),
@@ -1990,24 +1990,24 @@ return array (
       'type' => 'entity',
       'data' => 
       array (
-        'css' => '.drts-display--summary .directory-listing-main {
+        'css' => '%class% .directory-listing-main {
   padding: 0.8em 1em;
 }
-.drts-display--summary .directory-listing-title {
+%class% .directory-listing-title {
   font-size: 1.2em;
 }
-.drts-display--summary .directory-listing-labels {
+%class% .directory-listing-labels {
   position: absolute;
   top: 5px;
   left: 10px;
 }
-.drts-display--summary .directory-listing-buttons {
+%class% .directory-listing-buttons {
   position: absolute;
   bottom: 0;
   width: 100%;
 }
-.drts-display--summary .directory-listing-info,
-.drts-display--summary .directory-listing-contact-info {
+%class% .directory-listing-info,
+%class% .directory-listing-contact-info {
   font-size: 0.9em; 
   margin: 0.5em 0 0;
 }',

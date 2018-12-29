@@ -79,6 +79,7 @@ class MapboxGeocodingApi implements IGeocodingApi
                     '#horizontal' => true,
                     '#placeholder' => 'US,JP',
                     '#separator' => ',',
+                    '#alpha' => true,
                 ],
             ],
         ];

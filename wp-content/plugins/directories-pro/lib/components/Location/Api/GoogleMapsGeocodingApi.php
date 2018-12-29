@@ -58,6 +58,7 @@ class GoogleMapsGeocodingApi extends AbstractGoogleMapsApi implements IGeocoding
                     '#horizontal' => true,
                     '#placeholder' => 'US,JP',
                     '#alpha' => true,
+                    '#separator' => ',',
                 ],
             ],
         ];

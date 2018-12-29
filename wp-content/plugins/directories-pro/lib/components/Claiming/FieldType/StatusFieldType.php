@@ -18,11 +18,11 @@ class StatusFieldType extends AbstractValueType implements IColumnable, IRestric
         );
     }
     
-    public function fieldTypeOnSave(IField $field, array $values)
+    public function fieldTypeOnSave(IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         if (!$this->_application->HasPermission('entity_delete_others_' . $field->Bundle->name)) return;
         
-        return ($ret = parent::fieldTypeOnSave($field, $values)) ? $ret : null;
+        return ($ret = parent::fieldTypeOnSave($field, $values, $currentValues, $extraArgs)) ? $ret : null;
     }
 
     public function fieldTypeSchema()

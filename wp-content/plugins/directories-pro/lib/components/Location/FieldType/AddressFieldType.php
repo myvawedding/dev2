@@ -137,7 +137,7 @@ class AddressFieldType extends Field\Type\AbstractType implements
         );
     }
 
-    public function fieldTypeOnSave(Field\IField $field, array $values)
+    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         $settings = $field->getFieldSettings();
         $format = isset($settings['format']) ? $settings['format'] : $this->_fieldTypeInfo()['default_settings']['format'];

@@ -2,6 +2,7 @@
 namespace SabaiApps\Directories\Component\DirectoryPro\Helper;
 
 use SabaiApps\Directories\Application;
+use SabaiApps\Directories\Component\Display\Model\Display as DisplayModel;
 use SabaiApps\Directories\Exception;
 use SabaiApps\Directories\Component\Entity;
 
@@ -84,59 +85,26 @@ class ExportBundleHelper
         $displays = $application->getModel('Display', 'Display')
             ->bundleName_is($bundle->name)
             ->fetch();
+        $element_callback = null;
+        if ($makeTranslatable) {
+            $container =& $ret['displays'];
+            $element_callback = function($element) use ($domain, &$container) {
+                foreach (['settings', 'heading'] as $data_key) {
+                    if (isset($element['data'][$data_key]['label_custom'])
+                        && strlen($element['data'][$data_key]['label_custom'])
+                    ) {
+                        $element['data'][$data_key]['label_custom'] = $this->_makeTranslatable(
+                            $element['data'][$data_key]['label_custom'],
+                            $domain,
+                            $container
+                        );
+                    }
+                }
+                return $element;
+            };
+        }
         foreach ($displays as $display) {
-            if ($display->type === 'form') continue;
-            
-            $display_arr = array(
-                'name' => $display->name,
-                'type' => $display->type,
-                'data' => $display->data,
-            );
-            $_elements = [];
-            foreach ($display->Elements as $element) {
-                if (!$element_impl = $application->Display_Elements_impl($bundle, $element->name, true)) continue;
-                    
-                try {
-                    // Let element implementation modify data which will also be used when importing
-                    $data = $element->data;
-                    $element_impl->displayElementOnExport($bundle, $data);
-                } catch (Exception\IException $e) {
-                    $application->logError($e);
-                    continue;
-                }
-                
-                // Make label translatable?
-                if ($makeTranslatable) {
-                    foreach (['settings', 'heading'] as $data_key) {
-                        if (isset($data[$data_key]['label_custom'])
-                            && strlen($data[$data_key]['label_custom'])
-                        ) {
-                            $data[$data_key]['label_custom'] = $this->_makeTranslatable($data[$data_key]['label_custom'], $domain, $ret['displays']);
-                        }
-                    }
-                }
-                    
-                $element_arr = array(
-                    'id' => (int)$element->id,
-                    'name' => $element->name,
-                    'data' => $data,
-                    'parent_id' => (int)$element->parent_id,
-                    'weight' => (int)$element->weight,
-                    'system' => (bool)$element->system,
-                );
-                if (!empty($element_arr['parent_id'])
-                    && !isset($display_arr['elements'][$element_arr['parent_id']]) // parent element not yet added
-                ) {
-                    // wait until parent element is added
-                    $_elements[$element_arr['parent_id']][$element_arr['id']] = $element_arr;
-                } else {
-                    $display_arr['elements'][$element_arr['id']] = $element_arr;
-                    if (isset($_elements[$element_arr['id']])) {
-                        $this->_addChildElements($display_arr['elements'], $element_arr['id'], $_elements);
-                    }
-                }
-            }
-            if (empty($display_arr['elements'])) continue;
+            if (!$display_arr = $application->Display_Display_export($display, $element_callback)) continue;
 
             $ret['displays']['data'][$display->type][$display->name] = $display_arr;
         }
@@ -160,18 +128,11 @@ class ExportBundleHelper
     protected function _makeTranslatable($string, $domain, &$container)
     {
         $placeholder = '%%%' . $string . '%%%';
-        $container['placeholders']["'" . $placeholder . "'"] = sprintf('__(\'%s\', \'%s\')', str_replace("'", "\\'", $string), $domain);
+        $container['placeholders']["'" . $placeholder . "'"] = sprintf(
+            '__(\'%s\', \'%s\')',
+            str_replace("'", "\\'", $string),
+            $domain
+        );
         return $placeholder;
-    }
-    
-    protected function _addChildElements(array &$elements, $parentId, array &$children)
-    {
-        foreach (array_keys($children[$parentId]) as $element_id) {
-            $elements[$element_id] = $children[$parentId][$element_id];
-            unset($children[$parentId][$element_id]);
-            if (isset($children[$element_id])) {
-                $this->_addChildElements($elements, $element_id, $children);
-            }
-        }
     }
 }

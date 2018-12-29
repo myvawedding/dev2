@@ -6,11 +6,13 @@ use SabaiApps\Directories\Exception;
 
 class ApiHelper
 {
-    protected $_impls = [], $_loadedApis;
+    protected $_impls = [], $_loadedApis = [];
 
     public function help(Application $application, $type, $load = false)
     {
-        if (isset($this->_loadedApis[$type])) return;
+        if (isset($this->_loadedApis[$type])
+            && !$this->_loadedApis[$type]
+        ) return;
 
         if ((!$name = $this->name($application, $type))
             || (!$api = $this->impl($application, $name, $type, true))
@@ -19,7 +21,9 @@ class ApiHelper
             return;
         }
 
-        if ($load) {
+        if ($load
+            && !isset($this->_loadedApis[$type])
+        ) {
             $api->locationApiLoad($this->settings($application, $name));
             $this->_loadedApis[$type] = true;
         }
