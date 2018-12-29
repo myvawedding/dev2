@@ -200,3 +200,37 @@ function et_core_intentionally_unsanitized( $passthru, $excuse ) {
 	return $passthru;
 }
 endif;
+
+/**
+ * Fixes unclosed HTML tags
+ *
+ * @since 3.18.4
+ *
+ * @param string $content source HTML
+ *
+ * @return string
+ */
+if ( ! function_exists( 'et_core_fix_unclosed_html_tags' ) ):
+function et_core_fix_unclosed_html_tags( $content ) {
+	// Exit if source has no HTML tags or we miss what we need to fix them anyway
+	if ( false === strpos( $content, '<' ) || ! class_exists( 'DOMDocument' ) ) {
+		return $content;
+	}
+
+	$doc = new DOMDocument();
+	@$doc->loadHTML( sprintf(
+		'<html><head>%s</head><body>%s</body></html>',
+		// Use WP charset
+		sprintf( '<meta http-equiv="content-type" content="text/html; charset=%s" />', get_bloginfo( 'charset' ) ),
+		// Wrap content within a container to force a single node
+		sprintf( '<div>%s</div>', $content )
+	) );
+
+	// Grab fixed content and remove its container
+	return preg_replace(
+		'|<div>([\s\S]+?)</div>|',
+		'$1',
+		$doc->saveHTML( $doc->getElementsByTagName( 'body' )->item( 0 )->childNodes->item( 0 ) )
+	);
+}
+endif;
