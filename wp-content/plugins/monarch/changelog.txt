@@ -1,3 +1,7 @@
+version 1.4.10 ( updated 12-12-2018 )
+- Updated core to the latest version.
+	* core/components/data/Utils.php
+
 version 1.4.9 ( updated 12-05-2018 )
 - Various security hardening fixes.
 - Added i18n support for visual builder toggle buttons.

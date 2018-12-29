@@ -5,6 +5,7 @@ import {
   get,
   includes,
   forEach,
+  some,
 } from 'lodash';
 import $ from 'jquery';
 
@@ -15,18 +16,22 @@ let documentWrites = []
 window._et_document_write = content => documentWrites.push(content);
 
 const maybeFixInlineScript = (element) => {
+  if ('SCRIPT' !== element.nodeName) {
+    return element;
+  }
+
   let textContent = get(element, 'textContent', '');
 
   if (isEmpty(textContent)) {
     return element;
   }
 
-  if (textContent.indexOf('document.write') > 0) {
+  if (includes(textContent, 'document.write')) {
     // If the script uses document.write, use our wrapper
     element.textContent = textContent = textContent.split('document.write').join('window.top._et_document_write');
   }
 
-  if (textContent.indexOf('jQuery') === -1) {
+  if (includes(textContent, 'jQuery')) {
     // If the script uses jQuery, make sure it's defined
     element.textContent = `window.jQuery = window.jQuery || window.top && window.top.jQuery;${textContent}`;
   }
@@ -74,6 +79,15 @@ class ETCoreFrames {
    * @type {Object.<string, jQuery>}
    */
   active_frames = {};
+
+  /**
+   * Regex instances that match scripts that should not be put into frames.
+   *
+   * @since ??
+   *
+   * @type {RegExp}
+   */
+  exclude_scripts = /document\.location *=|apex\.live|(hotjar|googletagmanager|maps\.googleapis)\.com/i;
 
   /**
    * Cached frames available for use.
@@ -131,12 +145,41 @@ class ETCoreFrames {
     });
   };
 
+  _createElement = (base_element, target_document) => {
+    const resources = [];
+
+    this._filterElementContent(base_element);
+
+    // Handle resources nested below the top level
+    $(base_element).find('link', 'script', 'style').each((i, node) => {
+      resources.push(this._createResourceElement(node, target_document));
+      node.parentNode.remove(node);
+    });
+
+    const element = target_document.importNode(base_element, true);
+
+    $(element).find('iframe').remove();
+
+    forEach(resources, resource => element.appendChild(resource));
+
+    return element;
+  };
+
   _createFrame = (id, move_dom = false, parent = 'body') => {
-    const $iframe = this.$target('<iframe>', {
+    const is_chrome = /chrome/i.test(window.navigator.userAgent);
+    const is_safari = /safari/i.test(window.navigator.userAgent);
+    const $iframe   = this.$target('<iframe>', {
       src: `javascript:'<!DOCTYPE html><html><body></body></html>'`,
     });
 
+    let load_count = 0;
+
     $iframe.on('load', () => {
+      if (0 === load_count++ && (is_chrome || is_safari)) {
+        // Chrome & Safari fire two load events, we want the second one.
+        return;
+      }
+
       if (move_dom) {
         this._moveDOMToFrame($iframe);
       } else {
@@ -159,6 +202,42 @@ class ETCoreFrames {
     return $iframe;
   };
 
+  _createResourceElement = (base_element, target_document) => {
+    const { id, nodeName: name, href, src, rel } = base_element;
+
+    const attrs = ['id', 'src', 'href', 'type', 'rel', 'innerHTML', 'media', 'screen', 'crossorigin'];
+
+    if ('et-fb-top-window-css' === id) {
+      return; // continue
+    }
+
+    if ('et-frontend-builder-css' === id && IS_YARN_START) {
+      return; // continue
+    }
+
+    if ('SCRIPT' === name && this._isScriptExcluded(base_element)) {
+      return; // continue
+    }
+
+    const element = target_document.createElement(name);
+
+    if ((src || href) && ('LINK' !== name || 'stylesheet' === rel)) {
+      this.loading.push(this._resourceLoadAsPromise(element));
+    }
+
+    if ('SCRIPT' === name) {
+      element.async = element.defer = false;
+    }
+
+    forEach(attrs, attr => base_element[attr] ? element[attr] = base_element[attr] : '');
+
+    return element;
+  };
+
+  _isScriptExcluded = node => {
+    return this.exclude_scripts.test(node.innerHTML) || (node.src && this.exclude_scripts.test(node.src));
+  };
+
   _maybeCreateFrame = () => {
     if (isEmpty(this.frames)) {
       requestAnimationFrame(() => {
@@ -167,7 +246,7 @@ class ETCoreFrames {
     }
   };
 
-  _filterNodeContent = (node) => {
+  _filterElementContent = (node) => {
     if (node.id === 'page-container') {
       const $mobileMenu = $(node).find('#mobile_menu');
       if ($mobileMenu.length > 0) {
@@ -185,12 +264,12 @@ class ETCoreFrames {
     const target_head     = $iframe.contents()[0].head;
     const target_body     = $iframe.contents()[0].body;
 
-    const attrs           = ['id', 'src', 'href', 'type', 'rel', 'innerHTML', 'media', 'screen', 'crossorigin'];
     const resource_nodes  = ['LINK', 'SCRIPT', 'STYLE'];
-
     const loading         = [];
 
-    documentWrites        = [];
+    documentWrites = [];
+
+    this.loading = [];
 
     forEach(base_head.childNodes, child => {
       const is_resource = includes(resource_nodes, child.nodeName);
@@ -198,26 +277,17 @@ class ETCoreFrames {
       let element;
 
       if (is_resource) {
-        if ('et-fb-top-window-css' === child.id) {
+        element = this._createResourceElement(child, target_document)
+
+        if (! element) {
           return; // continue
         }
 
-        element = target_document.createElement(child.nodeName);
-
-        if ((child.src || child.href) && ('LINK' !== child.nodeName || 'stylesheet' === child.rel)) {
-          loading.push(this._resourceLoadAsPromise(element));
-        }
-
-        if ('SCRIPT' === child.nodeName) {
-          element.async = element.defer = false;
-        }
-
-        forEach(attrs, attr => child[attr] ? element[attr] = child[attr] : '');
       } else {
-        element = target_document.importNode(child, true);
+        element = this._createElement(child, target_document);
       }
 
-      target_head.appendChild('SCRIPT' === element.nodeName ? maybeFixInlineScript(element) : element);
+      target_head.appendChild(maybeFixInlineScript(element));
     });
 
     target_body.className = this.base_window.ET_Builder.Misc.original_body_class;
@@ -225,46 +295,22 @@ class ETCoreFrames {
     forEach(body_children, child => {
       const is_resource = includes(resource_nodes, child.nodeName);
 
-      let element;
+      let element = is_resource
+        ? this._createResourceElement(child, target_document)
+        : this._createElement(child, target_document);
 
-      if (is_resource) {
-        if ('et-fb-top-window-css' === child.id) {
-          return; // continue
-        }
-
-        if ('et-frontend-builder-css' === child.id && IS_YARN_START) {
-          return; // continue
-        }
-
-        element = target_document.createElement(child.nodeName);
-
-        if ((child.src || child.href) && ('LINK' !== child.nodeName || 'stylesheet' === child.rel)) {
-          loading.push(this._resourceLoadAsPromise(element));
-        }
-
-        if ('SCRIPT' === child.nodeName) {
-          element.async = element.defer = false;
-        }
-
-        forEach(attrs, attr => child[attr] ? element[attr] = child[attr] : '');
-
-      } else {
-        this._filterNodeContent(child);
-        element = target_document.importNode(child, true);
+      if (! element) {
+        return; // continue
       }
 
-      if ($(element).children().length > 0) {
-        $(element).find('iframe').remove();
-      }
-
-      target_body.appendChild('SCRIPT' === element.nodeName ? maybeFixInlineScript(element) : element);
+      target_body.appendChild(maybeFixInlineScript(element));
     });
 
     if (documentWrites.length > 0) {
       jQuery(target_body).append(documentWrites.join(';'));
     }
 
-    Promise.all(loading).then(() => {
+    Promise.all(this.loading).then(() => {
       // Fire events again since browser fired before we added content to the frame
       const frame_document = $iframe[0].contentDocument;
       const frame_window   = $iframe[0].contentWindow;
@@ -290,7 +336,7 @@ class ETCoreFrames {
         frame_document.dispatchEvent(dom_content_event);
         frame_window.dispatchEvent(load_event);
       }, 0);
-    });
+    }).catch(err => console.error(err));
   };
 
   _resourceLoadAsPromise(resource) {
