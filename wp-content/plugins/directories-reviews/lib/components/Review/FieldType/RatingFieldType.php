@@ -62,7 +62,7 @@ class RatingFieldType extends Field\Type\AbstractType implements
         );        
     }
 
-    public function fieldTypeOnSave(Field\IField $field, array $values)
+    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         $value = array_shift($values);
         foreach ($value as $name => $rating) {

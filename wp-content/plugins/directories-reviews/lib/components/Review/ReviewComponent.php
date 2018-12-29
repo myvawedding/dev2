@@ -16,7 +16,7 @@ class ReviewComponent extends AbstractComponent implements
     CSV\IExporters,
     CSV\IImporters
 {
-    const VERSION = '1.2.12', PACKAGE = 'directories-reviews';
+    const VERSION = '1.2.15', PACKAGE = 'directories-reviews';
     
     public static function interfaces()
     {
@@ -34,7 +34,7 @@ class ReviewComponent extends AbstractComponent implements
     public function onCoreComponentsLoaded()
     {
         $this->_application->setHelper('Review_Criteria', function (Application $application, Entity\Model\Bundle $bundle) {
-            return empty($bundle->info['review_criteria']) ? array('_all' => __('Overall rating')) : $bundle->info['review_criteria'];
+            return empty($bundle->info['review_criteria']) ? array('_all' => __('Overall rating', 'directories-reviews')) : $bundle->info['review_criteria'];
         });
     }
 
