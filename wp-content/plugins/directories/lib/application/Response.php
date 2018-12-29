@@ -184,7 +184,19 @@ class Response extends AbstractHttpResponse
 
                 $html[] = '<div class="' . DRTS_BS_PREFIX . 'alert ' . DRTS_BS_PREFIX . 'alert-' . $_flash['level'] . '">' . $this->_application->H($_flash['msg']) . '</div>';
             }
-            echo $this->_application->RedirectHtml($url, implode(PHP_EOL, $html), $context->isError() ? 30000 : 3000);
+            $timeout = 3000;
+            if ($context->isError()) {
+                switch ($context->getErrorType()) {
+                    case self::ERROR_UNAUTHORIZED:
+                        break;
+                    case self::ERROR_NOT_FOUND:
+                        $timeout = 5000;
+                        break;
+                    default:
+                        $timeout = 30000;
+                }
+            }
+            echo $this->_application->RedirectHtml($url, implode(PHP_EOL, $html), $timeout);
         } else {
             self::sendHeader('Location', $url);
         }

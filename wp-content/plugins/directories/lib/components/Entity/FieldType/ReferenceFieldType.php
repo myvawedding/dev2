@@ -64,6 +64,7 @@ class ReferenceFieldType extends Field\Type\AbstractType implements Field\Type\I
                 '#title' => __('Content Type', 'directories'),
                 '#options' => $options,
                 '#default_value' => $settings['bundle'],
+                '#required' => true,
             ],
             '#submit' => array(
                 11 => [[[$this, '_configureSync'], [$fieldType, $bundle->name, $parents, $sync_field_options]]], // 11 is weight
@@ -113,7 +114,7 @@ class ReferenceFieldType extends Field\Type\AbstractType implements Field\Type\I
         $sync_field->FieldConfig->commit();
     }
 
-    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null)
+    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         $ret = $entity_ids = [];
         foreach ($values as $weight => $value) {
@@ -142,13 +143,18 @@ class ReferenceFieldType extends Field\Type\AbstractType implements Field\Type\I
         }
         $values = [];
         foreach ($this->_application
-            ->Entity_Types_impl($field->Bundle->entitytype_name)
+            ->Entity_Types_impl($this->_getReferenceEntityType($field->Bundle))
             ->entityTypeEntitiesByIds(array_keys($entities))
         as $entity) {
             $key = $entities[$entity->getId()];
             $values[$key] = $entity;
         }
         ksort($values); // re-order as it was saved
+    }
+
+    protected function _getReferenceEntityType(Entity\Model\Bundle $bundle)
+    {
+        return $bundle->entitytype_name;
     }
 
     public function fieldTypeIsModified($field, $valueToSave, $currentLoadedValue)

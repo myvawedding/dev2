@@ -19,6 +19,7 @@ class ListMode extends AbstractMode
                 'list_layout_switch_cookie' => 'drts-entity-view-list-layout',
                 'list_grid_default' => false,
             ),
+            'default_display' => 'summary',
             'displays' => $this->_getDisplays(),
             'mapable' => true,
         );

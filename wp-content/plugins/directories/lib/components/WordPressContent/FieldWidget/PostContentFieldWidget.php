@@ -1,56 +1,40 @@
 <?php
 namespace SabaiApps\Directories\Component\WordPressContent\FieldWidget;
 
-use SabaiApps\Directories\Component\Field;
 use SabaiApps\Directories\Component\Entity;
 
-class PostContentFieldWidget extends Field\Widget\AbstractWidget
+class PostContentFieldWidget extends EditorFieldWidget
 {
     protected function _fieldWidgetInfo()
     {
-        return array(
-            'label' => __('WordPress editor', 'directories'),
-            'field_types' => array('wp_post_content'),
-            'default_settings' => array(
-                'rows' => 10,
-                'no_tinymce' => false,
-                'no_quicktags' => false,
-            ),
-        );
+        $info = parent::_fieldWidgetInfo();
+        $info['field_types'] = ['wp_post_content'];
+        $info['default_settings'] += [
+            'min_length' => null,
+            'max_length' => null,
+        ];
+        return $info;
     }
 
     public function fieldWidgetSettingsForm($fieldType, Entity\Model\Bundle $bundle, array $settings, array $parents = [], array $rootParents = [])
     {
-        return array(
-            'no_tinymce' => array(
-                '#type' => 'checkbox',
-                '#title' => __('Disable Visual mode', 'directories'),
-                '#default_value' => $settings['no_tinymce'],
-            ),
-            'no_quicktags' => array(
-                '#type' => 'checkbox',
-                '#title' => __('Disable toolbar in Text mode', 'directories'),
-                '#default_value' => $settings['no_quicktags'],
-            ),
-            'rows' => array(
-                '#type' => 'slider',
-                '#min_value' => 1,
-                '#max_value' => 50,
+        return [
+            'min_length' => array(
+                '#type' => 'number',
+                '#title' => __('Minimum length', 'directories'),
+                '#description' => __('The minimum length of value in characters.', 'directories'),
+                '#size' => 5,
                 '#integer' => true,
-                '#title' => __('Rows', 'directories'),
-                '#default_value' => $settings['rows'],
+                '#default_value' => $settings['min_length'],
             ),
-        );
-    }
-
-    public function fieldWidgetForm(Field\IField $field, array $settings, $value = null, Entity\Type\IEntity $entity = null, array $parents = [], $language = null)
-    {
-        return array(
-            '#type' => 'wp_editor',
-            '#default_value' => $value,
-            '#rows' => $settings['rows'],
-            '#no_tinymce' => !empty($settings['no_tinymce']),
-            '#no_quicktags' => !empty($settings['no_quicktags']),
-        );
+            'max_length' => array(
+                '#type' => 'number',
+                '#title' => __('Maximum length', 'directories'),
+                '#description' => __('The maximum length of value in characters.', 'directories'),
+                '#size' => 5,
+                '#integer' => true,
+                '#default_value' => $settings['max_length'],
+            ),
+        ] + parent::fieldWidgetSettingsForm($fieldType, $bundle, $settings, $parents, $rootParents);
     }
 }

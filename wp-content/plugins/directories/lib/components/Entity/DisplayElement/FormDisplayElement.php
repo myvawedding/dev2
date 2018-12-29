@@ -184,6 +184,7 @@ class FormDisplayElement extends Display\Element\AbstractElement
             '#default_value' => $field ? $field->getFieldLabel() : null,
         );
 
+        $field_prefix = $this->_application->Form_FieldName($parents);
         if ($field) {
             $form['_name'] = array(
                 '#type' => 'textfield',
@@ -203,7 +204,7 @@ class FormDisplayElement extends Display\Element\AbstractElement
                 '#type' => 'textfield',
                 '#title' => __('Field name', 'directories'),
                 '#description' => __('Enter a machine readable name which may not be changed later. Only lowercase alphanumeric characters and underscores are allowed.', 'directories'),
-                '#max_length' => 255,
+                '#max_length' => 50,
                 '#required' => true,
                 '#weight' => 2,
                 '#regex' => '/^[a-z0-9_]+$/',
@@ -211,7 +212,7 @@ class FormDisplayElement extends Display\Element\AbstractElement
                 '#horizontal' => true,
                 '#states' => array(
                     'slugify' => array(
-                        sprintf('input[name="%s[label]"]', $this->_application->Form_FieldName($parents)) => array('type' => 'filled', 'value' => true),
+                        sprintf('input[name="%s[label]"]', $field_prefix) => array('type' => 'filled', 'value' => true),
                     ),
                 ),
             );
@@ -230,9 +231,10 @@ class FormDisplayElement extends Display\Element\AbstractElement
                     '#type' => 'select',
                     '#options' => ['' => __('Create new field', 'directories')] + $existing_fields,
                     '#horizontal' => true,
+                    '#required' => true,
                 ];
                 $form['name']['#states']['visible'] = [
-                    sprintf('[name="%s[existing_field_name]"]', $this->_application->Form_FieldName($parents)) => array('value' => ''),
+                    sprintf('[name="%s[existing_field_name]"]', $field_prefix) => array('value' => ''),
                 ];
             }
         }
@@ -308,7 +310,7 @@ class FormDisplayElement extends Display\Element\AbstractElement
 
             // For existing fields, field type settings are shown only when editing
             if (!empty($existing_fields)) {
-                $form['settings']['#states']['visible'][sprintf('[name="%s[existing_field_name]"]', $this->_application->Form_FieldName($parents))] = [
+                $form['settings']['#states']['visible'][sprintf('[name="%s[existing_field_name]"]', $field_prefix)] = [
                     'value' => '',
                 ];
             }
@@ -399,7 +401,7 @@ class FormDisplayElement extends Display\Element\AbstractElement
                 }
             }
             $form['widget_settings'][$widget]['#states']['visible'] = array(
-                sprintf('[name="%s[widget]"]', $this->_application->Form_FieldName($parents)) => array('value' => $widget),
+                sprintf('[name="%s[widget]"]', $field_prefix) => array('value' => $widget),
             );
         }
 
@@ -445,7 +447,9 @@ class FormDisplayElement extends Display\Element\AbstractElement
     {
         $form_settings = $var->settings;
         if ($form_settings['#wrap']) {
-            $form_settings = $form_settings[$form_settings['#wrap']];
+            foreach ($form_settings['#wrap'] as $wrap) {
+                $form_settings = $form_settings[$wrap];
+            }
         }
         if (!empty($form_settings[$element['settings']['field_name']]['#admin_only'])
             && $this->_application->getPlatform()->isAdmin()

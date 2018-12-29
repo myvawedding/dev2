@@ -7,7 +7,7 @@ use SabaiApps\Directories\Component\System;
 
 class FieldComponent extends AbstractComponent implements ITypes, IWidgets, IRenderers, IFilters, Form\IFields
 {
-    const VERSION = '1.2.12', PACKAGE = 'directories';
+    const VERSION = '1.2.15', PACKAGE = 'directories';
 
     protected $_system = true;
 
@@ -129,6 +129,8 @@ class FieldComponent extends AbstractComponent implements ITypes, IWidgets, IRen
                 return new Renderer\ColorRenderer($this->_application, $name);
             case 'whatsapp':
                 return new Renderer\WhatsAppRenderer($this->_application, $name);
+            case 'date':
+                return new Renderer\DateRenderer($this->_application, $name);
             default:
                 return new Renderer\DefaultRenderer($this->_application, $name);
         }

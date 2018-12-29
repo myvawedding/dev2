@@ -8,12 +8,12 @@ class SortsHelper
     /**
      * @param Application $application
      * @param string $bundleName
+     * @param string $lang
      */
-    public function help(Application $application, $bundleName, $useCache = true)
+    public function help(Application $application, $bundleName, $lang = null)
     {
-        if (!$useCache
-            || (!$ret = $application->getPlatform()->getCache('entity_sorts_' . $bundleName))
-        ) {
+        $cache_id = $this->_getCacheId($application, $bundleName, $lang);
+        if (!$ret = $application->getPlatform()->getCache($cache_id)) {
             $ret = [];
             foreach ($application->Entity_Field($bundleName) as $field) {                
                 if ((!$field_type = $application->Field_Type($field->getFieldType(), true))
@@ -43,8 +43,16 @@ class SortsHelper
                 }
             }
             $ret['random'] = array('label' => __('Random', 'directories'));
-            $application->getPlatform()->setCache($application->Filter('entity_sorts', $ret, [$bundleName]), 'entity_sorts_' . $bundleName);
+            $application->getPlatform()->setCache($application->Filter('entity_sorts', $ret, [$bundleName]), $cache_id);
         }
         return $ret;
+    }
+
+    protected function _getCacheId(Application $application, $bundleName, $lang = null)
+    {
+        if (!isset($lang)) {
+            $lang = $application->getPlatform()->getCurrentLanguage();
+        }
+        return 'entity_sorts_' . $bundleName . '_' . $lang;
     }
 }

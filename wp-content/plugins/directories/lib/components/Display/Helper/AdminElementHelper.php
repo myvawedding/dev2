@@ -166,7 +166,7 @@ class AdminElementHelper
                 'value' => [
                     'id' => [
                         'label' => __('Element ID', 'directories'),
-                        'value' => $id,
+                        'value' => $name . '-' . (empty($id) ? 1 : $id),
                     ],
                     'type' => [
                         'label' => __('Element type', 'directories'),

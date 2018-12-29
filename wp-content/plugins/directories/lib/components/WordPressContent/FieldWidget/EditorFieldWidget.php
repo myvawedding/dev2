@@ -42,24 +42,30 @@ class EditorFieldWidget extends Field\Widget\AbstractWidget
             ),
         );
     }
-    
-    public function isIframeUrlsRequired($form, $parents)
-    {
-        $values = $form->getValue($parents);
-        return !empty($values['iframe']);
-    }
 
     public function fieldWidgetForm(Field\IField $field, array $settings, $value = null, Entity\Type\IEntity $entity = null, array $parents = [], $language = null)
     {
+        $min_length = $max_length = null;
         $field_settings = $field->getFieldSettings();
-        return array(
+        if (isset($settings['min_length'])) {
+            $min_length = $settings['min_length'];
+        } elseif (isset($field_settings['min_length'])) {
+            $min_length = $field_settings['min_length'];
+        }
+        if (isset($settings['max_length'])) {
+            $max_length = $settings['max_length'];
+        } elseif (isset($field_settings['max_length'])) {
+            $max_length = $field_settings['max_length'];
+        }
+
+        return [
             '#type' => 'wp_editor',
             '#default_value' => isset($value) ? (is_array($value) ? $value['value'] : $value) : null,
             '#rows' => $settings['rows'],
-            '#min_length' => isset($field_settings['min']) ? intval($field_settings['min']) : null,
-            '#max_length' => isset($field_settings['max']) ? intval($field_settings['max']) : null,
             '#no_tinymce' => !empty($settings['no_tinymce']),
             '#no_quicktags' => !empty($settings['no_quicktags']),
-        );
+            '#min_length' => $min_length,
+            '#max_length' => $max_length,
+        ];
     }
 }

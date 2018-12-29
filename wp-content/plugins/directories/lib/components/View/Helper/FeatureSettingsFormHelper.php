@@ -135,7 +135,9 @@ class FeatureSettingsFormHelper
             case 'filter':
                 if (!$application->getComponent('View')->isFilterable($bundle)) return;
 
-                $ret = array(
+                $show_filters_selector = sprintf('input[name="%s"]', $application->Form_FieldName(array_merge($parents, ['show'])));
+                $show_in_modal_selector = sprintf('input[name="%s"]', $application->Form_FieldName(array_merge($parents, ['show_modal'])));
+                $ret = [
                     '#tabs' => [
                         $feature => [
                             '#title' => __('Filter Settings', 'directories'),
@@ -144,41 +146,55 @@ class FeatureSettingsFormHelper
                     ],
                     '#tab' => $feature,
                     '#element_validate' => array(array($this, '_validateFilter')),
-                    'show' => array(
+                    'show' => [
                         '#type' => 'checkbox',
                         '#title' => __('Enable filters', 'directories'),
                         '#default_value' => !empty($settings['show']),
                         '#horizontal' => true,
                         '#weight' => 5,
-                    ),
-                    'shown' => array(
+                    ],
+                    'shown' => [
                         '#type' => 'checkbox',
                         '#title' => __('Show filters by default', 'directories'),
                         '#default_value' => !empty($settings['shown']),
                         '#horizontal' => true,
                         '#weight' => 11,
-                        '#states' => array(
-                            'visible' => array(
-                                sprintf('input[name="%s"]', $application->Form_FieldName(array_merge($parents, ['show']))) => ['type' => 'checked', 'value' => true],
-                                sprintf('input[name="%s"]', $application->Form_FieldName(array_merge($parents, ['show_modal']))) => ['type' => 'checked', 'value' => false]
-                            ),
-                        ),
-                    ),
-                );
+                        '#states' => [
+                            'visible' => [
+                                $show_filters_selector => ['type' => 'checked', 'value' => true],
+                                $show_in_modal_selector => ['type' => 'checked', 'value' => false]
+                            ],
+                        ],
+                    ],
+                    'auto_submit' => [
+                        '#title' => __('Auto submit filter form', 'directories'),
+                        '#type' => 'checkbox',
+                        '#default_value' => !isset($settings['auto_submit']) || $settings['auto_submit'],
+                        '#horizontal' => true,
+                        '#weight' => 15,
+                        '#states' => [
+                            'visible' => [
+                                $show_filters_selector => ['type' => 'checked', 'value' => true],
+                                $show_in_modal_selector => ['type' => 'checked', 'value' => false]
+                            ],
+                        ],
+                    ],
+                ];
                 if (empty($bundle->info['parent'])) {
-                    $ret['show_modal'] = array(
+                    $ret['show_modal'] = [
                         '#type' => 'checkbox',
                         '#title' => __('Show filters in modal window', 'directories'),
                         '#default_value' => !empty($settings['show_modal']),
                         '#horizontal' => true,
                         '#weight' => 10,
-                        '#states' => array(
-                            'visible' => array(
-                                sprintf('input[name="%s"]', $application->Form_FieldName(array_merge($parents, array('show')))) => array('type' => 'checked', 'value' => true)
-                            ),
-                        ),
-                    );
+                        '#states' => [
+                            'visible' => [
+                                $show_filters_selector => ['type' => 'checked', 'value' => true],
+                            ],
+                        ],
+                    ];
                 }
+
                 return $ret;
 
             case 'query':

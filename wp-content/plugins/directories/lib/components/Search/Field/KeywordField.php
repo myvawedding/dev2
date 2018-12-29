@@ -248,7 +248,7 @@ class KeywordField extends AbstractField
             $data['suggest-post'] = 'true';
             $data['suggest-post-url'] = $this->_getSuggestUrl($bundle, $settings['suggest']['settings']['post_num'], 'QUERY');
             $data['suggest-post-icon'] = $this->_application->Entity_BundleTypeInfo($bundle->type, 'icon');
-            $data['suggest-post-jump'] = !empty($settings['suggest']['settings']['post_jump']) ? 'false' : 'true';
+            $data['suggest-post-jump'] = empty($settings['suggest']['settings']['post_jump']) ? 'false' : 'true';
             $data['suggest-min-length'] = $settings['suggest']['settings']['min_length'];
             $data['suggest-post-prefetch-url'] = $this->_getSuggestUrl($bundle, 100);
 
@@ -273,7 +273,7 @@ class KeywordField extends AbstractField
                     $data['suggest-taxonomy-' . $taxonomy_bundle_type . '-header'] = $taxonomy_bundle->getLabel('singular');
                     $data['suggest-taxonomy-' . $taxonomy_bundle_type . '-icon'] = $this->_application->Entity_BundleTypeInfo($taxonomy_bundle_type, 'icon');
                     $data['suggest-taxonomy-' . $taxonomy_bundle_type . '-num'] = isset($settings['suggest'][$taxonomy_bundle_type . '_num']) ? $settings['suggest'][$taxonomy_bundle_type . '_num'] : 3;
-                    if (empty($settings['suggest_taxonomy_' . $taxonomy_bundle_type . '_hide_count'])) {
+                    if (empty($settings['suggest'][$taxonomy_bundle_type . '_hide_count'])) {
                         $data['suggest-taxonomy-' . $taxonomy_bundle_type . '-count'] = $bundle->type;
                     }
                     $data['suggest-taxonomy-' . $taxonomy_bundle_type . '-parents'] = empty($settings['suggest'][$taxonomy_bundle_type . '_inc_parents']) ? 'false' : 'true';

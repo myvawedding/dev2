@@ -28,8 +28,10 @@ class EmailWidget extends TextfieldWidget
     public function fieldWidgetForm(IField $field, array $settings, $value = null, Entity\Type\IEntity $entity = null, array $parents = [], $language = null)
     {
         $form = parent::fieldWidgetForm($field, $settings, $value, $entity, $parents, $language);
-        if (!empty($settings['autopopulate'])) {
-            $form['#auto_populate'] = 'email';
+        if (!isset($entity)
+            && !empty($settings['autopopulate'])
+        ) {
+            $form['#autopopulate'] = 'email';
         }
         $field_settings = $field->getFieldSettings();
         $form['#check_mx'] = !empty($field_settings['check_mx']);

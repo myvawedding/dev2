@@ -64,8 +64,9 @@ class TabsElement extends AbstractElement
             if (!isset($active_tab)) {
                 $active_tab = $child['id'];
             }
+
             $tabs[$child['id']] = array(
-                'label' => $this->_translateString($child['settings']['label'], 'label', $child['id'], 'tab'),
+                'label' => $this->_translateString($child['settings']['label'], 'label', $child['_element_id'], 'tab'),
                 'content' => $this->_application->callHelper('Display_Render_element', array($bundle, $child, $var)),
             );
         }

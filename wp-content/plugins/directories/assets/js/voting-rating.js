@@ -9,6 +9,13 @@
     if (!$select.length) return;
 
     var val = $select.val();
+    options = options || {};
+    if ($ele.data('vote-url')) {
+      options.url = $ele.data('vote-url');
+    }
+    if ($ele.data('vote-rating')) {
+      options.initialRating = $ele.data('vote-rating');
+    }
     var o = $.extend({}, DRTS.Voting.rating.defaults, options);
     if (o.url) {
       o.onSelect = function(value, text, event) {
@@ -58,6 +65,14 @@
   DRTS.Voting.rating.defaults = {
     theme: 'fontawesome-stars-o',
     url: location.href,
-    showSelectedRating: false
+    showSelectedRating: false,
+    showValues: false,
+    allowEmpty: true
   };
+
+  $(DRTS).on('loaded.sabai drts_init.sabai', function(e, data) {
+    $('.drts-voting-rating-select', data.context).each(function() {
+      DRTS.Voting.rating($(this));
+    });
+  });
 })(jQuery);

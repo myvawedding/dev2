@@ -41,7 +41,9 @@ class ProgressHelper
     if (modal.length) {
         modal.find(".drts-form-buttons").remove();
     }
-    var progress = $(".drts-system-progress").slideDown("fast");
+    var progress = $(".drts-system-progress")
+        .find(".drts-system-progress-bar > div").css("background-color", "#ccc").end()
+        .slideDown("fast");
     var initialMessage = $(".drts-system-progress").find(".drts-system-progress-message").html();
     var setProgressData = function(data) {
         if (typeof data.message === "string") {
@@ -52,7 +54,7 @@ class ProgressHelper
                 progress.find(".drts-system-progress-bar > div").css("width", "100%").end()
                     .find(".drts-system-progress-percent").text("");
             } else {
-                progress.find(".drts-system-progress-bar > div").css("width", data.percent + "%").end()
+                progress.find(".drts-system-progress-bar > div").css({"background-color": "", width: data.percent + "%"}).end()
                     .find(".drts-system-progress-percent").text(data.percent + "%");
             }
         }

@@ -90,12 +90,8 @@ class RatingFieldRenderer extends Field\Renderer\AbstractRenderer
         }
         
         return sprintf(
-            '<span id="%1$s"><select style="display:none;">%2$s</select></span><span class="drts-voting-rating-average %7$sml-1">%4$04.2f</span>%5$s
-<script type="text/javascript">
-%8$s
-    DRTS.Voting.rating("#%1$s", {url:"%3$s", theme:"fontawesome-stars-o", showValues:false, initialRating:%6$d, allowEmpty:true});
-});
-</script>',
+            '<span class="drts-voting-rating-select" id="%1$s" data-vote-url="%3$s" data-vote-rating="%6$d"><select style="display:none;">%2$s</select></span><span class="drts-voting-rating-average %7$sml-1">%4$04.2f</span>%5$s
+',
             $id,
             implode(PHP_EOL, $options),
             $this->_application->Entity_Url(

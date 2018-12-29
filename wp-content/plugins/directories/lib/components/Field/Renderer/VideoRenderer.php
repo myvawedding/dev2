@@ -33,20 +33,36 @@ class VideoRenderer extends AbstractRenderer
 
     protected function _fieldRendererRenderField(IField $field, array &$settings, Entity\Type\IEntity $entity, array $values, $more = 0)
     {
-        $ret = array('<div class="drts-row">');
         $width = 12 / $settings['columns'];
-        foreach ($values as $value) {
-            $ret[] = '<div class="drts-col-md-' . $width . '"><div class="drts-field-video">';
-            switch ($value['provider']) {
-                case 'vimeo':
-                    $ret[] = $this->_renderVimeoVideo($field, $settings, $value);
-                    break;
-                default:
-                    $ret[] = $this->_renderYouTubeVideo($field, $settings, $value);
+        if ($width === 12) {
+            $ret = [];
+            foreach ($values as $value) {
+                $ret[] = '<div class="drts-field-video">';
+                switch ($value['provider']) {
+                    case 'vimeo':
+                        $ret[] = $this->_renderVimeoVideo($field, $settings, $value);
+                        break;
+                    default:
+                        $ret[] = $this->_renderYouTubeVideo($field, $settings, $value);
+                }
+                $ret[] = '</div>';
             }
-            $ret[] = '</div></div>';
+        } else {
+            $ret = array('<div class="drts-row">');
+            foreach ($values as $value) {
+                $ret[] = '<div class="drts-col-md-' . $width . '"><div class="drts-field-video">';
+                switch ($value['provider']) {
+                    case 'vimeo':
+                        $ret[] = $this->_renderVimeoVideo($field, $settings, $value);
+                        break;
+                    default:
+                        $ret[] = $this->_renderYouTubeVideo($field, $settings, $value);
+                }
+                $ret[] = '</div></div>';
+            }
+            $ret[] = '</div>';
         }
-        $ret[] = '</div>';
+
         return implode(PHP_EOL, $ret);
     }
     

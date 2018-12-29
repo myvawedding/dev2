@@ -31,7 +31,7 @@ class SaveHelper
         // Notify that an entity is being created, with extracted fields values
         $this->invokeEvents($application, $bundle->entitytype_name, $bundle->type, array($bundle, &$values, &$extraArgs), 'create');
         // Save entity
-        $entity = $this->_saveEntity($application, $bundle, $values, $fields, null, $identity);
+        $entity = $this->_saveEntity($application, $bundle, $values, $fields, null, $identity, $extraArgs);
         // Notify that an entity has been created
         $this->invokeEvents($application, $bundle->entitytype_name, $bundle->type, array($bundle, $entity, $values, &$extraArgs), 'after_create');
         // Load entity fields
@@ -77,7 +77,7 @@ class SaveHelper
         }
         
         // Save entity
-        $updated_entity = $this->_saveEntity($application, $bundle, $values, $fields, $entity);
+        $updated_entity = $this->_saveEntity($application, $bundle, $values, $fields, $entity, null, $extraArgs);
         
         if (empty($extraArgs['force_create_events'])) {
             // Notify that an entity has been updated
@@ -103,7 +103,7 @@ class SaveHelper
         return $updated_entity;
     }
     
-    private function _extractFieldValues(Application $application, $entityType, array $fields, array $fieldValues, Entity\Type\IEntity $entity = null, array $extraArgs = [])
+    private function _extractFieldValues(Application $application, $entityType, array $fields, array $fieldValues, Entity\Type\IEntity $entity = null, array &$extraArgs = [])
     {     
         // Extract field values to save
         $ret = [];
@@ -138,7 +138,7 @@ class SaveHelper
                 // Get current value if this is an update
                 $current_field_value = isset($entity) ? $entity->getFieldValue($field_name) : null;
                 // Let the field type component for the field to work on values before saving to the storage
-                $field_value = $field_type->fieldTypeOnSave($field, $field_value, $current_field_value);
+                $field_value = $field_type->fieldTypeOnSave($field, $field_value, $current_field_value, $extraArgs);
                 if (!is_array($field_value)) continue;
                 
                 // If this is an update, make sure that the new value is different from the existing one
@@ -199,7 +199,7 @@ class SaveHelper
             // Get current value if this is an update
             $current_field_value = isset($entity) ? $entity->getFieldValue($field_name) : null;
             // Let the field type component for the field to work on values before saving to the storage
-            $field_value = $field_type->fieldTypeOnSave($field, $field_value, $current_field_value);
+            $field_value = $field_type->fieldTypeOnSave($field, $field_value, $current_field_value, $extraArgs);
             if (!is_array($field_value)) continue;
             
             // If this is an update, make sure that the new value is different from the existing one
@@ -228,7 +228,7 @@ class SaveHelper
         return $ret;
     }
 
-    private function _saveEntity(Application $application, Entity\Model\Bundle $bundle, array $fieldValues, $fields, Entity\Type\IEntity $entity = null, AbstractIdentity $identity = null)
+    private function _saveEntity(Application $application, Entity\Model\Bundle $bundle, array $fieldValues, $fields, Entity\Type\IEntity $entity = null, AbstractIdentity $identity = null, array &$extraArgs = [])
     {
         // Extract field values to save
         $field_values = $properties = [];
@@ -250,7 +250,7 @@ class SaveHelper
                 // Get current value if this is an update
                 $current_field_value = isset($entity) ? $entity->getFieldValue($field_name) : null;
                 // Let the field type component for the field to work on values before saving to the storage
-                $field_value = $field_type->fieldTypeOnSave($field, $field_value, $current_field_value);
+                $field_value = $field_type->fieldTypeOnSave($field, $field_value, $current_field_value, $extraArgs);
                 if (!is_array($field_value)) continue;
                 
                 $field_values[$field_name] = $field_value;

@@ -14,6 +14,6 @@ class ElementGateway extends Base\ElementGateway
             $this->_db->escapeString($elementName)
         );
 
-        return $this->_db->query($sql)->fetchSingle();
+        return ($id = $this->_db->query($sql)->fetchSingle()) ? $id : 1;
     }
 }

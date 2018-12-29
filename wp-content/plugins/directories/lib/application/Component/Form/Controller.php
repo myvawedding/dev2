@@ -135,7 +135,11 @@ abstract class Controller extends BaseController
         }
         
         // Initialize some required form properties
-        if (isset($buildId)) $form['#build_id'] = $buildId;
+        if (isset($buildId)
+            && !isset($form['#build_id'])
+        ) {
+            $form['#build_id'] = $buildId;
+        }
         $form['#initial_storage'] = $storage;
         if (!isset($form['#action'])) {
             $form['#action'] = $this->Url($context->getRoute());

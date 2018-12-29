@@ -20,7 +20,7 @@ class WordPressContentComponent extends AbstractComponent implements
     Display\IElements,
     Display\IStatistics
 {
-    const VERSION = '1.2.12', PACKAGE = 'directories';
+    const VERSION = '1.2.15', PACKAGE = 'directories';
 
     protected $_system = true;
 
@@ -476,7 +476,7 @@ class WordPressContentComponent extends AbstractComponent implements
                     if ($entity = $this->_application->Entity_Entity('post', $post->ID)) {
                         foreach ($permalinks[$post_type]['taxonomies'] as $tag => $taxonomy_type) {
                             if ($terms = $entity->getFieldValue($taxonomy_type)) {
-                                $term = array_shift($terms); // get first term
+                                $term = $this->_getPrimaryTerm($post->ID, $terms);
                                 $slug = '/' . $term->getSlug();
                                 if ($parent_slugs = $term->getCustomProperty('parent_slugs')) {
                                     $slug = '/' . implode('/', $parent_slugs) . $slug;
@@ -513,6 +513,24 @@ class WordPressContentComponent extends AbstractComponent implements
         }
 
         return $url;
+    }
+
+    protected function _getPrimaryTerm($postId, array $terms)
+    {
+        $keys = array_keys($terms);
+        if (count($keys) > 1
+            && class_exists('\WPSEO_Primary_Term', false)
+        ) {
+            $wpseo_primary_term = new \WPSEO_Primary_Term($terms[$keys[0]]->getBundleName(), $postId);
+            if ($primary_term_id = $wpseo_primary_term->get_primary_term()) {
+                foreach ($keys as $k) {
+                    if ($terms[$k]->getId() == $primary_term_id) {
+                        return $terms[$k];
+                    }
+                }
+            }
+        }
+        return $terms[$keys[0]];
     }
 
     public function termLinkFilter($url, $term, $taxonomy)
@@ -807,12 +825,18 @@ class WordPressContentComponent extends AbstractComponent implements
 
     public function displayGetElementNames(Entity\Model\Bundle $bundle)
     {
-        return empty($bundle->info['public']) || $bundle->entitytype_name !== 'post' ? [] : ['wp_comments'];
+        return empty($bundle->info['public']) || $bundle->entitytype_name !== 'post' ? [] : ['wp_comments', 'wp_acf'];
     }
 
     public function displayGetElement($name)
     {
-        return new DisplayElement\CommentsDisplayElement($this->_application, $name);
+        switch ($name) {
+            case 'wp_comments':
+                return new DisplayElement\CommentsDisplayElement($this->_application, $name);
+            case 'wp_acf':
+                return new DisplayElement\AcfDisplayElement($this->_application, $name);
+        }
+
     }
 
     public function displayGetStatisticNames(Entity\Model\Bundle $bundle)
@@ -923,7 +947,7 @@ class WordPressContentComponent extends AbstractComponent implements
 
     public function onDisplayCacheDisplayFilter(&$display, $bundle, $displayType, $displayName)
     {
-        // Cache if display/row/column/element requrie role check so that we do not need to process those do not required at runtime
+        // Cache if display/row/column/element require role check so that we do not need to process those do not required at runtime
         foreach (array_keys($display['elements']) as $element_id) { // elements
             $this->_checkDisplayElementRoleSettings($display, $display['elements'][$element_id]);
         }
@@ -1108,6 +1132,7 @@ class WordPressContentComponent extends AbstractComponent implements
     {
         if (empty($bundle->info['public'])
             || !empty($bundle->info['is_user'])
+            || !empty($bundle->info['internal'])
         ) return;
 
         if ($page_settings_form = $this->_application->WordPressContent_PageSettingsForm($bundle, ['wordpress_page'])) {
@@ -1368,5 +1393,12 @@ class WordPressContentComponent extends AbstractComponent implements
             $classes = array_merge($classes, $this->_application->Entity_HtmlClass($GLOBALS['drts_entity'], true));
         }
         return $classes;
+    }
+
+    public function onEntityFormFilter(&$form, $bundle, $entity, $options)
+    {
+        if (class_exists('ACF', false)) {
+            $form['#submit'][9][] = [__NAMESPACE__ . '\DisplayElement\AcfDisplayElement', 'entityFormSubmitCallback'];
+        }
     }
 }

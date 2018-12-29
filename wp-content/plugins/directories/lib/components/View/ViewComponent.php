@@ -18,7 +18,7 @@ class ViewComponent extends AbstractComponent implements
     IModes,
     Field\IFilters
 {
-    const VERSION = '1.2.12', PACKAGE = 'directories';
+    const VERSION = '1.2.15', PACKAGE = 'directories';
 
     protected $_system = true;
 
@@ -474,8 +474,8 @@ class ViewComponent extends AbstractComponent implements
     public function isFilterable($bundle)
     {
         return !empty($bundle->info['public'])
-            //&& empty($bundle->info['parent'])
-            && empty($bundle->info['is_taxonomy']);
+            && empty($bundle->info['is_taxonomy'])
+            && empty($bundle->info['internal']);
     }
 
     public function onEntityBundleAdminLinksFilter(&$links, $bundle)
@@ -559,6 +559,19 @@ class ViewComponent extends AbstractComponent implements
         $form['#tabs'][$this->_name] = [
             '#title' => __('Filters', 'directories'),
             '#weight' => 17,
+            '#submit' => array(
+                9 => array( // weight
+                    function (Form\Form $form) {
+                        if ($btn_label = $form->getValue($this->_name, 'filters', 'btn_label')) {
+                            $this->_application->getPlatform()->registerString(
+                                $btn_label,
+                                'nav_filter_btn_label',
+                                'view'
+                            );
+                        }
+                    },
+                ),
+            ),
         ];
         $form[$this->_name] = [
             '#tree' => true,

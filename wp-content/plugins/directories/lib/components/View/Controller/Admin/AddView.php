@@ -30,7 +30,7 @@ class AddView extends System\Controller\Admin\AbstractSettings
                 'label' => array(
                     '#type' => 'textfield',
                     '#title' => __('View label', 'directories'),
-                    '#description' => __('Enter a label used for administration purpose only.'),
+                    '#description' => __('Enter a label used for administration purpose only.', 'directories'),
                     '#max_length' => 255,
                     '#required' => true,
                     '#horizontal' => true,
@@ -38,7 +38,7 @@ class AddView extends System\Controller\Admin\AbstractSettings
                 'name' => array(
                     '#type' => 'textfield',
                     '#title' => __('View name', 'directories'),
-                    '#description' => __('Enter a unique name so that that it can be easily referenced. Only lowercase alphanumeric characters and underscores are allowed.'),
+                    '#description' => __('Enter a unique name so that that it can be easily referenced. Only lowercase alphanumeric characters and underscores are allowed.', 'directories'),
                     '#max_length' => 255,
                     '#required' => true,
                     '#regex' => '/^[a-z0-9_]+$/',

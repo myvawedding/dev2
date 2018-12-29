@@ -12,12 +12,13 @@ class SubmitButtonsHelper
         } else {
             if (empty($buttons)) return;
         }
-        
+
+        $margin = isset($options['margin']) ? $options['margin'] : DRTS_BS_PREFIX . 'mt-5';
         $submits = array(
             '#tree' => true,
             '#weight' => 99999,
             '#group' => false,
-            '#prefix' => '<div class="drts-form-buttons ' . DRTS_BS_PREFIX . 'form-inline ' . DRTS_BS_PREFIX . 'mt-5">',
+            '#prefix' => '<div class="drts-form-buttons ' . DRTS_BS_PREFIX . 'form-inline ' . $margin . '">',
             '#suffix' => '</div>',
         );
         

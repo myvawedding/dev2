@@ -62,6 +62,11 @@ class PostEntityType extends Entity\Type\AbstractType
                     'column_type' => Application::COLUMN_VARCHAR,
                     'column' => 'post_date_gmt',
                 ),
+                'modified' => array(
+                    'type' => 'entity_modified',
+                    'column_type' => Application::COLUMN_VARCHAR,
+                    'column' => 'post_modified_gmt',
+                ),
                 'author' => array(
                     'type' => 'entity_author',
                     'column_type' => Application::COLUMN_INTEGER,
@@ -81,7 +86,7 @@ class PostEntityType extends Entity\Type\AbstractType
         if (!$post = get_post($entityId)) {
             return false;
         }
-        return new PostEntity($post);
+        return $this->_toEntity($post);
     }
     
     public function entityTypeEntityBySlug($bundleName, $slug)
@@ -99,7 +104,7 @@ class PostEntityType extends Entity\Type\AbstractType
             ) return false;
         }
 
-        return new PostEntity($post);
+        return $this->_toEntity($post);
     }
     
     public function entityTypeEntityByTitle($bundleName, $title)
@@ -115,7 +120,7 @@ class PostEntityType extends Entity\Type\AbstractType
             ) return false;
         }
         
-        return new PostEntity($post);
+        return $this->_toEntity($post);
     }
 
     public function entityTypeEntitiesByIds(array $entityIds)
@@ -142,7 +147,7 @@ class PostEntityType extends Entity\Type\AbstractType
         );
         $entities = [];
         foreach (get_posts($args) as $post) {
-            $entities[$post->ID] = new PostEntity($post);
+            $entities[$post->ID] = $this->_toEntity($post);
         }
         return $entities;
     }
@@ -164,7 +169,7 @@ class PostEntityType extends Entity\Type\AbstractType
         if (is_wp_error($post_id)) {
             throw new Exception\RuntimeException($post_id->get_error_message());
         }
-        return new PostEntity(get_post($post_id));
+        return $this->_toEntity(get_post($post_id));
     }
 
     
@@ -183,7 +188,7 @@ class PostEntityType extends Entity\Type\AbstractType
                     throw new Exception\RuntimeException('Failed saving post to the database.');
                 }
             }
-            return new PostEntity(get_post($post['ID']));
+            return $this->_toEntity(get_post($post['ID']));
         }
         
         foreach ($properties as $property => $value) {
@@ -212,7 +217,7 @@ class PostEntityType extends Entity\Type\AbstractType
         if (is_wp_error($post_id)) {
             throw new Exception\RuntimeException($post_id->get_error_message());
         }
-        return new PostEntity(get_post($post_id));
+        return $this->_toEntity(get_post($post_id));
     }
     
     public function entityTypeTrashEntities(array $entities, array $formValues = null)
@@ -262,5 +267,10 @@ class PostEntityType extends Entity\Type\AbstractType
     protected function _getFieldQuery($operator)
     {
         return new PostFieldQuery($operator);
+    }
+
+    protected function _toEntity($post)
+    {
+        return new PostEntity($post);
     }
 }

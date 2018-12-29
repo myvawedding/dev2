@@ -365,7 +365,7 @@ class AdminContent
                 $post->post_type,
                 'side',
                 'low',
-                array($rendered['form']->getHtml($field_name, 'drts'))
+                array($rendered['form']->getHtml($field_name, ['drts']))
             );
         }
 
@@ -402,7 +402,7 @@ class AdminContent
         }
     }
 
-    protected function _getPostForm($post, array $values = null, $wrap = false)
+    protected function _getPostForm($post, array $values = null, $wrap = null)
     {
         $entity = null;
         if ($post->post_status !== 'auto-draft') {
@@ -414,7 +414,7 @@ class AdminContent
             array(
                 'values' => isset($values) ? ($wrap ? array($wrap => $values) : $values) : null,
                 'is_admin' => true,
-                'wrap' => $wrap,
+                'wrap' => isset($wrap) ? [$wrap] : [],
                 'pre_render_display' => true,
             )
         );
@@ -1015,7 +1015,9 @@ class AdminContent
 
     public function beforeDeletePostAction($postId)
     {
-        if (!$post = get_post($postId)) return;
+        if ((!$post = get_post($postId))
+            || !isset($this->_postTypes[$post->post_type])
+        ) return;
 
         $entity_ids = [$postId];
 

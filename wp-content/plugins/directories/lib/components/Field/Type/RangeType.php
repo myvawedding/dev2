@@ -109,7 +109,7 @@ class RangeType extends AbstractType implements IQueryable, ISchemable, IHumanRe
         );
     }   
 
-    public function fieldTypeOnSave(IField $field, array $values)
+    public function fieldTypeOnSave(IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         $settings = $field->getFieldSettings();
         $ret = [];

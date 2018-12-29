@@ -99,7 +99,7 @@ class ColorType extends AbstractValueType
         );
     }
     
-    public function fieldTypeOnSave(IField $field, array $values)
+    public function fieldTypeOnSave(IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         $ret = [];
         $colors = self::colors();

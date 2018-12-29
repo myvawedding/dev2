@@ -15,7 +15,7 @@ use Monolog\Handler\ErrorLogHandler;
 
 class Platform extends AbstractPlatform
 {
-    const VERSION = '1.2.12';
+    const VERSION = '1.2.15';
     private $_mainContent, $_singlePageId, $_singlePageContent, $_userToBeDeleted,
         $_jqueryUiCoreLoaded, $_jqueryUiCssLoaded,
         $_moLoaded, $_i18n, $_flash = [], $_bsHandle, $_flushRewriteRules, $_pluginsUrl;
@@ -916,7 +916,6 @@ class Platform extends AbstractPlatform
         ) {
             return $post->post_title;
         }
-        return parent::getTitle($component, $name, $lang);
     }
 
     private function _isSabaiPageId($id)
@@ -1463,7 +1462,7 @@ class Platform extends AbstractPlatform
         // Reload all main routes
         $this->getApplication()->getComponent('System')->reloadAllRoutes(true);
 
-        // Updrade all ISlug components since slugs have been updated
+        // Upgrade all ISlug components since slugs have been updated
         $this->getApplication()->System_Component_upgradeAll(array_keys($this->getApplication()->System_Slugs()));
 
         // Need to manually flush rules since this is not coming from our plugin admin page

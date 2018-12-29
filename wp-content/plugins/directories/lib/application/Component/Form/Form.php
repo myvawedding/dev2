@@ -287,7 +287,7 @@ class Form implements \ArrayAccess
             }
         }
 
-        return implode($separator, $labels);;
+        return implode($separator, $labels);
     }
 
     public function isSubmitted()
@@ -525,19 +525,24 @@ class Form implements \ArrayAccess
         // Assign error headers if any
         if (!empty($this->_errors)) {
             $errors = [];
+            $default_error = __('Please correct the error(s) below.', 'directories');
             foreach (array_keys($this->_errors) as $name) {
-                if ($label = $this->getLabel($name)) {
-                    $errors[] = sprintf(
-                        '<strong>%s:</strong> <span>%s</span>',
-                        $this->_application->H($label),
-                        $this->_application->H($this->_errors[$name])
-                    );
+                if ($name === '') {
+                    $default_error = $this->_errors[$name];
+                    continue;
                 }
+
+                if (!$label = $this->getLabel($name)) $label = $name;
+                $errors[] = sprintf(
+                    '<strong>%s:</strong> <span>%s</span>',
+                    $this->_application->H($label),
+                    $this->_application->H(strip_tags($this->_errors[$name]))
+                );
             }
             $headers[] = sprintf(
                 '<div class="%1$salert %1$salert-danger"><div><i class="fas fa-exclamation-triangle"></i> %2$s</div>%3$s</div>',
                 DRTS_BS_PREFIX,
-                isset($this->_errors['']) ? $this->_errors[''] : $this->_application->H(__('Please correct the error(s) below.', 'directories')),
+                $this->_application->H($default_error),
                 empty($errors) ? '' : '<ul class="' . DRTS_BS_PREFIX . 'mt-2"><li>' . implode('</li><li>', $errors) . '</li></ul>'
             );
         }
@@ -545,10 +550,31 @@ class Form implements \ArrayAccess
         return empty($headers) ? '' : '<div class="drts-form-headers">' . implode(PHP_EOL, $headers) . '</div>';
     }
 
-    public function getHtml($name = false, $unwrap = false)
+    public function getHtml($name = false, array $unwrap = null)
     {
         if (!empty($unwrap)) {
-            if (!$name || !isset($this->_fields['#children'][0][$unwrap]['#children'])) return '';
+            if (!$name) return '';
+
+            $fields = $this->_fields;
+            $settings =& $this->settings['#html'];
+            foreach ($unwrap as $_unwrap) {
+                if (!isset($fields['#children'][0][$_unwrap]['#children'])) return'';
+
+                $fields = $fields['#children'][0][$_unwrap];
+                if (!isset($settings[$_unwrap])) {
+                    $settings[$_unwrap] = [];
+                };
+                $settings =& $settings[$_unwrap];
+            }
+
+            $elements =& $fields['#children'];
+            foreach (array_keys($elements) as $weight) {
+                foreach (array_keys($elements[$weight]) as $ele_key) {
+                    $settings[$ele_key] = implode(PHP_EOL, $elements[$weight][$ele_key]['#html']);
+                }
+            }
+            return isset($settings[$name]) ? $settings[$name] : '';
+
 
             if (!isset($this->settings['#html'][$unwrap])) {
                 $this->settings['#html'][$unwrap] = [];
@@ -730,8 +756,8 @@ class Form implements \ArrayAccess
                     $this->settings['#tabs'][$tab_name]['#active'] = true;
                     $active_tab = $tab_name;
                 }
-                $tab_id = empty($tab['#id']) ? 'tab-' . $tab_name : $tab['#id'];
-                $html = sprintf(
+                $tab_id = empty($tab['#id']) ? 'drts-form-tab-' . $tab_name : $tab['#id'];
+                $this->settings['#tabs'][$tab_name]['#html'] = sprintf(
                     '<a class="%1$snav-item %1$snav-link%2$s" href="#%3$s" data-toggle="%1$s%5$s">%4$s</a>',
                     DRTS_BS_PREFIX,
                     $active_tab === $tab_name ? ' ' . DRTS_BS_PREFIX . 'active' : '',
@@ -739,25 +765,32 @@ class Form implements \ArrayAccess
                     $this->_application->H($tab['#title']),
                     $this->settings['#tab_style']
                 );
-                if (!empty($tab['#menu'])) {
-                    $html .= '<div class="' . DRTS_BS_PREFIX . 'dropdown-menu">';
-                    foreach ($tab['#menu'] as $menu_name => $menu_title) {
-                        $html .= sprintf(
-                            '<a class="%3$sdropdown-item" href="#%1$s">%2$s</a>',
-                            DRTS_BS_PREFIX,
-                            $tab_id . '-menu-' . $menu_name,
-                            $this->_application->H($menu_title)
-                        );
-                    }
-                    if (isset($tab['#link'])) {
-                        $link = $tab['#link'];
-                        if (!isset($link['#options'])) $link['#options'] = [];
-                        $html .= '<div class="' . DRTS_BS_PREFIX . 'dropdown-divider"></div>'
-                            . $this->_application->LinkTo($link['#title'], $link['#url'], $link['#options'], ['class' => DRTS_BS_PREFIX . 'dropdown-item']);
-                    }
-                    $html .='</div>';
+            }
+
+            if (!empty($this->settings['#listen_tabs'])) {
+                $this->settings['#js_ready'][] = sprintf(
+                    '(function () {
+    function onHashChange() {
+        var hash = window.location.hash;
+        if (hash) {
+            var $form = $("#%1$s"),
+                tab = $form.find("a[data-toggle=\'%2$s%3$s\'][href=\'" + hash + "\']");
+            if (tab.length) {
+                var pane = tab.closest(".%2$stab-pane", $form);
+                if (pane.length) {
+                    $form.find("a[data-toggle=\'%2$s%3$s\'][href=\'#" + pane.attr("id") + "\']").click();
                 }
-                $this->settings['#tabs'][$tab_name]['#html'] = $html;
+                tab.click();
+            }
+        }
+    }
+    $(window).on("hashchange", onHashChange, false);
+    onHashChange();
+})();',
+                    $this->settings['#id'],
+                    DRTS_BS_PREFIX,
+                    $this->settings['#tab_style']
+                );
             }
         }
 
@@ -895,12 +928,7 @@ class Form implements \ArrayAccess
                     if (!isset($data['#suffix'])) {
                         $data['#suffix'] = '';
                     }
-                    $tab_id = empty($this->settings['#tabs'][$data['#tab']]['#id']) ? 'tab-' . $data['#tab'] : $this->settings['#tabs'][$data['#tab']]['#id'];
-                    if (isset($data['#tab_menu'])
-                        && (!empty($this->settings['#tabs'][$data['#tab']]['#menu'][$data['#tab_menu']]))
-                    ) {
-                        $tab_id .= '-menu-' . $data['#tab_menu'];
-                    }
+                    $tab_id = empty($this->settings['#tabs'][$data['#tab']]['#id']) ? 'drts-form-tab-' . $data['#tab'] : $this->settings['#tabs'][$data['#tab']]['#id'];
                     $data['#prefix'] = sprintf(
                         '<div class="%1$stab-pane %1$sfade%2$s" id="%3$s">%4$s',
                         DRTS_BS_PREFIX,
@@ -924,7 +952,7 @@ class Form implements \ArrayAccess
 
             // Field prefix
             if (isset($data['#prefix'])) {
-                $data['#html'][] = $data['#prefix'];
+                $data['#html'][] = str_replace('__FORM_ID__', $this->settings['#id'], $data['#prefix']);
             }
 
             // Render field
@@ -932,7 +960,7 @@ class Form implements \ArrayAccess
 
             // Field suffix
             if (isset($data['#suffix'])) {
-                $data['#html'][] = $data['#suffix'];
+                $data['#html'][] = str_replace('__FORM_ID__', $this->settings['#id'], $data['#suffix']);
             }
         }
 
@@ -960,7 +988,7 @@ class Form implements \ArrayAccess
             $help_block = '';
             if (!$output_error) {
                 if (isset($data['#description']) && strlen($data['#description'])) {
-                    $help_block = '<div class="' . DRTS_BS_PREFIX . 'form-text drts-form-description ' . DRTS_BS_PREFIX . 'mb-4 ' . DRTS_BS_PREFIX . 'mt-0">'
+                    $help_block = '<div class="' . DRTS_BS_PREFIX . 'form-text drts-form-description ' . DRTS_BS_PREFIX . 'mb-3 ' . DRTS_BS_PREFIX . 'mt-0">'
                         . (empty($data['#description_no_escape']) ? $this->_application->H($data['#description']) : $data['#description']) . '</div>';
                 }
             } else {

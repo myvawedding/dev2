@@ -383,6 +383,7 @@ class NavHelper
             'icon' => $application->getComponent('View')->getConfig('filters', 'btn_icon'),
             'btn' => true,
         ];
+        $link_options['text'] = $application->getPlatform()->translateString($link_options['text'], 'nav_filter_btn_label', 'view');
         $link_text = $link_options['text'];
         unset($link_options['text']);
         if ($show) {

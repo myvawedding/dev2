@@ -110,7 +110,6 @@ class QueryFormField extends Form\Field\FieldsetField
     };
     form.on("change", ".drts-form-type-field-query select", callback);
     $(DRTS).on("clonefield.sabai", function (e, data) {
-        var input;
         if (data.clone.hasClass("drts-form-type-field-query")) {
             callback.call(data.clone.find(".drts-field-form-fieldquery-query"));
         }

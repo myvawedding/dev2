@@ -15,6 +15,7 @@ class MasonryMode extends ListMode
                 'masonry_cols' => 'responsive',
                 'masonry_cols_responsive' => ['xs' => 2, 'lg' => 3, 'xl' => 4],
             ),
+            'default_display' => 'summary',
             'assets' => array(
                 'css' => array(
                     'driveway' => array('driveway.min.css', null, null, true),

@@ -52,7 +52,7 @@ class FieldTemplateDisplayElement extends Display\Element\TemplateElement
         
         $settings = $element['settings'];
         $label_type = $settings['label'];
-        $label = $this->_application->Display_ElementLabelSettingsForm_label($element['settings'], $this->displayElementStringId('label', $element['element_id']));
+        $label = $this->_application->Display_ElementLabelSettingsForm_label($element['settings'], $this->displayElementStringId('label', $element['_element_id']));
         if (!strlen($label)) {
             $rendered['html'] = '<div class="drts-entity-field-value">' . $rendered['html'] . '</div>';
             return $rendered;

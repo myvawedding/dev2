@@ -44,7 +44,7 @@ class TermsFieldType extends Field\Type\AbstractType implements
         );
     }
 
-    public function fieldTypeOnSave(Field\IField $field, array $values)
+    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         $ret = $term_ids = [];
         if ($field->getFieldWidget() === 'entity_tag_term') {

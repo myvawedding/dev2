@@ -196,7 +196,7 @@ class FilterDisplayElement extends Display\Element\AbstractElement
         $label_type = $settings['label'];
         $label = $this->_application->Display_ElementLabelSettingsForm_label(
             $settings,
-            $this->displayElementStringId('label', $element['element_id']),
+            $this->displayElementStringId('label', $element['_element_id']),
             $this->_getField($bundle->name)->getFieldLabel(true)
         );
         if (!strlen($label)) return $html;
@@ -290,10 +290,11 @@ class FilterDisplayElement extends Display\Element\AbstractElement
         if (isset($element->data['settings']['label'])
             && in_array($element->data['settings']['label'], array('custom', 'custom_icon'))
         ) {
-            $this->_registerString($element->data['settings']['label_custom'], 'label', $element->id);
+            $this->_registerString($element->data['settings']['label_custom'], 'label', $element->element_id);
         } else {
             $this->_unregisterString('label', $element->id);
         }
+        $this->_unregisterString('label', $element->id); // for old versions
     }
 
     public function displayElementOnExport(Entity\Model\Bundle $bundle, array &$data)

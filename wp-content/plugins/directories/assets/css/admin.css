@@ -972,8 +972,12 @@ div.drts-ajax-loader {
     font-weight: normal;
 }
 
-.drts .drts-form-field-removable {
+.drts .drts-form-field.drts-form-field-removable {
     border-top: 1px dashed #ccc;
+    padding-top: 1.5em;
+}
+
+.drts.drts-main .drts-form-field.drts-form-field-removable {
     padding-top: 1em;
 }
 
@@ -987,7 +991,7 @@ div.drts-ajax-loader {
     z-index: 999;
 }
 
-.drts .drts-form-field-removable:hover button.drts-form-field-remove {
+.drts .drts-form-field.drts-form-field-removable:hover button.drts-form-field-remove {
     display: inline-block;
 }
 
@@ -1239,6 +1243,10 @@ button.drts-form-field-option-icon {
     height: 0;
     overflow: hidden;
     margin-bottom: 5%;
+}
+
+.drts-display-element .drts-field-video:last-child {
+    margin: 0;
 }
 
 .drts-field-video iframe {

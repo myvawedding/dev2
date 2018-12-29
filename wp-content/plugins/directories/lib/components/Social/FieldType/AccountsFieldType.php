@@ -70,7 +70,7 @@ class AccountsFieldType extends Field\Type\AbstractType implements
         );
     }
 
-    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null)
+    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         $ret = [];
         $value = array_shift($values); // single entry allowed for this field

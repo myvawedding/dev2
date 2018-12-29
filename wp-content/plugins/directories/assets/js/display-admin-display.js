@@ -1,4 +1,21 @@
-'use strict';
+"use strict";
+
+var _createClass = function() {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+  return function(Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -14,27 +31,146 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
 (function($) {
   DRTS.Display = DRTS.Display || {};
-  DRTS.Display.adminDisplay = function(options) {
+
+  DRTS.Display.adminDisplays = function() {
+    function _class(form, options) {
+      var _this = this;
+
+      _classCallCheck(this, _class);
+
+      this.form = $(form);
+      this.options = $.extend({
+        addDisplayUrl: null,
+        elementTypes: {},
+        addElementTitle: null,
+        editElementTitle: null,
+        deleteConfirm: null,
+        saveChangesAlert: null
+      }, options);
+      this.submitRequired = [];
+
+      // Add display link
+      $(".drts-display-add-display").on('click', function(e) {
+        if (_this.isSubmitRequired()) {
+          alert(_this.options.saveChangesAlert);
+          return;
+        }
+
+        var $this = $(e.currentTarget);
+        DRTS.ajax({
+          type: "get",
+          container: "#drts-modal",
+          url: _this.options.addDisplayUrl,
+          data: {
+            display_type: $this.data("display-type"),
+            display_name: $this.data("display-name")
+          },
+          trigger: $this,
+          cache: true,
+          cacheId: _this.options.addDisplayUrl + $this.data("display-type") + "-" + $this.data("display-name")
+        });
+      });
+
+      // Delete display link
+      $(".drts-display-delete-display").on('click', function(e) {
+        var $this = $(e.currentTarget);
+        var tab = $this.parent('.drts-display-tab2-link');
+        if (!tab.length) return;
+
+        if (!confirm(_this.options.deleteConfirm)) return false;
+
+        var data = {
+          display_type: tab.data("display-type"),
+          display_name: tab.data("display-name")
+        };
+        data[DRTS.params.token] = _this.form.find('input[name="' + DRTS.params.token + '"]').val();
+        DRTS.ajax({
+          type: "post",
+          url: _this.options.deleteDisplayUrl,
+          data: data,
+          trigger: tab,
+          onSuccess: function onSuccess(result, target, trigger) {
+            trigger.fadeTo("fast", 0, function() {
+              trigger.slideUp("fast", function() {
+                trigger.remove();
+              });
+              if (trigger.hasClass(DRTS.bsPrefix + 'active')) {
+                trigger.parent().find('.drts-display-tab2-link-default').click();
+              }
+            });
+            // Clear add display form cache
+            var addDisplayLink = trigger.closest('.' + DRTS.bsPrefix + 'tab-pane').find('.drts-display-add-display');
+            if (addDisplayLink.length) {
+              console.log(_this.options.addDisplayUrl + addDisplayLink.data('display-type') + '-' + addDisplayLink.data('display-name'));
+              DRTS.cache(_this.options.addDisplayUrl + addDisplayLink.data('display-type') + '-' + addDisplayLink.data('display-name'), false);
+            }
+          }
+        });
+        return false;
+      });
+
+      this.form.on('submit', function(e) {
+        _this.submitRequired = [];
+      });
+
+      // Submit form immediately if submit timeout is active when leaving the page
+      $(window).on('beforeunload', function(e) {
+        if (_this.isSubmitRequired()) {
+          return '';
+        }
+      });
+    }
+
+    _createClass(_class, [{
+      key: "addDisplay",
+      value: function addDisplay(selector, options) {
+        DRTS.Display.adminDisplay(this, selector, $.extend({}, this.options, options));
+      }
+    }, {
+      key: "isSubmitRequired",
+      value: function isSubmitRequired(selector, value) {
+        if (!selector) return this.submitRequired.length > 0;
+
+        var index = this.submitRequired.indexOf(selector);
+        if (index !== -1) {
+          // found in array
+          if (value === false) {
+            this.submitRequired.splice(index, 1);
+          } else if (value !== true) {
+            return true;
+          }
+        } else {
+          // not found in array
+          if (value === true) {
+            this.submitRequired.push(selector);
+          } else if (value !== false) {
+            return false;
+          }
+        }
+      }
+    }]);
+
+    return _class;
+  }();
+
+  DRTS.Display.adminDisplay = function(admin, selector, options) {
     options = $.extend({
-      selector: '#drts-display',
-      formSelector: '#drts-display',
+      selector: selector,
       name: 'elements',
       listElementsUrl: null,
       addElementUrl: null,
-      addElementTitle: null,
       editElementUrl: null,
-      editElementTitle: null,
-      deleteElementTitle: null,
-      deleteConfirm: null,
-      elementTypes: {}
+      deleteElementTitle: null
     }, options);
-    var submitting,
-      submitTimeout,
-      submitRequired,
-      dragging,
-      form = options.formSelector ? $(options.formSelector) : null,
+    var dragging,
       addElement = function addElement() {
         var $this = $(this);
         hidePopover();
@@ -125,7 +261,7 @@ function _defineProperty(obj, key, value) {
           });
         });
 
-        submitForm(true);
+        submitForm();
 
         return false;
       },
@@ -149,7 +285,7 @@ function _defineProperty(obj, key, value) {
             if (!DRTS.cache('drts-display-element-name-' + data.child_element_name)) {
               var _$$get;
 
-              $.get(options.addElementUrl, (_$$get = {}, _defineProperty(_$$get, DRTS.params.ajax, '#drts-modal'), _defineProperty(_$$get, 'element', data.child_element_name), _$$get), function(_data) {
+              $.get(options.addElementUrl, (_$$get = {}, _defineProperty(_$$get, DRTS.params.ajax, '#drts-modal'), _defineProperty(_$$get, "element", data.child_element_name), _$$get), function(_data) {
                 DRTS.cache(options.addElementsUrl + '-' + data.child_element_name, _data);
               });
             }
@@ -159,7 +295,7 @@ function _defineProperty(obj, key, value) {
             if (!DRTS.cache(options.listElementsUrl + '-' + data.child_element_type)) {
               var _$$get2;
 
-              $.get(options.listElementsUrl, (_$$get2 = {}, _defineProperty(_$$get2, DRTS.params.ajax, '#drts-modal'), _defineProperty(_$$get2, 'type', data.child_element_type), _$$get2), function(_data) {
+              $.get(options.listElementsUrl, (_$$get2 = {}, _defineProperty(_$$get2, DRTS.params.ajax, '#drts-modal'), _defineProperty(_$$get2, "type", data.child_element_type), _$$get2), function(_data) {
                 DRTS.cache(options.listElementsUrl + '-' + data.child_element_type, _data);
               });
             }
@@ -188,27 +324,8 @@ function _defineProperty(obj, key, value) {
           title.prepend('<span class="drts-display-element-icon"><i class="fa-fw ' + data.icon + '"></i></span>');
         }
       },
-      submitForm = function submitForm(delay) {
-        if (!form || !form.length) {
-          submitRequired = true;
-        } else {
-          cancelSubmitForm();
-          if (delay) {
-            if (!submitTimeout) {
-              submitTimeout = setTimeout(function() {
-                form.submit();
-              }, delay === true ? 2000 : delay);
-            }
-          } else {
-            form.submit();
-          }
-        }
-      },
-      cancelSubmitForm = function cancelSubmitForm() {
-        if (submitTimeout) {
-          clearTimeout(submitTimeout);
-          submitTimeout = null;
-        }
+      submitForm = function submitForm() {
+        admin.isSubmitRequired(options.selector, true);
       },
       highlightElement = function highlightElement(element) {
         if (element.hasClass('drts-display-element-containable')) {
@@ -242,7 +359,6 @@ function _defineProperty(obj, key, value) {
         if (ui.item.data('element-width')) {
           ui.placeholder.css('width', ui.item.data('element-width'));
         }
-        cancelSubmitForm();
       },
       update: function update(e, ui) {
         submitForm(true);
@@ -328,44 +444,6 @@ function _defineProperty(obj, key, value) {
       DRTS.cache('drts-display-element-id-' + element.data('element-id'), false);
     });
 
-    if (form && form.length) {
-      // Form submit callback
-      form.on('submit', function() {
-        var $form = $(this);
-        submitting = true;
-        submitTimeout = null;
-
-        DRTS.ajax({
-          type: $form.attr('method'),
-          container: $form,
-          url: $form.attr('action'),
-          data: $form.serialize(),
-          onSuccess: function onSuccess(result, target, trigger) {},
-          onErrorFlash: true,
-          loadingImage: false
-        });
-
-        return false;
-      });
-    } else {
-      $(options.selector).closest('form').on('submit', function() {
-        submitRequired = false;
-      });
-    }
-
-    // Submit form immediately if submit timeout is active when leaving the page
-    $(window).on('beforeunload', function() {
-      if (!form || !form.length) {
-        if (submitRequired) {
-          return '';
-        }
-      } else {
-        if (submitTimeout) {
-          submitForm();
-        }
-      }
-    });
-
     // Load and cache pages
     $(function() {
       $.get(options.listElementsUrl, _defineProperty({}, DRTS.params.ajax, '#drts-modal'), function(data) {
@@ -373,30 +451,24 @@ function _defineProperty(obj, key, value) {
         $('.drts-display-display', options.selector).on('click', '.drts-display-add-element:not([data-element-name])', addElement);
         $('.drts-display-add-element-main', options.selector).prop('disabled', false);
       });
-      $('.drts-display-add-element[data-element-name]', options.selector).each(function() {
-        var $this = $(this).prop('disabled', true),
-          element_name = $this.data('element-name');
-        if (!DRTS.cache('drts-display-element-name-' + element_name)) {
-          var _$$get4;
-
-          $.get(options.addElementUrl, (_$$get4 = {}, _defineProperty(_$$get4, DRTS.params.ajax, '#drts-modal'), _defineProperty(_$$get4, 'element', element_name), _$$get4), function(_data) {
-            DRTS.cache(options.addElementUrl + '-' + element_name, _data);
-            $this.prop('disabled', false);
-          });
-        }
-      });
-      $('.drts-display-add-element[data-element-type]', options.selector).each(function() {
-        var $this = $(this).prop('disabled', true),
-          element_type = $this.data('element-type');
-        if (!DRTS.cache(options.listElementsUrl + '-' + element_type)) {
-          var _$$get5;
-
-          $.get(options.listElementsUrl, (_$$get5 = {}, _defineProperty(_$$get5, DRTS.params.ajax, '#drts-modal'), _defineProperty(_$$get5, 'type', element_type), _$$get5), function(_data) {
-            DRTS.cache(options.listElementsUrl + '-' + element_type, _data);
-            $this.prop('disabled', false);
-          });
-        }
-      });
+      //$('.drts-display-add-element[data-element-name]', options.selector).each(function(){
+      //    var $this = $(this).prop('disabled', true), element_name = $this.data('element-name');
+      //    if (!DRTS.cache('drts-display-element-name-' + element_name)) {
+      //        $.get(options.addElementUrl, {[DRTS.params.ajax]: '#drts-modal', element: element_name}, function(_data) {
+      //            DRTS.cache(options.addElementUrl + '-' + element_name, _data);
+      //            $this.prop('disabled', false);
+      //        });
+      //    }
+      //});
+      //$('.drts-display-add-element[data-element-type]', options.selector).each(function(){
+      //    var $this = $(this).prop('disabled', true), element_type = $this.data('element-type');
+      //    if (!DRTS.cache(options.listElementsUrl + '-' + element_type)) {
+      //        $.get(options.listElementsUrl, {[DRTS.params.ajax]: '#drts-modal', type: element_type}, function(_data) {
+      //            DRTS.cache(options.listElementsUrl + '-' + element_type, _data);
+      //            $this.prop('disabled', false);
+      //        });
+      //    }
+      //});
       // Bind events
       $('.drts-display-display', options.selector).on('click', '.drts-display-element-edit', editElement).on('click', '.drts-display-add-element[data-element-name]', addSingleElement).on('click', '.drts-display-element-info', function(e) {
         var $this = $(this);

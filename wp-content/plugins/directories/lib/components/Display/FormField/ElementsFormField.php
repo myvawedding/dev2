@@ -68,7 +68,7 @@ class ElementsFormField extends Form\Field\AbstractField
     {
         return $this->_application->Display_AdminElement_getDataArray(
             $bundleName,
-            $element['element_id'],
+            $element['_element_id'],
             $element['name'],
             $this->_elementTypes[$element['type']],
             $element['label'],
@@ -161,26 +161,41 @@ class ElementsFormField extends Form\Field\AbstractField
     }
     
     public function preRenderCallback(Form\Form $form, $bundle)
-    {   
+    {
+        $admin_path = $this->_application->Entity_BundleTypeInfo($bundle, 'admin_path');
+        $admin_path = strtr($admin_path, [
+            ':bundle_name' => $bundle->name,
+            ':directory_name' => $bundle->group,
+            ':bundle_group' => $bundle->group,
+        ]);
         $options = [
             'addElementTitle' => __('Add Element', 'directories'),
             'editElementTitle' => __('Edit Element', 'directories'),
             'deleteElementTitle' => __('Delete Element', 'directories'),
             'deleteConfirm' => __('Are you sure?', 'directories'),
             'elementTypes' => $this->_application->Display_Elements_types($bundle),
+            'addDisplayUrl' => (string)$this->_application->Url($admin_path . '/displays/add_display', [], '', '&'),
+            'deleteDisplayUrl' => (string)$this->_application->Url($admin_path . '/displays/delete_display', [], '', '&'),
+            'saveChangesAlert' => __('Please save changes first!', 'directories'),
         ];
-        $admin_path = $this->_application->Entity_BundleTypeInfo($bundle, 'admin_path');
-        $admin_path = strtr($admin_path, [':bundle_name' => $bundle->name, ':directory_name' => $bundle->group, ':bundle_group' => $bundle->group]);
+        $js = [
+            sprintf(
+                'let adminDisplays = new DRTS.Display.adminDisplays("#%s", %s); ',
+                $form->settings['#id'],
+                $this->_application->JsonEncode($options)
+            ),
+        ];
         foreach (self::$_fields[$form->settings['#id']] as $id => $data) {
             $_options = [
-                'selector' => '#' . $id,
                 'name' => $data['name'],
                 'listElementsUrl' => (string)$this->_application->Url($admin_path . '/displays/list_elements', array('display_id' => $data['display_id']), '', '&'),
                 'addElementUrl' => (string)$this->_application->Url($admin_path . '/displays/add_element', array('display_id' => $data['display_id']), '', '&'),
                 'editElementUrl' => (string)$this->_application->Url($admin_path . '/displays/edit_element', array('display_id' => $data['display_id']), '', '&'),
             ];
-            $form->settings['#js_ready'][] = sprintf('DRTS.Display.adminDisplay(%s);', $this->_application->JsonEncode($_options + $options));
+            $js[] = sprintf('adminDisplays.addDisplay("#%s", %s);', $id, $this->_application->JsonEncode($_options));
         }
+        $form->settings['#js_ready'][] = implode(PHP_EOL, $js);
+
         $this->_application->getPlatform()->loadJqueryUiJs(array('sortable', 'draggable', 'effects-highlight'))
             ->addJsFile('display-admin-display.min.js', 'drts-display-admin-display', array('drts', 'jquery-ui-sortable'))
             ->addCssFile('display-admin-display.min.css', 'drts-display-admin-display', array('drts'));

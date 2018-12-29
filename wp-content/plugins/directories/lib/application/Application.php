@@ -14,7 +14,7 @@ class Application extends AbstractHttpApplication
         $_components = [], $_componentsLoaded = [], $_componentsLoadedTimestamp;
 
     // System version constants
-    const VERSION = '1.2.12', PACKAGE = 'directories';
+    const VERSION = '1.2.15', PACKAGE = 'directories';
 
     const COMPONENT_NAME_REGEX = '/^[a-zA-Z0-9]{2,}$/';
     
@@ -293,7 +293,7 @@ class Application extends AbstractHttpApplication
         throw new Exception\ComponentNotFoundException('Component info for component ' . $componentName . ' was not found.');
      }
     
-    protected function _getComponentInfo($componentName, $key, $throwException = true)
+    protected function _getComponentInfo($componentName, $key)
     {
         if (!isset($this->_componentsLoaded[$componentName])) {
             // Fetch from local file
@@ -303,21 +303,18 @@ class Application extends AbstractHttpApplication
             }
             
             // No local file data, so force reload
-            $this->_reloadComponentInfo($componentName, $throwException);
+            $this->_reloadComponentInfo($componentName);
         }
         return isset($this->_componentsLoaded[$componentName][$key]) ? $this->_componentsLoaded[$componentName][$key] : null;        
     }
     
-    protected function _reloadComponentInfo($componentName, $throwException = true)
+    protected function _reloadComponentInfo($componentName)
     {
         $this->_loadComponents(true);
         if (isset($this->_componentsLoaded[$componentName])) return;
-    
-        if ($throwException) {
-            $this->clearComponentInfoCache();
-            $this->backtrace(true);
-            throw new Exception\ComponentNotInstalledException('The following component is not installed or loaded: ' . $componentName);
-        }
+
+        $this->clearComponentInfoCache();
+        throw new Exception\ComponentNotInstalledException('The following component is not installed or loaded: ' . $componentName);
     }
     
     public function clearComponentInfoCache()

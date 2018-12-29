@@ -972,8 +972,12 @@ div.drts-ajax-loader {
     font-weight: normal;
 }
 
-.drts .drts-form-field-removable {
+.drts .drts-form-field.drts-form-field-removable {
     border-top: 1px dashed #ccc;
+    padding-top: 1.5em;
+}
+
+.drts.drts-main .drts-form-field.drts-form-field-removable {
     padding-top: 1em;
 }
 
@@ -987,7 +991,7 @@ div.drts-ajax-loader {
     z-index: 999;
 }
 
-.drts .drts-form-field-removable:hover button.drts-form-field-remove {
+.drts .drts-form-field.drts-form-field-removable:hover button.drts-form-field-remove {
     display: inline-block;
 }
 
@@ -1241,6 +1245,10 @@ button.drts-form-field-option-icon {
     margin-bottom: 5%;
 }
 
+.drts-display-element .drts-field-video:last-child {
+    margin: 0;
+}
+
 .drts-field-video iframe {
     position: absolute;
     top: 0;
@@ -1487,10 +1495,6 @@ table.drts-directory-openinghours tr td:first-child {
     margin-bottom: 0;
 }
 
-.drts-view-filter-form .drts-form-buttons {
-    margin-top: 1em !important;
-}
-
 .drts-view-filter-field-label {
     font-weight: bold;
     margin-bottom: 0.3em;
@@ -1549,26 +1553,26 @@ table.drts-directory-openinghours tr td:first-child {
     padding-right: 0.5em;
 }
 
-.drts-view-post-entities .drts-display--summary {
+.drts-view-post-entities .drts-display-default-summary {
     border: 1px solid #eef3f6;
     -webkit-transform: perspective(1px) translateZ(0);
     transform: perspective(1px) translateZ(0);
 }
 
-.drts-view-post-entities .dw .drts-display--summary {
+.drts-view-post-entities .dw .drts-display-default-summary {
     -webkit-transform: none;
     transform: none;
 }
 
-.drts-view-post-entities .drts-display--summary:hover {
+.drts-view-post-entities .drts-display-default-summary:hover {
     border-color: #dde4e9;
 }
 
-.drts-view-post-entities.drts-view-entities-list .drts-display--summary {
+.drts-view-post-entities.drts-view-entities-list .drts-display-default-summary {
     margin-bottom: 10px;
 }
 
-.drts-view-post-entities .drts-display--summary.drts-highlighted {
+.drts-view-post-entities .drts-display-default-summary.drts-highlighted {
     -webkit-animation-name: drts-wobble-vertical;
     animation-name: drts-wobble-vertical;
     -webkit-animation-duration: 1s;

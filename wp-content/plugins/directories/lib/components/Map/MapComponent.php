@@ -15,7 +15,7 @@ class MapComponent extends AbstractComponent implements
     Field\IRenderers,
     View\IModes
 {
-    const VERSION = '1.2.12', PACKAGE = 'directories',
+    const VERSION = '1.2.15', PACKAGE = 'directories',
         LAT_REGEX = '/^-?([1-8]?[1-9]|[1-9]?0)\.{1}\d{5,}/',
         LNG_REGEX = '/^-?((([1]?[0-7][0-9]|[1-9]?[0-9])\.{1}\d{5,}$)|[1]?[1-8][0]\.{1}0{5,}$)/';
     

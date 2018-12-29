@@ -45,7 +45,7 @@ class ChildCountFieldType extends Field\Type\AbstractType implements
         );
     }
 
-    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null)
+    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         $ret = [];
         foreach ($values as $value) {

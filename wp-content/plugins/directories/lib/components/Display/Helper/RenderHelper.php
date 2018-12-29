@@ -4,7 +4,6 @@ namespace SabaiApps\Directories\Component\Display\Helper;
 use SabaiApps\Directories\Application;
 use SabaiApps\Directories\Exception;
 use SabaiApps\Directories\Component\Entity;
-use SabaiApps\Directories\Request;
 
 class RenderHelper
 {
@@ -184,7 +183,10 @@ class RenderHelper
 
     public function element(Application $application, Entity\Model\Bundle $bundle, array $element, $var, $tag = 'div')
     {
-        if (!empty($element['visibility']['hide_on_parent']) && $var->isOnParentPage()) return;
+        if (!empty($element['visibility']['hide_on_parent'])
+            && $var instanceof \SabaiApps\Directories\Component\Entity\Type\IEntity
+            && $var->isOnParentPage()
+        ) return;
 
         if (!empty($element['advanced']['cache'])) {
             $cache_id = $this->_getElementCacheId($bundle, $element['id'], $var);
@@ -269,7 +271,7 @@ class RenderHelper
         if (isset($element['heading']['label'])) {
             $heading = $application->Display_ElementLabelSettingsForm_label(
                 $element['heading'],
-                $application->Display_Elements_impl($bundle, $element['name'])->displayElementStringId('heading', $element['element_id'])
+                $application->Display_Elements_impl($bundle, $element['name'])->displayElementStringId('heading', $element['_element_id'])
             );
             if (strlen($heading)) {
                 $heading = '<div class="drts-display-element-header"><span>' . $heading . '</span></div>';

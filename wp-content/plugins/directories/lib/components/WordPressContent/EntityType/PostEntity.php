@@ -17,6 +17,7 @@ class PostEntity extends Entity\Type\AbstractEntity
             array(
                 'post_author' => (int)$post->post_author,
                 'post_published' => strtotime($post->post_date_gmt),
+                'post_modified' => strtotime($post->post_modified_gmt),
                 'post_id' => $post->ID,
                 'post_title' => $post->post_title,
                 'post_status' => $post->post_status,
@@ -59,6 +60,11 @@ class PostEntity extends Entity\Type\AbstractEntity
     public function getTimestamp()
     {
         return $this->_properties['post_published'];
+    }
+
+    public function getModified()
+    {
+        return $this->_properties['post_modified'];
     }
 
     public function getId()

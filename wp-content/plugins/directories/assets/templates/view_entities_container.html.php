@@ -1,7 +1,7 @@
 <div class="drts-view-entities-header <?php echo DRTS_BS_PREFIX;?>mb-4"><?php if (!empty($nav[0])):?><?php echo $this->View_Nav($CONTEXT, $nav[0]);?><?php endif;?></div>
 
 <?php if (!empty($settings['filter']['show']) && isset($filter['form'])):?>
-<div class="drts-view-entities-filter-form <?php echo DRTS_BS_PREFIX;?>collapse<?php if (!empty($settings['filter']['shown'])):?> <?php echo DRTS_BS_PREFIX;?>show<?php endif;?> <?php echo DRTS_BS_PREFIX;?>mb-4" id="<?php echo $this->H(substr($CONTEXT->getContainer(), 1));?>-view-filter-form"<?php if (empty($settings['filter']['shown'])):?> data-collapsible="1"<?php endif;?>>
+<div class="drts-view-entities-filter-form <?php echo DRTS_BS_PREFIX;?>collapse<?php if (!empty($settings['filter']['shown'])):?> <?php echo DRTS_BS_PREFIX;?>show<?php endif;?> <?php echo DRTS_BS_PREFIX;?>mb-4<?php if (isset($settings['filter']['auto_submit']) && !$settings['filter']['auto_submit']):?> drts-view-filter-form-manual<?php endif;?>" id="<?php echo $this->H(substr($CONTEXT->getContainer(), 1));?>-view-filter-form"<?php if (empty($settings['filter']['shown'])):?> data-collapsible="1"<?php endif;?>>
     <?php echo $this->View_FilterForm_render($filter['form']);?>
 </div>
 <?php endif;?>

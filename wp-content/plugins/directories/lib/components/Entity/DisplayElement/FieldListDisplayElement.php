@@ -79,6 +79,9 @@ class FieldListDisplayElement extends Display\Element\AbstractElement
             $child['settings']['label'] = 'none';
             if (!$field_value = $this->_application->callHelper('Display_Render_element', array($bundle, $child, $var))) continue;
 
+            $child_field_name = substr($child['name'], 13); // remove entity_field_ part
+            if (!$child_field = $this->_application->Entity_Field($bundle, $child_field_name)) continue; // this should not happen
+
             $html[] = '<div class="' . DRTS_BS_PREFIX . 'list-group-item ' . DRTS_BS_PREFIX . 'px-0">';
             if ($element['settings']['size'] !== 'sm'
                 && $label_type !== 'icon'
@@ -88,7 +91,16 @@ class FieldListDisplayElement extends Display\Element\AbstractElement
             } else {
                 $html[] = '<div class="drts-entity-field">';
             }
-            $html[] = '<div class="drts-entity-field-label drts-entity-field-label-type-' . $label_type . '">' . $child['title'] . '</div>';
+            if (!$label_is_no_text) {
+                $label = $this->_application->Display_ElementLabelSettingsForm_label(
+                    ['label' => $label_type] + $child['settings'],
+                    $this->displayElementStringId('label', $child['_element_id'], $child['name']),
+                    $child_field->getFieldLabel(true)
+                );
+            } else {
+                $label = $child['title'];
+            }
+            $html[] = '<div class="drts-entity-field-label drts-entity-field-label-type-' . $label_type . '">' . $label . '</div>';
             $html[] = '<div class="drts-entity-field-value">' . $field_value . '</div>';
             $html[] = '</div></div>';
         }

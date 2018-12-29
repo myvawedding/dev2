@@ -40,8 +40,8 @@ class FileFieldWidget extends Field\Widget\AbstractWidget
             }
         } else {
             if ($settings['allowed_files'] === 'video') {
-                $extensions = ['mp4', 'm4v', 'webm', 'ogv', 'wmv', 'flv'];
-                $wp_extensions = ['mp4|m4v', 'webm', 'ogv', 'wmv', 'flv'];
+                $extensions = ['mp4', 'm4v', 'webm', 'ogv', 'wmv', 'flv', 'mov', 'qt'];
+                $wp_extensions = ['mp4|m4v', 'webm', 'ogv', 'wmv', 'flv', 'mov|qt'];
             } elseif ($settings['allowed_files'] === 'audio') {
                 $extensions = ['mp3', 'm4a', 'm4b', 'ogg', 'oga', 'wav', 'wma'];
                 $wp_extensions = ['mp3|m4a|m4b', 'ogg|oga', 'wav', 'wma'];

@@ -6,7 +6,7 @@ use SabaiApps\Directories\Context;
 class Template
 {
     private static $_instance;
-    private $_context, $_checkLoop, $_headHtml, $_jsHtml, $_pageIds;
+    private $_context, $_checkLoop, $_headHtml, $_jsHtml, $_pageIds, $_postTypes;
     
     public function __construct(Platform $platform)
     {
@@ -17,7 +17,19 @@ class Template
         $page_slugs = $platform->getPageSlugs();
         $this->_pageIds = (array)$page_slugs[2];
         
-        $this->_checkLoop = defined('DRTS_WORDPRESS_TEMPLATE_FIX_MENU') && DRTS_WORDPRESS_TEMPLATE_FIX_MENU;
+        $this->_checkLoop = defined('DRTS_WORDPRESS_TEMPLATE_FIX_MENU')
+            && DRTS_WORDPRESS_TEMPLATE_FIX_MENU;
+
+        // For Publisher theme, where for some reason the title of the first post
+        // in archive on taxonomy page is used as page title
+        if (defined('DRTS_WORDPRESS_FORCE_TAX_PAGE_TITLE')
+            && DRTS_WORDPRESS_FORCE_TAX_PAGE_TITLE
+        ) {
+            $post_types = $platform->getApplication()
+                ->getComponent('WordPressContent')
+                ->getPostTypes();
+            $this->_postTypes = array_keys($post_types);
+        }
     }
     
     public static function getInstance(Platform $platform)
@@ -185,7 +197,18 @@ class Template
             ) {
                 if (!in_the_loop()) return false;
             }
-            return in_array($pageId, $this->_pageIds);
+            if (in_array($pageId, $this->_pageIds)) return true;
+
+            if (is_tax()
+                && defined('DRTS_WORDPRESS_FORCE_TAX_PAGE_TITLE')
+                && DRTS_WORDPRESS_FORCE_TAX_PAGE_TITLE
+                && in_array(get_post_type($pageId), $this->_postTypes)
+                && !wp_get_post_parent_id($pageId)
+            ) {
+                return true;
+            }
+
+            return false;
         }
         return isset($GLOBALS['drts_entity'])
             && $GLOBALS['drts_entity']->getId() === $pageId;

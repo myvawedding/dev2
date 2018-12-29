@@ -8,6 +8,7 @@ interface IEntity extends \Serializable
     public function getId();
     public function getType();
     public function getTimestamp();
+    public function getModified();
     public function getBundleName();
     public function getBundleType();
     public function getTitle();

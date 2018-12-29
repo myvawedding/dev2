@@ -263,6 +263,18 @@ class Util
     
         $sql = [];
         $table_prefix = $wpdb->prefix . 'drts_';
+        // Get charset/collation from the posts table and use them for new tables
+        $posts_table_status = $wpdb->get_row("SHOW TABLE STATUS LIKE '" . $wpdb->posts . "'");
+        if ($posts_table_status
+            && $posts_table_status->Collation
+            && ($collation_parts = explode('_', $posts_table_status->Collation))
+        ) {
+            $charset = $collation_parts[0];
+            $collation = $posts_table_status->Collation;
+        } else {
+            $charset = $wpdb->charset;
+            $collation = $wpdb->collate;
+        }
         foreach ($schema['tables'] as $table => $table_info) {
             $table_name = $table_prefix . $table;
             if (strlen($table_name) > 64) {
@@ -347,11 +359,11 @@ class Util
             }
 
             $charset_collate = '';
-            if (!empty($wpdb->charset)) {
-                $charset_collate .= ' DEFAULT CHARACTER SET ' . $wpdb->charset;
+            if (!empty($charset)) {
+                $charset_collate .= ' DEFAULT CHARACTER SET ' . $charset;
             }
-            if (!empty($wpdb->collate)) {
-                $charset_collate .= ' COLLATE ' . $wpdb->collate;
+            if (!empty($collation)) {
+                $charset_collate .= ' COLLATE ' . $collation;
             }
             $sql[$table_name] = sprintf('CREATE TABLE %s (
   %s

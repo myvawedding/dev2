@@ -159,6 +159,11 @@ abstract class AbstractEntity implements IEntity
     }
     
     public function getStatus(){}
+
+    public function getModified()
+    {
+        return $this->getTimestamp();
+    }
         
     public function isFeatured()
     {

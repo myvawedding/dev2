@@ -16,11 +16,13 @@ class FormHelper
             'values' => null,
             'is_admin' => false,
             'is_edit' => null,
-            'wrap' => false,
+            'wrap' => [],
             'token' => 'entity_form',
             'pre_render_display' => false,
             'language' => null,
+            'horizontal' => false,
         );
+        settype($options['wrap'], 'array');
 
         $entity = null;
         if ($entityOrBundle instanceof \SabaiApps\Directories\Component\Entity\Type\IEntity) {
@@ -55,7 +57,14 @@ class FormHelper
 
                 // Unwrap if wrapped
                 if ($options['wrap']) {
-                    $options['values'] = $options['values'][$options['wrap']];
+                    foreach ($options['wrap'] as $wrap) {
+                        if (!isset($options['values'][$wrap])) {
+                            $options['values'] = null;
+                            break;
+                        } else {
+                            $options['values'] = $options['values'][$wrap];
+                        }
+                    }
                 }
             } else {
                 $options['values'] = null;
@@ -76,6 +85,17 @@ class FormHelper
                 || (!$field_type = $application->Field_Type($field->getFieldType(), true))
                 || (!$options['is_admin'] && $field_type->fieldTypeInfo('admin_only'))
             ) continue;
+
+            if ($property = $field->isPropertyField()) {
+                switch ($property) {
+                    case 'title':
+                        if (!empty($bundle->info['no_title'])) continue 2;
+                        break;
+                    case 'content':
+                        if (!empty($bundle->info['no_content'])) continue 2;
+                        break;
+                }
+            }
 
             $fields[$field->getFieldName()] = $field;
         }
@@ -108,6 +128,9 @@ class FormHelper
                         continue;
                     }
                 }
+                if (!empty($options['horizontal'])) {
+                    $form_field['#horizontal'] = true;
+                }
                 $form[$field_name] = $form_field;
                 $_fields[$field_name] = $field;
             }
@@ -124,16 +147,21 @@ class FormHelper
         $form = $application->Filter('entity_form', $form, array($bundle, $entity, $options));
 
         if ($options['wrap']) {
-            $form = array(
+            $_form = [
                 '#class' => $form['#class'],
                 '#bundle' => $bundle,
                 '#entity' => $entity,
-                '#wrap' => $options['wrap'],
-                $options['wrap'] => array(
+            ];
+            $__form =& $_form;
+            foreach ($options['wrap'] as $wrap) {
+                $__form[$wrap] = [
                     '#tree' => true,
-                ) + $form,
-            );
-            unset($form[$options['wrap']]['#class'], $form[$options['wrap']]['#bundle'], $form[$options['wrap']]['#entity']);
+                ];
+                $__form =& $__form[$wrap];
+            }
+            $__form += $form;
+            unset($__form['#class'], $__form['#bundle'], $__form['#entity']);
+            $form = $_form;
         }
         $form['#wrap'] = $options['wrap'];
         $form['#fields'] = $_fields;
@@ -151,7 +179,9 @@ class FormHelper
     public function render(Application $application, $form)
     {
         $rendered = $this->renderDisplay($application, $form);
-        if (empty($rendered['html'])) return '';
+        if (!$rendered
+            ||empty($rendered['html'])
+        ) return '';
 
         $form = $rendered['form'];
         return implode(PHP_EOL, array(
@@ -166,11 +196,13 @@ class FormHelper
         ));
     }
 
-    public function renderDisplay(Application $application, $form)
+    public function renderDisplay(Application $application, $form, array $options = [])
     {
         $form = $application->Form_Render($form);
-        $rendered = $application->Display_Render($form->settings['#bundle'], $this->getDisplay($application, $form->settings['#bundle']), $form);
-        $rendered['form'] = $form;
+        $display = $this->getDisplay($application, $form->settings['#bundle']);
+        if ($rendered = $application->Display_Render($form->settings['#bundle'], $display, $form, $options)) {
+            $rendered['form'] = $form;
+        }
         return $rendered;
     }
 
@@ -250,6 +282,7 @@ class FormHelper
                 || $field_types[$field_type]['admin_only']
                 || empty($field_types[$field_type]['widgets'])
                 || ($field_type === 'entity_title' && !empty($bundle->info['no_title']))
+                || (in_array($field_type, array('entity_content', 'wp_post_content')) && !empty($bundle->info['no_content']))
                 || (in_array($field_type, array('entity_parent', 'wp_post_parent')) && empty($bundle->info['parent']))
                 || (in_array($field_type, array('entity_term_parent')) && empty($bundle->info['is_hierarchical']))
             ) continue;
@@ -273,6 +306,13 @@ class FormHelper
         ) return;
 
         $rules = [];
+        $field_prefix = null;
+        if ($wrap) {
+            $field_prefix = array_unshift($wrap);
+            if (!empty($wrap)) {
+                $field_prefix .= '[' . implode('][', $wrap) . ']';
+            }
+        }
         foreach ($conditions['rules'] as $rule) {
             if (strpos($rule['field'], ',')) {
                 if (!$_rule = explode(',', $rule['field'])) continue;
@@ -295,7 +335,7 @@ class FormHelper
 
                 if (!isset($_rule['target'])) {
                     $selector = $rule['field'];
-                    if ($wrap) $selector = $wrap . '[' . $selector . ']';
+                    if ($field_prefix) $selector = $field_prefix . '[' . $selector . ']';
                     $_rule['target'] = '[name^="' . $selector . '"]';
                 }
                 $rules[] = $_rule;
@@ -310,7 +350,7 @@ class FormHelper
         return [$action => $rules];
     }
 
-    protected function _getField(Application $application, Field\IField $field, Entity\Type\IEntity $entity = null, array $value = null, $wrap = false, $setValue = true, $language = null)
+    protected function _getField(Application $application, Field\IField $field, Entity\Type\IEntity $entity = null, array $value = null, array $wrap = [], $setValue = true, $language = null)
     {
         if (!$iwidget = $application->Field_Widgets_impl($field->getFieldWidget(), true)) return;
 
@@ -381,9 +421,11 @@ class FormHelper
             if (!$_form_field = $this->_doGetField($application, $field, $entity, null, $setValue ? $value : null, $wrap, $language)) {
                 return;
             }
-            $form_field = array(
+            $form_field = [
                 '#required' => $form_field['#required'],
-            ) + $_form_field + $form_field;
+                '#class' => $form_field['#class'],
+                '#description_top' => true,
+            ] + $_form_field + $form_field;
         }
         if (isset($form_field[0])) {
             // Make only the first element required if multiple input fields
@@ -409,13 +451,13 @@ class FormHelper
         return $form_field;
     }
 
-    protected function _doGetField(Application $application, Field\IField $field, Entity\Type\IEntity $entity = null, $key = null, $value = null, $wrap = false, $language = null)
+    protected function _doGetField(Application $application, Field\IField $field, Entity\Type\IEntity $entity = null, $key = null, $value = null, array $wrap = [], $language = null)
     {
         $widget = $field->getFieldWidget();
         $iwidget = $application->Field_Widgets_impl($widget);
         // Init widget settings
         $widget_settings = $field->getFieldWidgetSettings() + (array)$iwidget->fieldWidgetInfo('default_settings');
-        $parents = $wrap ? array($wrap) : [];
+        $parents = $wrap;
         $parents[] = $field->getFieldName();
         if (isset($key)) {
             $parents[] = $key;

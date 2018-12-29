@@ -70,7 +70,7 @@ class DateType extends AbstractType
         );
     }
 
-    public function fieldTypeOnSave(IField $field, array $values)
+    public function fieldTypeOnSave(IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         $ret = [];
         foreach ($values as $weight => $value) {

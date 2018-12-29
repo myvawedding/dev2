@@ -110,7 +110,7 @@ class TextfieldWidget extends AbstractWidget
                     $form['#type'] = 'textfield'; 
                 }
                 $form['#mask'] = $settings['mask'];
-                $form['#auto_populate'] = $settings['autopopulate'];
+                $form['#autopopulate'] = !isset($entity) && !empty($settings['autopopulate']);
         }
 
         return $form;

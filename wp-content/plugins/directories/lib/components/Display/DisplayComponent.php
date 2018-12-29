@@ -17,7 +17,7 @@ class DisplayComponent extends AbstractComponent implements
     System\IAdminRouter,
     Form\IFields
 {
-    const VERSION = '1.2.12', PACKAGE = 'directories';
+    const VERSION = '1.2.15', PACKAGE = 'directories';
 
     protected $_system = true;
 
@@ -115,13 +115,52 @@ class DisplayComponent extends AbstractComponent implements
                 $admin_path . '/displays/edit_element' => array(
                     'controller' => 'EditElement',
                 ),
+                $admin_path . '/displays/add_display' => array(
+                    'controller' => 'AddDisplay',
+                    'access_callback' => true,
+                    'callback_path' => 'add_display',
+                ),
+                $admin_path . '/displays/delete_display' => array(
+                    'controller' => 'DeleteDisplay',
+                    'access_callback' => true,
+                    'callback_path' => 'delete_display',
+                ),
             );
         }
 
         return $routes;
     }
 
-    public function systemOnAccessAdminRoute(Context $context, $path, $accessType, array &$route){}
+    public function systemOnAccessAdminRoute(Context $context, $path, $accessType, array &$route)
+    {
+        switch ($path) {
+            case 'add_display':
+                if ($accessType === Application::ROUTE_ACCESS_LINK) {
+                    $type = $context->getRequest()->asStr('display_type');
+                    $name = $context->getRequest()->asStr('display_name');
+                    return $this->_application->Filter(
+                        'display_is_creatable',
+                        $type === 'entity' && $name === 'summary',
+                        [$type, $name]
+                    );
+                }
+                return true;
+            case 'delete_display':
+                if ($accessType === Application::ROUTE_ACCESS_LINK) {
+                    $name = $context->getRequest()->asStr('display_name');
+                    if (!$pos = strpos($name, '-')) return false; // can not delete default display
+
+                    $name = substr($name, 0, $pos);
+                    $type = $context->getRequest()->asStr('display_type');
+                    return $this->_application->Filter(
+                        'display_is_creatable',
+                        $type === 'entity' && $name === 'summary',
+                        [$type, $name]
+                    );
+                }
+                return true;
+        }
+    }
 
     public function systemAdminRouteTitle(Context $context, $path, $titleType, array $route){}
 

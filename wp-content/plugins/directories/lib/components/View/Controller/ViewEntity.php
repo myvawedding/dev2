@@ -15,18 +15,23 @@ class ViewEntity extends Controller
             ->addTemplate('view_entity')
             ->setAttributes(array(
                 'entity' => $entity,
-                'display' => $display = $this->_getDisplay($context, $entity),
+                'display' => $display = $this->_getDisplayName($context, $entity),
             ));
         // Invoke other components
         $this->Action('view_entity', array($entity, $display, $context));
     }
     
-    protected function _getDisplay(Context $context, Entity\Type\IEntity $entity)
+    protected function _getDisplayName(Context $context, Entity\Type\IEntity $entity)
     {
         if ($this->_isAmp($entity)) return 'amp_detailed';
-        
-        // Defaults to detailed view unless summary view is requested explicitly
-        return isset($context->settings['display']) ? $context->settings['display'] : 'detailed';
+
+        if (isset($context->settings['display'])
+            && $context->settings['display'] !== 'detailed'
+            && $this->Display_Display($entity, $context->settings['display']) // make sure the display exists
+        ) {
+            return $context->settings['display'];
+        }
+        return 'detailed';
     }
     
     protected function _isAmp(Entity\Type\IEntity $entity)

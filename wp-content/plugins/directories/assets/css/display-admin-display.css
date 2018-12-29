@@ -197,3 +197,18 @@ div.drts-display-element-dimmed,
 .drts-display-element-name-columns > .drts-display-element-wrapper > .drts-display-element-name-column:first-child {
     border-left-width: 1px;
 }
+
+a.drts-display-tab2-link {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+}
+
+a.drts-display-tab2-link .drts-clear {
+    display: none !important;
+}
+
+a.drts-display-tab2-link:hover .drts-clear {
+    display: inline-block !important;
+}

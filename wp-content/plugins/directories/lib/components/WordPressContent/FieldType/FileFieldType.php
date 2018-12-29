@@ -64,7 +64,7 @@ class FileFieldType extends Field\Type\AbstractType implements Field\Type\IHuman
         $values = array_values($_values);
     }
     
-    public function fieldTypeOnSave(Field\IField $field, array $values)
+    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         $ret = [];
         $i = 0;

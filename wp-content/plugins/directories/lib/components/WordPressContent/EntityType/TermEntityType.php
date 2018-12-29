@@ -61,6 +61,7 @@ class TermEntityType extends Entity\Type\AbstractType
                     'column' => 'tt.description',
                 ),
                 'published' => false,
+                'modified' => false,
                 'author' => false,
                 'status' => false,
             )

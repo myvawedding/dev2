@@ -48,7 +48,7 @@ class TextElement extends AbstractElement
     
     public function displayElementRender(Entity\Model\Bundle $bundle, array $element, $var)
     {
-        $text = $this->_translateString($element['settings']['text'], 'text', $element['id']);
+        $text = $this->_translateString($element['settings']['text'], 'text', $element['_element_id']);
         if ($var instanceof \SabaiApps\Directories\Component\Entity\Type\IEntity) {
             $text = $this->_application->Entity_Tokens_replace($text, $var);
         }
@@ -75,6 +75,7 @@ class TextElement extends AbstractElement
 
     public function displayElementOnSaved(Entity\Model\Bundle $bundle, Display\Model\Element $element)
     {
-        $this->_registerString($element->data['settings']['text'], 'text', $element->id);
+        $this->_registerString($element->data['settings']['text'], 'text', $element->element_id);
+        $this->_unregisterString('text', $element->id); // for old versions
     }
 }

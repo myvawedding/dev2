@@ -42,7 +42,7 @@ class UserType extends AbstractType implements IQueryable, IOpenGraph, IHumanRea
         );
     }
 
-    public function fieldTypeOnSave(IField $field, array $values)
+    public function fieldTypeOnSave(IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         $ret = $user_ids = [];
         foreach ($values as $weight => $value) {

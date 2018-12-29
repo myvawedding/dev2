@@ -142,6 +142,9 @@ class AddDirectory extends Form\Controller
         
         // Run upgrade process to notify directory slugs have been updated
         $this->System_Component_upgradeAll(array_keys($this->System_Slugs()));
+
+        // Reload all routes
+        $this->getComponent('System')->reloadAllRoutes();
         
         $progress->set('Components reloaded');
         

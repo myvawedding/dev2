@@ -21,14 +21,16 @@ class Displays extends AbstractDisplays
     protected function _getSettingsForm(Context $context, array &$formStorage)
     {
         $form = parent::_getSettingsForm($context, $formStorage);
-        foreach ($form['#displays'] as $display_name) {
-            if (!$template = $this->Entity_Display_hasCustomTemplate($context->bundle, $display_name)) continue;
-        
-            $form[$display_name]['#prefix'] = '<div class="drts-bs-alert drts-bs-alert-warning">'
-                . sprintf(
-                    $this->H(__('Template file for this display was found at %s. Display settings on this page are ignored.', 'directories')),
-                    '<code>' . $this->H($template) . '</code>'
-                ) . '</div>';
+        foreach (array_keys($form['#displays']) as $default_display_name) {
+            foreach ($form['#displays'][$default_display_name] as $display_name) {
+                if (!$template = $this->Entity_Display_hasCustomTemplate($context->bundle, $display_name)) continue;
+
+                $form[$default_display_name][$display_name]['#prefix'] = '<div class="drts-bs-alert drts-bs-alert-warning">'
+                    . sprintf(
+                        $this->H(__('Template file for this display was found at %s. Display settings on this page are ignored.', 'directories')),
+                        '<code>' . $this->H($template) . '</code>'
+                    ) . '</div>';
+            }
         }
         
         return $form;

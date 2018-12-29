@@ -20,19 +20,25 @@
         }
       });
 
+      // Form.serialize() will not include the value of submit button so append the value as a hidden element.
       $form.append($('<input>', {
         type: 'hidden',
         name: $this.attr('name'),
         value: $this.val()
       }));
 
-      // Manually submit form if the button was moved outside the form in modal window
-      if ($this.closest('.' + DRTS.bsPrefix + 'modal-footer').length) {
+      if ($form.data('force-submit') || $this.closest('.' + DRTS.bsPrefix + 'modal-footer').length // button was moved outside the form in modal window
+      ) {
+        $form.data('force-submit', false);
         $form.submit();
       }
     }).end().submit(function() {
       buttonContainer.find('button[type=submit]').prop('disabled', true);
     });
+
+    if (typeof acf !== 'undefined') {
+      acf.validation.active = false;
+    }
 
     return $form;
   };

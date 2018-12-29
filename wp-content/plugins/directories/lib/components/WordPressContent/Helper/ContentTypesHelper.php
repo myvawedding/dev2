@@ -35,9 +35,7 @@ class ContentTypesHelper
         $permalinks = $application->getPlatform()->getPermalinkConfig();
         $cap_prefix = 'drts_entity_';
         foreach ($application->Entity_Bundles() as $bundle) {
-            if (!$application->Entity_BundleTypes($bundle->type) // check component exists for this bundle type
-                || !in_array($bundle->entitytype_name, ['post', 'term'])
-            ) {
+            if (!$application->Entity_BundleTypes($bundle->type)) { // check component exists for this bundle type
                 continue;
             }
 

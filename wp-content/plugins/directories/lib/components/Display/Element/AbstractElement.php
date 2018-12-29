@@ -120,7 +120,7 @@ abstract class AbstractElement implements IElement
         if (isset($element->data['heading']['label'])) {
             $this->_application->Display_ElementLabelSettingsForm_registerLabel(
                 $element->data['heading'],
-                $this->displayElementStringId('heading', $element->id)
+                $this->displayElementStringId('heading', $element->element_id)
             );
         }
     }

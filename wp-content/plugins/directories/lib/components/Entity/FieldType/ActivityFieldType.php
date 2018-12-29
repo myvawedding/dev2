@@ -54,7 +54,7 @@ class ActivityFieldType extends Field\Type\AbstractType implements Field\Type\IS
         );
     }
 
-    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null)
+    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         if (!isset($values[0]) || !is_array($values[0])) return array(false); // remove
 

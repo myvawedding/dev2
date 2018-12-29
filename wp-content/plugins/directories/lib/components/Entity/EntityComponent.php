@@ -19,7 +19,7 @@ class EntityComponent extends AbstractComponent implements
     System\IMainRouter,
     System\IAdminRouter
 {
-    const VERSION = '1.2.12', PACKAGE = 'directories';
+    const VERSION = '1.2.15', PACKAGE = 'directories';
     const FIELD_REALM_ALL = 0, FIELD_REALM_ENTITY_TYPE_DEFAULT = 1, FIELD_REALM_BUNDLE_DEFAULT = 2;
 
     protected $_system = true;
@@ -92,10 +92,16 @@ class EntityComponent extends AbstractComponent implements
     public static function iconHelper(Application $application, Type\IEntity $entity, $fallbackBundleIcon = true, $iconField = null)
     {
         if ($bundle = $application->Entity_Bundle($entity)) {
-            if (!isset($iconField)) $iconField = $bundle->info['entity_icon'];
+            if (!isset($iconField)
+                && isset($bundle->info['entity_icon'])
+            ) {
+                $iconField = $bundle->info['entity_icon'];
+            }
             if (!empty($iconField)
                 && ($icon = $entity->getSingleFieldValue($iconField))
-            ) return $icon;
+            ) {
+                return $icon;
+            }
         }
 
         return $fallbackBundleIcon ? $application->Entity_BundleTypeInfo($entity->getBundleType(), 'icon') : null;
@@ -1225,12 +1231,12 @@ class EntityComponent extends AbstractComponent implements
 
     public function fieldGetTypeNames()
     {
-        return array('entity_id', 'entity_bundle_name', 'entity_bundle_type', 'entity_slug',
-            'entity_parent', 'entity_child_count', 'entity_reference',
-            'entity_activity', 'entity_title', 'entity_published', 'entity_author',
+        return ['entity_id', 'entity_bundle_name', 'entity_bundle_type', 'entity_slug',
+            'entity_parent', 'entity_child_count', 'entity_reference', 'entity_activity',
+            'entity_title', 'entity_published', 'entity_modified', 'entity_author',
             'entity_terms', 'entity_term_content_count', 'entity_term_parent',
             'entity_featured'
-        );
+        ];
     }
 
     public function fieldGetType($name)
@@ -1242,6 +1248,8 @@ class EntityComponent extends AbstractComponent implements
                 return new FieldType\TitleFieldType($this->_application, $name);
             case 'entity_published':
                 return new FieldType\PublishedFieldType($this->_application, $name);
+            case 'entity_modified':
+                return new FieldType\ModifiedFieldType($this->_application, $name);
             case 'entity_author':
                 return new FieldType\AuthorFieldType($this->_application, $name);
             case 'entity_parent':
@@ -1267,10 +1275,10 @@ class EntityComponent extends AbstractComponent implements
 
     public function fieldGetWidgetNames()
     {
-        return array('entity_parent', 'entity_title', 'entity_term_select', 'entity_term_list',
+        return ['entity_parent', 'entity_title', 'entity_term_select', 'entity_term_list',
             'entity_term_tagging', 'entity_term_parent', 'entity_author', 'entity_reference',
             'entity_reference_hidden', 'entity_featured'
-        );
+        ];
     }
 
     public function fieldGetWidget($name)
@@ -1301,7 +1309,7 @@ class EntityComponent extends AbstractComponent implements
 
     public function fieldGetRendererNames()
     {
-        return ['entity_title', 'entity_published', 'entity_author', 'entity_terms',
+        return ['entity_title', 'entity_published', 'entity_modified', 'entity_author', 'entity_terms',
             'entity_term_content_count', 'entity_reference', 'entity_reference_link'
         ];
     }
@@ -1313,6 +1321,8 @@ class EntityComponent extends AbstractComponent implements
                 return new FieldRenderer\TitleFieldRenderer($this->_application, $name);
             case 'entity_published':
                 return new FieldRenderer\PublishedFieldRenderer($this->_application, $name);
+            case 'entity_modified':
+                return new FieldRenderer\ModifiedFieldRenderer($this->_application, $name);
             case 'entity_author':
                 return new FieldRenderer\AuthorFieldRenderer($this->_application, $name);
             case 'entity_terms':

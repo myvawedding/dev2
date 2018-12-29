@@ -269,7 +269,7 @@ class FieldDisplayElement extends Display\Element\AbstractElement
             $html['class'] .= ' drts-display-element-with-link';
         }
 
-        $label = $this->_application->Display_ElementLabelSettingsForm_label($settings, $this->displayElementStringId('label', $element['element_id']), $field->getFieldLabel(true));
+        $label = $this->_application->Display_ElementLabelSettingsForm_label($settings, $this->displayElementStringId('label', $element['_element_id']), $field->getFieldLabel(true));
         if (!strlen($label)) return $html;
 
         $label_class = 'drts-entity-field-label drts-entity-field-label-type-' . $settings['label'];
@@ -322,10 +322,11 @@ class FieldDisplayElement extends Display\Element\AbstractElement
         if (isset($element->data['settings']['label'])
             && in_array($element->data['settings']['label'], array('custom', 'custom_icon'))
         ) {
-            $this->_registerString($element->data['settings']['label_custom'], 'label', $element->id);
+            $this->_registerString($element->data['settings']['label_custom'], 'label', $element->element_id);
         } else {
-            $this->_unregisterString('label', $element->id);
+            $this->_unregisterString('label', $element->element_id);
         }
+        $this->_unregisterString('label', $element->id); // for old versions
     }
 
     protected function _displayElementReadableInfo(Entity\Model\Bundle $bundle, Display\Model\Element $element)

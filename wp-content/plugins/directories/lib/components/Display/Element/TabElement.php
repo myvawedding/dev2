@@ -41,7 +41,8 @@ class TabElement extends AbstractElement
     
     public function displayElementOnSaved(Entity\Model\Bundle $bundle, Display\Model\Element $element)
     {
-        $this->_registerString($element->data['settings']['label'], 'label', $element->id);
+        $this->_registerString($element->data['settings']['label'], 'label',  $element->element_id);
+        $this->_unregisterString('label', $element->id); // for old versions
     }
     
     public function displayElementRender(Entity\Model\Bundle $bundle, array $element, $var)

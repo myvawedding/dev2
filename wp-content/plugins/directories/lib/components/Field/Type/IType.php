@@ -9,6 +9,6 @@ interface IType
     public function fieldTypeInfo($key = null);
     public function fieldTypeSettingsForm($fieldType, Entity\Model\Bundle $bundle, array $settings, array $parents = []);
     public function fieldTypeSchema();
-    public function fieldTypeOnSave(IField $field, array $values);
+    public function fieldTypeOnSave(IField $field, array $values, array $currentValues = null, array &$extraArgs = []);
     public function fieldTypeOnLoad(IField $field, array &$values, Entity\Type\IEntity $entity);
 }

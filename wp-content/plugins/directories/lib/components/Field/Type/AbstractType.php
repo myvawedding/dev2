@@ -28,7 +28,7 @@ abstract class AbstractType implements IType
     
     public function fieldTypeSchema(){}
 
-    public function fieldTypeOnSave(IField $field, array $values){}
+    public function fieldTypeOnSave(IField $field, array $values, array $currentValues = null, array &$extraArgs = []){}
 
     public function fieldTypeOnLoad(IField $field, array &$values, Entity\Type\IEntity $entity){}
     

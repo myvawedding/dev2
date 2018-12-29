@@ -28,8 +28,10 @@ class UrlWidget extends TextfieldWidget
     public function fieldWidgetForm(IField $field, array $settings, $value = null, Entity\Type\IEntity $entity = null, array $parents = [], $language = null)
     {
         $form = parent::fieldWidgetForm($field, $settings, $value, $entity, $parents, $language);
-        if (!empty($settings['autopopulate'])) {
-            $form['#auto_populate'] = 'url';
+        if (!isset($entity)
+            && !empty($settings['autopopulate'])
+        ) {
+            $form['#autopopulate'] = 'url';
         }
 
         return $form;

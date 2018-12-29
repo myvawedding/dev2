@@ -73,6 +73,18 @@ class ViewEntities extends Controller
                 $url_params['num'] = $perpage = $context->getRequest()->asInt('num', $perpage, $view_settings['pagination']['perpages']);
             }
         }
+
+        // Init display
+        if (!empty($view_settings['display'])) {
+            if ($pos = strpos($view_settings['display'], '-')) { // is it a custom display?
+                if (!$this->Display_Display($context->bundle->name, $view_settings['display'])) {
+                    // Specified custom display does not exist, fallback to default
+                    $view_settings['display'] = substr($view_settings['display'], 0, $pos);
+                }
+            }
+        } else {
+            $view_settings['display'] = 'summary';
+        }
         
         // Init context
         $context->addTemplate('view_entities')->setAttributes(array(

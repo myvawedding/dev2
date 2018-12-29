@@ -23,6 +23,8 @@ abstract class AbstractType implements IType
     }
     
     abstract protected function _entityTypeInfo();
+
+    public function entityTypeEntityByTitle($bundleName, $title){}
     
     public function entityTypeGetQuery($operator = null)
     {

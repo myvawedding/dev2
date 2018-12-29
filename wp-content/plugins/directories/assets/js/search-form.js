@@ -15,10 +15,10 @@
       $taxonomy = $form.find('.drts-search-keyword-taxonomy'),
       datasets = [],
       options = {
-        suggest_post: $field.data('suggest-post') || false,
+        suggest_post: $field.data('suggest-post') === true,
         suggest_post_url: $field.data('suggest-post-url') || '',
-        suggest_post_jump: $field.data('suggest-post-jump') || true,
-        suggest_taxonomy: $field.data('suggest-taxonomy') || false,
+        suggest_post_jump: $field.data('suggest-post-jump') === true,
+        suggest_taxonomy: $field.data('suggest-taxonomy') === true,
         suggest_min_length: $field.data('suggest-min-length') || 2
       },
       getIcon = function getIcon(item, defaultIcon, allowParent) {

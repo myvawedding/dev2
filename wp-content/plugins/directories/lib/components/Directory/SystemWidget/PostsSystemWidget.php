@@ -142,8 +142,23 @@ class PostsSystemWidget extends AbstractWidget
         if (!empty($settings['featured_only'])) {
             $query->fieldIsNotNull('entity_featured');
         }
+        if ($term = $this->_isOnTaxonomyTermPage()) {
+            $query->fieldIs($term->getBundleType(), $term->getId());
+        }
 
         return $query;
+    }
+
+    protected function _isOnTaxonomyTermPage()
+    {
+        if (isset($GLOBALS['drts_entity'])) {
+            $entity = $GLOBALS['drts_entity'];
+            if ($entity instanceof \SabaiApps\Directories\Component\Entity\Type\IEntity
+                && $entity->isTaxonomyTerm()
+            ) {
+                return $entity;
+            }
+        }
     }
 
     protected function _getEntityMeta($entity, $settings)
@@ -154,5 +169,13 @@ class PostsSystemWidget extends AbstractWidget
         }
 
         return $this->_application->Filter('entity_widget_entity_meta', $meta, array($entity, $settings, 'entity_list'));
+    }
+
+    protected function _getCacheId(array $settings)
+    {
+        if ($term = $this->_isOnTaxonomyTermPage()) {
+            $settings['_term_id'] = $term->getId();
+        }
+        return 'widgets_widget_' . $this->_name . '_' . md5(serialize($settings));
     }
 }

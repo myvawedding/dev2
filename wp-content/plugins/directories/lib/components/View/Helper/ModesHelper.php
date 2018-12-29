@@ -2,6 +2,7 @@
 namespace SabaiApps\Directories\Component\View\Helper;
 
 use SabaiApps\Directories\Application;
+use SabaiApps\Directories\Component\Display\Controller\Admin\AddDisplay;
 use SabaiApps\Directories\Exception;
 use SabaiApps\Directories\Component\Entity;
 
@@ -58,6 +59,23 @@ class ModesHelper
         $view_mode = $mode instanceof \SabaiApps\Directories\Component\View\Mode\IMode ? $mode : $this->impl($application, $mode);
         $settings += (array)$view_mode->viewModeInfo('default_settings');
         $form = (array)$view_mode->viewModeSettingsForm($bundle, $settings, $parents);
+        if ($default_display = $view_mode->viewModeInfo('default_display')) {
+            $displays = AddDisplay::existingDisplays($application, $bundle->name, $default_display);
+            if (count($displays) > 1) {
+                $form['display'] = [
+                    '#type' => 'select',
+                    '#title' => __('Select display', 'directories'),
+                    '#options' => $displays,
+                    '#horizontal' => true,
+                    '#default_value' => isset($settings['display']) && isset($displays[$settings['display']]) ? $settings['display'] : $default_display,
+                ];
+            } else {
+                $form['display'] = [
+                    '#type' => 'hidden',
+                    '#default_value' => $default_display,
+                ];
+            }
+        }
         
         return $application->Filter('view_mode_settings_form', $form, array($view_mode, $bundle, $settings, $parents, $submitValues));  
     }

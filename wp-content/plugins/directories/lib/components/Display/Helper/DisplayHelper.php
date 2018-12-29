@@ -56,7 +56,7 @@ class DisplayHelper
                     $display->commit();
                 }
             }
-            
+
             $ret = array(
                 'id' => $display->id,
                 'name' => $display->name,
@@ -64,9 +64,10 @@ class DisplayHelper
                 'type' => $display->type,
                 'pre_render' => false,
                 'bundle_name' => $display->bundle_name,
-                'css' => isset($display->data['css']) && strlen($display->data['css']) ? $display->data['css'] : null,
-                'class' => $display->getCssClass(),
+                'class' => implode(' ', $css_classes = $display->getCssClasses()),
+                'css' => isset($display->data['css']) && strlen($display->data['css']) ? str_replace('%class%', '.' . $css_classes[0], $display->data['css']) : null,
                 'is_amp' => $display->isAmp(),
+                'label' => isset($display->data['label']) && strlen($display->data['label']) ? $display->data['label'] : null,
             );
             
             $elements = [];
@@ -167,6 +168,7 @@ class DisplayHelper
         return array(
             'id' => $element->id,
             'element_id' => $element_id,
+            '_element_id' => $element->element_id,
             'display' => $display->name,
             'name' => $element->name,
             'label' => $info['label'],
@@ -329,5 +331,70 @@ class DisplayHelper
         }
 
         return $element;
+    }
+
+    public function export(Application $application, DisplayModel $display, \Closure $elementCallback = null)
+    {
+        if ($display->type === 'form') return;
+
+        if (!$bundle = $application->Entity_Bundle($display->bundle_name)) return;
+
+        $display_arr = [
+            'elements' => [],
+        ];
+        $_elements = [];
+        foreach ($display->Elements as $element) {
+            if (!$element_impl = $application->Display_Elements_impl($bundle, $element->name, true)) continue;
+
+            try {
+                // Let element implementation modify data which will also be used when importing
+                $data = $element->data;
+                $element_impl->displayElementOnExport($bundle, $data);
+            } catch (Exception\IException $e) {
+                $application->logError($e);
+                continue;
+            }
+
+            $element_arr = array(
+                'id' => (int)$element->id,
+                'name' => $element->name,
+                'data' => $data,
+                'parent_id' => (int)$element->parent_id,
+                'weight' => (int)$element->weight,
+                'system' => (bool)$element->system,
+            );
+            if (isset($elementCallback)) {
+                $element_arr = $elementCallback($element_arr);
+            }
+            if (!empty($element_arr['parent_id'])
+                && !isset($display_arr['elements'][$element_arr['parent_id']]) // parent element not yet added
+            ) {
+                // wait until parent element is added
+                $_elements[$element_arr['parent_id']][$element_arr['id']] = $element_arr;
+            } else {
+                $display_arr['elements'][$element_arr['id']] = $element_arr;
+                if (isset($_elements[$element_arr['id']])) {
+                    $this->_addChildElements($display_arr['elements'], $element_arr['id'], $_elements);
+                }
+            }
+        }
+        if (empty($display_arr['elements'])) return;
+
+        return [
+            'name' => $display->name,
+            'type' => $display->type,
+            'data' => $display->data,
+        ] + $display_arr;
+    }
+
+    protected function _addChildElements(array &$elements, $parentId, array &$children)
+    {
+        foreach (array_keys($children[$parentId]) as $element_id) {
+            $elements[$element_id] = $children[$parentId][$element_id];
+            unset($children[$parentId][$element_id]);
+            if (isset($children[$element_id])) {
+                $this->_addChildElements($elements, $element_id, $children);
+            }
+        }
     }
 }

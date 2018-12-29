@@ -246,6 +246,7 @@ var DRTS = {
         onErrorRedirect: false,
         onContent: null,
         onSuccessRedirect: false,
+        onSuccessRedirectUrl: null,
         effect: null,
         scroll: false,
         replace: false,
@@ -271,9 +272,14 @@ var DRTS = {
         if (o.onSuccess) {
           o.onSuccess(result, target, o.trigger);
         }
-        if (o.onSuccessRedirect && result.url) {
-          window.location = result.url;
-          return;
+        if (o.onSuccessRedirect) {
+          if (result.url) {
+            window.location = result.url;
+            return;
+          } else if (o.onSuccessRedirectUrl) {
+            window.location = o.onSuccessRedirectUrl;
+            return;
+          }
         }
         if (result.messages) {
           DRTS.flash(result.messages, 'success');
@@ -389,7 +395,8 @@ var DRTS = {
         $(DRTS).trigger('loaded.sabai', {
           container: o.container,
           target: target,
-          response: response
+          response: response,
+          context: target
         });
       };
     if (o.trigger) {

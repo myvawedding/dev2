@@ -10,7 +10,7 @@ use Monolog\Handler\StreamHandler;
 
 class SystemComponent extends AbstractComponent implements IAdminRouter
 {
-    const VERSION = '1.2.12', PACKAGE = 'directories'; 
+    const VERSION = '1.2.15', PACKAGE = 'directories'; 
     
     protected $_system = true;
 
@@ -355,30 +355,6 @@ class SystemComponent extends AbstractComponent implements IAdminRouter
         $this->_application->getPlatform()->deleteCache('system_widgets');
     }
     
-    public function onSystemISlugsUpgradeSuccess(AbstractComponent $component)
-    {
-        $this->_reloadMainRouterRoutes();
-    }
-    
-    public function onSystemISlugsInstallSuccess(AbstractComponent $component)
-    {
-        $this->_reloadMainRouterRoutes();
-    }
-    
-    public function onSystemISlugsUninstallSuccess(AbstractComponent $component)
-    {
-        $this->_reloadMainRouterRoutes();
-    }
-    
-    protected function _reloadMainRouterRoutes()
-    {
-        foreach ($this->_application->InstalledComponentsByInterface('System\IMainRouter') as $component_name) {
-            if (!$this->_application->isComponentLoaded($component_name)) continue;
-            
-            $this->_application->getComponent('System')->reloadRoutes($this->_application->getComponent($component_name));
-        }
-    }
-    
     public function onCoreComponentsLoaded()
     {
         if (!$logger = $this->_application->getLogger()) return;
@@ -532,7 +508,7 @@ class SystemComponent extends AbstractComponent implements IAdminRouter
                 }
                 $this->reloadAllRoutes();
                 break;
-            case 'system_runcron':
+            case 'system_run_cron':
                 $this->_application->System_Cron($progress, true);
                 break;
             case 'system_clear_logs':

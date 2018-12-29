@@ -8,7 +8,7 @@ abstract class AbstractValueType extends AbstractType
 {
     protected $_valueColumn = 'value';
 
-    public function fieldTypeOnSave(IField $field, array $values)
+    public function fieldTypeOnSave(IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         $settings = (array)$field->getFieldSettings();
         $ret = [];

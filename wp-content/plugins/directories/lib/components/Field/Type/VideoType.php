@@ -59,7 +59,7 @@ class VideoType extends AbstractType implements IHumanReadable, IVideo
         );
     }
     
-    public function fieldTypeOnSave(IField $field, array $values)
+    public function fieldTypeOnSave(IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         foreach (array_keys($values) as $i) {
             if (!is_array($values[$i])

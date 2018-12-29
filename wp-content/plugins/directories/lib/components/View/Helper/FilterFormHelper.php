@@ -74,7 +74,7 @@ class FilterFormHelper
             $form['#action'] = $url;
         }
         
-        // Add "filter" paramter required to invoke filters
+        // Add "filter" parameter required to invoke filters
         $form['filter'] = array(
             '#type' => 'hidden',
             '#value' => 1,
@@ -104,13 +104,16 @@ class FilterFormHelper
         if (!empty($form['#filters'])) {
             $application->getPlatform()->addJsFile('view-filter-form.min.js', 'drts-view-filter-form', array('drts'));
         }
-        
-        $form[Form\FormComponent::FORM_SUBMIT_BUTTON_NAME] = $application->Form_SubmitButtons(array(array(
-            '#btn_label' => $options['btn_label'],
-            '#btn_size' => $options['btn_size'],
-            '#btn_color' => $options['btn_color'],
-            '#attributes' => array('class' => DRTS_BS_PREFIX . 'btn-block'),
-        )));
+
+        $buttons = [
+            [
+                '#btn_label' => $options['btn_label'],
+                '#btn_size' => $options['btn_size'],
+                '#btn_color' => $options['btn_color'],
+                '#attributes' => array('class' => DRTS_BS_PREFIX . 'btn-block'),
+            ],
+        ];
+        $form[Form\FormComponent::FORM_SUBMIT_BUTTON_NAME] = $application->Form_SubmitButtons($buttons, ['margin' => DRTS_BS_PREFIX . 'mt-0 ' . DRTS_BS_PREFIX . 'mt-sm-3']);
 
         return $form;
     }
@@ -154,13 +157,12 @@ class FilterFormHelper
                 $element['settings']['label'] = 'none';
             }
         }
-        
-        $rendered = $application->Display_Render(
-            $form->settings['#bundle'],
-            $display,
-            $form,
-            ['tag' => null, 'html_as_array' => true]
-        );
+
+        $options = [
+            'tag' => null,
+            'html_as_array' => true,
+        ];
+        $rendered = $application->Display_Render($form->settings['#bundle'], $display, $form, $options);
         if (!$rendered || !$rendered['html']) return '';
         
         $html = '<div' . $application->Attr($rendered['attr']) . '>';

@@ -58,8 +58,8 @@ class TextField extends AbstractField
 
         // Auto populate field?
         if (!isset($data['#default_value'])) {
-            if (isset($data['#auto_populate'])) {
-                switch ($data['#auto_populate']) {
+            if (isset($data['#autopopulate'])) {
+                switch ($data['#autopopulate']) {
                     case 'email':
                         $data['#default_value'] = $this->_application->getUser()->email;
                         break;

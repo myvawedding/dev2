@@ -8,7 +8,7 @@ class InstalledComponentsHelper
 {
     public function help(Application $application, $force = false)
     {
-        if ($force || (false === $ret = $application->getPlatform()->getCache('drts_components_installed'))) {
+        if ($force || (false === $ret = $application->getPlatform()->getCache('core_components_installed'))) {
             $ret = [];
             try {
                 $components = $application->fetchComponent('System')->getModel('Component')->fetch(0, 0, 'priority', 'DESC');
@@ -33,7 +33,7 @@ class InstalledComponentsHelper
                 // Probably application has not been installed yet
                 $application->logError($e);
             }
-            $application->getPlatform()->setCache($ret, 'drts_components_installed');
+            $application->getPlatform()->setCache($ret, 'core_components_installed');
         }
 
         return $ret;
