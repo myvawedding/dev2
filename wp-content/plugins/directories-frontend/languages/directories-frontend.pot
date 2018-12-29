@@ -77,59 +77,59 @@ msgstr ""
 msgid "Enable frontend submit"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:54
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:56
 msgid "reCAPTCHA"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:61
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:63
 msgid "reCAPTCHA API Settings"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:63
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:65
 msgid "reCAPTCHA API site key"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:69
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:71
 msgid "reCAPTCHA API secret key"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:76
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:78
 msgid "reCAPTCHA size"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:78
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:80
 msgid "Normal"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:79
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:81
 msgid "Compact"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:86
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:88
 msgid "reCAPTCHA type"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:88
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:90
 msgid "Image"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:89
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:91
 msgid "Audio"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:96
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:98
 msgid "reCAPTCHA theme"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:98
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:100
 msgid "Light"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:99
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:101
 msgid "Dark"
 msgstr ""
 
-#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:112
+#: lib/components/reCAPTCHA/reCAPTCHAComponent.php:114
 msgid "Add reCAPTCHA field"
 msgstr ""
 
@@ -145,7 +145,7 @@ msgstr ""
 msgid "Save Changes"
 msgstr ""
 
-#: lib/components/Dashboard/Controller/EditPost.php:68
+#: lib/components/Dashboard/Controller/EditPost.php:67
 msgid "Your item has been updated successfully."
 msgstr ""
 

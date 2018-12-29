@@ -311,7 +311,7 @@ class LoginOrRegister extends Form\Controller
             || !isset($this->_action)
         ) {
             if (empty($url)) {
-                return $this->Filter('frontendsubmit_after_login_register_url', $this->getPlatform()->getSiteUrl(), [$type]);
+                return $this->_getDefaultRedirectUrl($type);
             }
             return $url;
         }
@@ -331,7 +331,7 @@ class LoginOrRegister extends Form\Controller
                     }
                     return $this->Url('/' . $this->FrontendSubmit_AddEntitySlug($bundle_type), $params + $this->_params, '', '&');
             }
-            return $this->Filter('frontendsubmit_after_login_register_url', $this->getPlatform()->getSiteUrl(), [$type]);
+            return $this->_getDefaultRedirectUrl($type);
         }
 
         if (empty($this->_bundle->info['parent'])) {
@@ -352,5 +352,18 @@ class LoginOrRegister extends Form\Controller
             '',
             '&'
         );
+    }
+
+    protected function _getDefaultRedirectUrl($type)
+    {
+        if ($this->isComponentLoaded('Dashboard')
+            && ($dashboard_slug = $this->getComponent('Dashboard')->getSlug('dashboard'))
+        ) {
+            $url = (string)$this->Url('/' . $dashboard_slug);
+        } else {
+            $url = $this->getPlatform()->getSiteUrl();
+        }
+
+        return $this->Filter('frontendsubmit_after_login_register_url', $url, [$type]);
     }
 }

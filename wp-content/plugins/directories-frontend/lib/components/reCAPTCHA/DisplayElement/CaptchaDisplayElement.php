@@ -22,7 +22,8 @@ class CaptchaDisplayElement extends Display\Element\AbstractElement
     
     protected function _displayElementSupports(Entity\Model\Bundle $bundle, Display\Model\Display $display)
     {
-        return in_array($display->type, array('form'));
+        return in_array($display->type, array('form'))
+            && empty($bundle->info['internal']);
     }
     
     public function displayElementRender(Entity\Model\Bundle $bundle, array $element, $var)

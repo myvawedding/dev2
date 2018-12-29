@@ -7,7 +7,7 @@ use SabaiApps\Directories\Component\Entity;
 
 class reCAPTCHAComponent extends AbstractComponent implements Display\IElements
 {
-    const VERSION = '1.2.12', PACKAGE = 'directories-frontend';
+    const VERSION = '1.2.15', PACKAGE = 'directories-frontend';
 
     public static function description()
     {
@@ -31,7 +31,9 @@ class reCAPTCHAComponent extends AbstractComponent implements Display\IElements
 
     public function onFormBuildFrontendSubmitLoginOrRegister(array &$form)
     {
-        if (!$this->_application->getComponent('FrontendSubmit')->getConfig('login', 'recaptcha')) return;
+        if (!$this->_application->getComponent('FrontendSubmit')->getConfig('login', 'recaptcha')
+            || (defined('DRTS_RECAPTCHA_DISABLE') && DRTS_RECAPTCHA_DISABLE)
+        ) return;
 
         $options = array(
             'size' => $this->_config['size'],

@@ -63,10 +63,8 @@ class EditPost extends Form\Controller
             ),
         ];
         
-        $context->setSuccess($this->_getSuccessUrl($context, $form->storage), $attr);
-        if (!empty($form->storage['redirect'])) {
-            $context->addFlash(__('Your item has been updated successfully.', 'directories-frontend'));
-        }
+        $context->setSuccess($this->_getSuccessUrl($context, $form->storage), $attr)
+            ->addFlash(__('Your item has been updated successfully.', 'directories-frontend'));
         
         return $entity;
     }
