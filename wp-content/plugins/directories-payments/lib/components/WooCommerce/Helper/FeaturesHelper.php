@@ -14,10 +14,14 @@ class FeaturesHelper
     {
         if ($product->get_sabai_plan_type() !== 'addon') {
             $prev_status = [];
-            $new_status = $application->Entity_Status(
-                $entity->getType(),
-                $application->HasPermission('entity_publish_' . $entity->getBundleName(), $application->Entity_Author($entity)) ? 'publish' : 'pending'
-            );
+            $bundle = $application->Entity_Bundle($entity, null, '', true);
+            $new_status = 'publish';
+            if (!empty($bundle->info['public'])
+                && !$application->HasPermission('entity_publish_' . $bundle->name, $application->Entity_Author($entity))
+            ) {
+                $new_status = 'pending';
+            }
+            $new_status = $application->Entity_Status($entity->getType(), $new_status);
             if (!$entity->isPublished()) {
                 if ($new_status !== $entity->getStatus()) {
                     $prev_status[$entity->getId()] = $entity->getStatus();

@@ -10,7 +10,7 @@ use SabaiApps\Directories\Request;
 
 class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
 {
-    const VERSION = '1.2.12', PACKAGE = 'directories-payments';
+    const VERSION = '1.2.15', PACKAGE = 'directories-payments';
 
     public static function description()
     {
@@ -132,7 +132,6 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
             document.addEventListener("DOMContentLoaded", function(e) {
                 var $ = jQuery;
                 $('#woocommerce-product-data')
-                    .find('.product_data_tabs .general_options').addClass('<?php echo $show_class;?>').end()
                     .find('.options_group.pricing').addClass('<?php echo $show_class;?>').end()
                     .find('.options_group.reviews').addClass('<?php echo $hide_class;?>').end()
                     .find('.options_group.show_if_downloadable').addClass('<?php echo $hide_class;?>').end()
@@ -968,13 +967,13 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
         return $items;
     }
 
-    protected function _getMyAccountPageSlug()
+    protected function _getMyAccountPageUrl()
     {
-        if ((!$page_id = wc_get_page_id('myaccount'))
-            || (!$page = get_post($page_id))
-        ) return;
-
-        return $page->post_name;
+        if (($page_id = wc_get_page_id('myaccount'))
+            && ($permalink = get_permalink($page_id)) // need to use get_permalink to fetch the current language page
+        ) {
+            return $permalink;
+        }
     }
 
     public function onCoreAccessRouteFilter(&$result, $context, $route, $paths)
@@ -988,15 +987,20 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
             || $this->_application->getComponent('Payment')->getConfig('payment', 'component') !== $this->_name
             || !$this->_application->getComponent('Dashboard')->getConfig('woocommerce', 'account_show')
             || !$this->_application->getComponent('Dashboard')->getConfig('woocommerce', 'account_redirect')
+            || (!$url = $this->_getMyAccountPageUrl())
         ) return;
 
         $result = false;
-        $paths[0] = $this->_getMyAccountPageSlug();
-        if (isset($paths[1])) $paths[1] = 'drts-' . $paths[1];
+        unset($paths[0]);
+        if (isset($paths[1])) {
+            $paths[1] = 'drts-' . $paths[1];
+            $url = rtrim($url, '/');
+            $url .= '/' . implode('/', $paths);
+        }
         $params = $context->getRequest()->getParams();
         // Remove panel_name from params since it is already in the path
         unset($params['panel_name']);
-        $context->setRedirect($this->_application->Url('/' . implode('/', $paths), $params));
+        $context->setRedirect($url . '?' . implode('&', $params));
     }
 
     public function onEntityCreateBundlesCommitted(array $bundles, array $bundleInfo)

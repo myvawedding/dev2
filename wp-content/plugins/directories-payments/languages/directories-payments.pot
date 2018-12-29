@@ -143,39 +143,39 @@ msgstr ""
 msgid "Claim Rejected"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:206
+#: lib/components/WooCommerce/WooCommerceComponent.php:205
 msgid "Plan Features"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:808
+#: lib/components/WooCommerce/WooCommerceComponent.php:807
 msgid "Purchase type"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:810
+#: lib/components/WooCommerce/WooCommerceComponent.php:809
 msgid "Purchase item"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:832
+#: lib/components/WooCommerce/WooCommerceComponent.php:831
 msgid "WooCommerce \"My account\" Page Integration"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:839
+#: lib/components/WooCommerce/WooCommerceComponent.php:838
 msgid "Show dashboard panels"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:843
+#: lib/components/WooCommerce/WooCommerceComponent.php:842
 msgid "Check this option to show dashboard panels on the WooCommerce \"My account\" page."
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:846
+#: lib/components/WooCommerce/WooCommerceComponent.php:845
 msgid "Redirect dashboard access"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:850
+#: lib/components/WooCommerce/WooCommerceComponent.php:849
 msgid "Check this option to redirect dashboard access to the WooCommerce \"My account\" page."
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:1105
+#: lib/components/WooCommerce/WooCommerceComponent.php:1109
 msgid "(Subscription plan)"
 msgstr ""
 
