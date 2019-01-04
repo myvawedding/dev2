@@ -308,7 +308,7 @@ class FormHelper
         $rules = [];
         $field_prefix = null;
         if ($wrap) {
-            $field_prefix = array_unshift($wrap);
+            $field_prefix = array_shift($wrap);
             if (!empty($wrap)) {
                 $field_prefix .= '[' . implode('][', $wrap) . ']';
             }

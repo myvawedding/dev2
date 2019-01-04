@@ -70,7 +70,6 @@ class AdminContent
         add_action('save_post', array($this, 'savePostAction'), 10, 3);
         add_filter('quick_edit_show_taxonomy', array($this, 'quickEditShowTaxonomyFilter'), 10, 3);
         foreach (array_keys($this->_postTypes) as $post_type) {
-            add_filter('views_edit-' . $post_type, array($this, 'viewsEditFilter'));
             // Add extra columns
             add_filter('manage_' . $post_type . '_posts_columns' , array($this, 'managePostsColumnsFilter'));
             add_action('manage_' . $post_type . '_posts_custom_column' , array($this, 'managePostsCustomColumnAction'), 10, 2);
@@ -162,17 +161,6 @@ class AdminContent
         ) {
             return $GLOBALS['tag'];
         }
-    }
-
-    public function viewsEditFilter($views)
-    {
-         // Re-order status labels so that trash always comes last, in case other components added custom status
-        if (isset($views['trash'])) {
-            $trash = $views['trash'];
-            unset($views['trash']);
-            $views['trash'] = $trash;
-        }
-        return $views;
     }
 
     public function adminPrintStylesAction()
@@ -609,7 +597,7 @@ class AdminContent
             }
 
             // Let other components filter values
-            $values = $this->_application->Filter('wordpress_admin_save_post_values', $values, array($post, $this->_oldPostEntity));
+            $values = $this->_application->Filter('wordpress_admin_save_post_values', $values, [$post, $this->_oldPostEntity]);
         }
 
         if ($this->_oldPostEntity->getStatus() === 'auto-draft') {
@@ -619,7 +607,7 @@ class AdminContent
 
         // Update the post, which will fire save_post again so use $this->_saving to prevent loops
         $this->_saving = true;
-        $this->_application->Entity_Save($this->_oldPostEntity, array('id' => $post->ID) + $values, $extra_args);
+        $this->_application->Entity_Save($this->_oldPostEntity, ['id' => $post->ID] + $values, $extra_args);
         $this->_saving = false;
     }
 
@@ -793,10 +781,8 @@ class AdminContent
     {
         if (isset($content->term_id)) {
             $id = $content->term_id; // term
-            $taxonomy = $content->taxonomy;
         } elseif (isset($content->ID)) {
             $id = $content->ID; // post
-            $post_type = $content->post_type;
         } else {
             return;
         }

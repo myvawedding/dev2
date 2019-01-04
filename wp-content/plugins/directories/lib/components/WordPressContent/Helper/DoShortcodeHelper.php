@@ -16,8 +16,7 @@ class DoShortcodeHelper
                     if (isset($GLOBALS['drts_entity'])) {
                         $entity = $GLOBALS['drts_entity'];
                     } elseif ($post = get_post()) {
-                        $post_types = $application->getComponent('WordPressContent')->getPostTypes();
-                        if (!isset($post_types[$post->post_type])) return;
+                        if (!$application->getComponent('WordPressContent')->hasPostType($post->post_type)) return;
 
                         $entity = new PostEntity($post);
                         $application->Entity_LoadFields($entity);

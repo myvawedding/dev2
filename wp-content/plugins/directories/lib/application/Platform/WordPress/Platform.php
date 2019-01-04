@@ -15,7 +15,7 @@ use Monolog\Handler\ErrorLogHandler;
 
 class Platform extends AbstractPlatform
 {
-    const VERSION = '1.2.15';
+    const VERSION = '1.2.17';
     private $_mainContent, $_singlePageId, $_singlePageContent, $_userToBeDeleted,
         $_jqueryUiCoreLoaded, $_jqueryUiCssLoaded,
         $_moLoaded, $_i18n, $_flash = [], $_bsHandle, $_flushRewriteRules, $_pluginsUrl;
@@ -948,14 +948,17 @@ class Platform extends AbstractPlatform
             if (!$route = get_query_var('drts_route')) {
                 // Using Plain permalink type, so get route from current object
 
+                $object = get_queried_object();
                 if (is_single()) {
-                    $post_types = $this->getApplication()->getComponent('WordPressContent')->getPostTypes();
-                    if (!isset($post_types[get_queried_object()->post_type])) return false; // Not a Sabai2 post type
+                    if (!$this->getApplication()->getComponent('WordPressContent')->hasPostType($object->post_type)) {
+                        return false;  // Not our post type
+                    }
 
                     $entity_type = 'post';
                 } else {
-                    $taxonomies = $this->getApplication()->getComponent('WordPressContent')->getTaxonomies();
-                    if (!isset($taxonomies[get_queried_object()->taxonomy])) return false; // Not a Sabai2 taxonomy
+                    if (!$this->getApplication()->getComponent('WordPressContent')->hasTaxonomy($object->taxonomy)) {
+                        return false;  // Not our taxonomy
+                    }
 
                     $entity_type = 'term';
                 }
@@ -1377,7 +1380,7 @@ class Platform extends AbstractPlatform
         foreach ($endpoints as $path => $endpoint) {
             add_menu_page(
                 $endpoint['label'],
-                $endpoint['label_menu'],
+                isset($endpoint['label_menu']) ? $endpoint['label_menu'] : $endpoint['label'],
                 $capability = isset($endpoint['capability']) ? $endpoint['capability'] : $default_cap,
                 'drts' . $path,
                 array($this, 'runAdmin'),
@@ -1389,7 +1392,7 @@ class Platform extends AbstractPlatform
                     add_submenu_page(
                         'drts' . $path,
                         $_endpoint['label'],
-                        $_endpoint['label_menu'],
+                        isset($_endpoint['label_menu']) ? $_endpoint['label_menu'] : $_endpoint['label'],
                         isset($_endpoint['capability']) ? $_endpoint['capability'] : $capability,
                         'drts' . $_path,
                         array($this, 'runAdmin')

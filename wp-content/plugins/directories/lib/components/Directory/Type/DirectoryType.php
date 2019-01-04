@@ -18,7 +18,7 @@ class DirectoryType extends AbstractType
                 return array(
                     'component' => 'Directory',
                     'entity_type' => 'post',
-                    'name' => 'dir_ltg',
+                    'suffix' => 'dir_ltg',
                     'slug' => 'listing',
                     'is_primary' => true,
                     'label' => __('Listings', 'directories'),

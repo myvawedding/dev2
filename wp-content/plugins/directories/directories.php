@@ -7,16 +7,16 @@
  * Author URI: https://codecanyon.net/user/onokazu/portfolio?ref=onokazu
  * Text Domain: directories
  * Domain Path: /languages
- * Version: 1.2.15
+ * Version: 1.2.17
  */
 
 if (!class_exists('\SabaiApps\Directories\Platform\WordPress\Loader', false)) {
     require __DIR__ . '/lib/application/Platform/WordPress/Loader.php';
 }
-\SabaiApps\Directories\Platform\WordPress\Loader::register(__DIR__, '1.2.15');
+\SabaiApps\Directories\Platform\WordPress\Loader::register(__DIR__, '1.2.17');
 
 add_filter('drts_core_component_paths', function ($paths) {
-    $paths['directories'] = [__DIR__ . '/lib/components', '1.2.15'];
+    $paths['directories'] = [__DIR__ . '/lib/components', '1.2.17'];
     return $paths;
 });
 

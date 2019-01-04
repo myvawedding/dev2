@@ -183,11 +183,17 @@ class TermsFieldType extends Field\Type\AbstractType implements
             
             // Current post
             if ($term_ids[$k] === '_current_') {
-                if (isset($GLOBALS['drts_entity'])
-                    && ($terms = $GLOBALS['drts_entity']->getFieldValue($fieldName))
-                ) {
-                    foreach ($terms as $term) {
-                        $include[] = $term->getId();
+                if (isset($GLOBALS['drts_entity'])) {
+                    if ($GLOBALS['drts_entity']->isTaxonomyTerm()) {
+                        if ($GLOBALS['drts_entity']->getBundleType() === $fieldName) {
+                            $include[] = $GLOBALS['drts_entity']->getId();
+                        }
+                    } else {
+                        if ($terms = $GLOBALS['drts_entity']->getFieldValue($fieldName)) {
+                            foreach ($terms as $term) {
+                                $include[] = $term->getId();
+                            }
+                        }
                     }
                 }
                 continue;

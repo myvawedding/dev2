@@ -230,6 +230,8 @@ function _inherits(subClass, superClass) {
     }, {
       key: 'draw',
       value: function draw(options) {
+        var _this2 = this;
+
         options = options || {};
         this.currentMarker = null;
         if (this.currentCircle) {
@@ -258,11 +260,11 @@ function _inherits(subClass, superClass) {
                 bounds.extend(new google.maps.LatLng(options.center[0] * 2 - pos.lat(), options.center[1] * 2 - pos.lng()));
               }
             }
-            google.maps.event.addListener(this.markers[i], this.options.infobox_event, function(map, marker) {
+            google.maps.event.addListener(this.markers[i], this.options.infobox_event, function(marker) {
               return function(e) {
-                map.clickMarker(marker);
+                _this2.clickMarker(marker);
               };
-            }(this, this.markers[i]));
+            }(this.markers[i]));
 
             if (Object.keys(this.markers).length <= 100) {
               // Bounce on display
@@ -321,19 +323,26 @@ function _inherits(subClass, superClass) {
     }, {
       key: 'clickMarker',
       value: function clickMarker(marker, triggered) {
-        if (this.currentMarker && this.currentMarker.get('id') === marker.get('id')) {
-          this.showMarkerContent(marker, triggered);
-          if (!triggered) {
-            // make sure manually clicked
-            this.container.trigger('marker_click.sabai', {
-              map: this,
-              marker: marker
-            });
+        if (this.currentMarker) {
+          if (this.currentMarker.get('id') === marker.get('id')) {
+            this.showMarkerContent(marker, triggered);
+            this.currentMarker = marker;
+            if (!triggered) {
+              // make sure manually clicked
+              this.container.trigger('marker_click.sabai', {
+                map: this,
+                marker: marker
+              });
+            }
+            return;
           }
-          return;
+
+          this.currentMarker.setZIndex(0);
         }
 
-        if (triggered && this.markerClusterer) {
+        marker.setZIndex(1);
+
+        if (this.markerClusterer) {
           // Add back previously removed marker
           if (this.currentMarker) {
             this.markerClusterer.addMarker(this.currentMarker);
@@ -346,13 +355,6 @@ function _inherits(subClass, superClass) {
         if (this.map.getBounds() && !this.map.getBounds().contains(marker.getPosition())) {
           this.map.panTo(marker.getPosition());
         }
-
-        if (this.currentMarker) {
-          //current.setAnimation(null);
-          this.currentMarker.setZIndex(0);
-        }
-        marker.setZIndex(1);
-
         this.showMarkerContent(marker, triggered);
 
         this.currentMarker = marker;
@@ -477,7 +479,7 @@ function _inherits(subClass, superClass) {
   };
   DRTS.Map.googlemaps.map.marker.prototype = new google.maps.OverlayView();
   DRTS.Map.googlemaps.map.marker.prototype.onAdd = function() {
-    var _this2 = this;
+    var _this3 = this;
 
     var size = this.options.size || 38,
       marker = void 0;
@@ -506,7 +508,7 @@ function _inherits(subClass, superClass) {
     this.getPanes().overlayImage.appendChild(this.div);
     var ev = this.options.event;
     google.maps.event.addDomListener(this.div, ev, function(event) {
-      google.maps.event.trigger(_this2, ev);
+      google.maps.event.trigger(_this3, ev);
     });
     this.setPosition(this.position);
     this.set('marker_height', DRTS.Map.markerHeight(size));

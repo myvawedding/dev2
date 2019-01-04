@@ -2,8 +2,8 @@
 <h1 class="wp-heading-inline"><?php echo $this->H($CONTENT_TITLE);?></h1>
 <?php endif;?>
 <?php if ($CONTENT_MENU = $CONTEXT->getMenus()):?>
-<?php   foreach ($CONTENT_MENU as $_CONTENT_MENU): $options = isset($_CONTENT_MENU['data']['link_options']) ? $_CONTENT_MENU['data']['link_options'] : [];?>
-<?php     echo $this->LinkTo($_CONTENT_MENU['title'], $_CONTENT_MENU['url'], $options, (isset($_CONTENT_MENU['data']['link_attr']) ? $_CONTENT_MENU['data']['link_attr'] : []) + array('class' => 'page-title-action'));?>
+<?php   foreach ($CONTENT_MENU as $_CONTENT_MENU): $options = isset($_CONTENT_MENU['data']['link_options']) ? $_CONTENT_MENU['data']['link_options'] : []; $attr = isset($_CONTENT_MENU['data']['link_attr']) ? $_CONTENT_MENU['data']['link_attr'] : [];  unset($options['icon'], $attr['class']);?>
+<?php     echo $this->LinkTo($_CONTENT_MENU['title'], $_CONTENT_MENU['url'], $options, $attr + ['class' => 'page-title-action']);?>
 <?php   endforeach;?>
 <?php endif;?>
 <?php if (($CONTENT_BREADCRUMBS = $CONTEXT->getInfo()) && count($CONTENT_BREADCRUMBS) > 1): $_CONTENT_BREADCRUMB_LAST = array_pop($CONTENT_BREADCRUMBS);?>

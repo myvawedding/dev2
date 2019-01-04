@@ -31,7 +31,7 @@ abstract class AbstractMode implements IMode
     
     public function viewModeSupports(Entity\Model\Bundle $bundle)
     {
-        return empty($bundle->info['internal']) && !empty($bundle->info['public']);
+        return !empty($bundle->info['public']);
     }
     
     public function viewModeSettingsForm(Entity\Model\Bundle $bundle, array $settings, array $parents = []){}
@@ -43,7 +43,7 @@ abstract class AbstractMode implements IMode
 
     public function viewModeOnView(Entity\Model\Bundle $bundle, Entity\Type\Query $query, Context $context) {}
     
-    public function imageSettingsForm(Entity\Model\Bundle $bundle, $prefix, array $settings, $required = false, array $parents = [], $weight = null)
+    public function imageSettingsForm(Entity\Model\Bundle $bundle, $prefix = '', array $settings = [], $required = false, array $parents = [], $weight = null)
     {
         if (!$fields = $this->_application->Entity_Field_options($bundle, ['interface' => 'Field\Type\IImage', 'empty_value' => ''])) return [];
 
@@ -67,7 +67,7 @@ abstract class AbstractMode implements IMode
                     'medium' => __('Medium size', 'directories'),
                     'large' => __('Large size', 'directories'),
                 ],
-                '#default_value' => $settings[$prefix . 'image_size'],
+                '#default_value' => !empty($settings[$prefix . 'image_size']),
                 '#weight' => isset($weight) ? $weight + 1 : null,
                 '#horizontal' => true,
                 '#states' => [

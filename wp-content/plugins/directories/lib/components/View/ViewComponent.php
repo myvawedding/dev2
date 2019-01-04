@@ -18,7 +18,7 @@ class ViewComponent extends AbstractComponent implements
     IModes,
     Field\IFilters
 {
-    const VERSION = '1.2.15', PACKAGE = 'directories';
+    const VERSION = '1.2.17', PACKAGE = 'directories';
 
     protected $_system = true;
 

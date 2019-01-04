@@ -11,7 +11,7 @@ class SocialComponent extends AbstractComponent implements
     Field\IFilters,
     Field\IRenderers
 {
-    const VERSION = '1.2.15', PACKAGE = 'directories';
+    const VERSION = '1.2.17', PACKAGE = 'directories';
     
     public static function description()
     {

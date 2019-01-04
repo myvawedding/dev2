@@ -7,7 +7,7 @@ use SabaiApps\Directories\Component\System;
 
 class FieldComponent extends AbstractComponent implements ITypes, IWidgets, IRenderers, IFilters, Form\IFields
 {
-    const VERSION = '1.2.15', PACKAGE = 'directories';
+    const VERSION = '1.2.17', PACKAGE = 'directories';
 
     protected $_system = true;
 

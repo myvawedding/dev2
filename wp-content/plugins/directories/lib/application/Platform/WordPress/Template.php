@@ -25,10 +25,9 @@ class Template
         if (defined('DRTS_WORDPRESS_FORCE_TAX_PAGE_TITLE')
             && DRTS_WORDPRESS_FORCE_TAX_PAGE_TITLE
         ) {
-            $post_types = $platform->getApplication()
+            $this->_postTypes = $platform->getApplication()
                 ->getComponent('WordPressContent')
-                ->getPostTypes();
-            $this->_postTypes = array_keys($post_types);
+                ->getPostTypeNames();
         }
     }
     

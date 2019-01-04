@@ -162,7 +162,12 @@ class ContentTypesHelper
                 }
             }
 
-            $ret['post_types'][$bundle->name] = $application->Filter('wordpress_post_type', $ret['post_types'][$bundle->name], array($bundle));
+            // Let other components modify
+            $ret['post_types'][$bundle->name] = $application->Filter(
+                'wordpress_post_type',
+                $ret['post_types'][$bundle->name],
+                array($bundle)
+            );
         }
 
         if (!empty($taxonomy_to_post_types)) {
@@ -222,6 +227,7 @@ class ContentTypesHelper
                     );
                 }
 
+                // Let other components modify
                 $ret['taxonomies'][$taxonomy_bundle->type][$taxonomy_bundle_name] = $application->Filter(
                     'wordpress_taxonomy',
                     $ret['taxonomies'][$taxonomy_bundle->type][$taxonomy_bundle_name],

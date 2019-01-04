@@ -82,7 +82,7 @@ class FeatureSettingsFormHelper
                     'no_pagination' => [
                         '#type' => 'checkbox',
                         '#title' => __('Disable pagination', 'directories'),
-                        '#default_value' => !empty($settings['no_pagination']),
+                        '#default_value' => !empty($settings['no_pagination']) || (!isset($settings['no_pagination']) && !empty($bundle->info['internal'])),
                         '#horizontal' => true,
                         '#weight' => 1,
                     ],
@@ -148,14 +148,14 @@ class FeatureSettingsFormHelper
                     '#element_validate' => array(array($this, '_validateFilter')),
                     'show' => [
                         '#type' => 'checkbox',
-                        '#title' => __('Enable filters', 'directories'),
+                        '#title' => __('Show filter form', 'directories'),
                         '#default_value' => !empty($settings['show']),
                         '#horizontal' => true,
                         '#weight' => 5,
                     ],
                     'shown' => [
                         '#type' => 'checkbox',
-                        '#title' => __('Show filters by default', 'directories'),
+                        '#title' => __('Disable collapsing filter form', 'directories'),
                         '#default_value' => !empty($settings['shown']),
                         '#horizontal' => true,
                         '#weight' => 11,
@@ -183,7 +183,7 @@ class FeatureSettingsFormHelper
                 if (empty($bundle->info['parent'])) {
                     $ret['show_modal'] = [
                         '#type' => 'checkbox',
-                        '#title' => __('Show filters in modal window', 'directories'),
+                        '#title' => __('Show filter form in modal window', 'directories'),
                         '#default_value' => !empty($settings['show_modal']),
                         '#horizontal' => true,
                         '#weight' => 10,
@@ -274,8 +274,30 @@ class FeatureSettingsFormHelper
                         '#horizontal' => true,
                         '#weight' => 5,
                     ],
+                    'not_found' => [
+                        '#weight' => 20,
+                        'custom' => [
+                            '#type' => 'checkbox',
+                            '#title' => __('Customize "Not found" text', 'directories'),
+                            '#default_value' => !empty($settings['not_found']['custom']),
+                            '#horizontal' => true,
+                        ],
+                        'html' => [
+                            '#type' => 'textarea',
+                            '#rows' => 3,
+                            '#default_value' => isset($settings['not_found']['html']) ? $settings['not_found']['html'] : null,
+
+                            '#horizontal' => true,
+                            '#states' => [
+                                'visible' => [
+                                    sprintf('input[name="%s"]', $application->Form_FieldName(array_merge($parents, ['not_found', 'custom']))) => ['type' => 'checked', 'value' => true],
+                                ],
+                            ],
+                        ],
+                    ],
                 ];
                 if (empty($bundle->info['is_taxonomy'])
+                    && empty($bundle->info['internal'])
                     && !empty($bundle->info['public'])
                     && empty($bundle->info['parent'])
                     && $application->isComponentLoaded('FrontendSubmit')
@@ -292,15 +314,16 @@ class FeatureSettingsFormHelper
                             '#title' => sprintf(__('Show "%s" button with label', 'directories'), $bundle->getLabel('add')),
                             '#default_value' => !empty($settings['add']['show_label']),
                             '#horizontal' => true,
-                            '#states' => array(
-                                'visible' => array(
-                                    sprintf('input[name="%s"]', $application->Form_FieldName(array_merge($parents, array('add', 'show')))) => array('type' => 'checked', 'value' => true)
-                                ),
-                            ),
+                            '#states' => [
+                                'visible' => [
+                                    sprintf('input[name="%s"]', $application->Form_FieldName(array_merge($parents, ['add', 'show']))) => ['type' => 'checked', 'value' => true],
+                                ],
+                            ],
                         ],
                         '#weight' => 10,
                     ];
                 }
+
                 return $form;
         }
     }

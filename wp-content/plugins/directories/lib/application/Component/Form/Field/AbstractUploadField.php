@@ -320,7 +320,7 @@ abstract class AbstractUploadField extends FieldsetField
     formData: {"drts_form_build_id": "%4$s", "drts_form_file_field_id": "%5$s"},
     maxNumFiles: %6$d,
     sortable: %7$s,
-    maxNumFileExceededError: "%7$s",
+    maxNumFileExceededError: "%8$s",
 });',
                 $this->_application->H($upload_id),
                 $this->_application->MainUrl($upload['route'], array(Request::PARAM_CONTENT_TYPE => 'json')),

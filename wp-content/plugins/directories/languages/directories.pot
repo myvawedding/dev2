@@ -1,4 +1,4 @@
-# Copyright (C) 2018 unnamed project
+# Copyright (C) 2019 unnamed project
 # This file is distributed under the same license as the unnamed project package.
 msgid ""
 msgstr ""
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: assets/templates/view_entities_none.html.php:1
+#: assets/templates/view_entities_none.html.php:4
 msgid "Sorry, there were no items that matched your criteria."
 msgstr ""
 
@@ -152,7 +152,7 @@ msgstr ""
 msgid "Thumbnail (small)"
 msgstr ""
 
-#: lib/application/Helper/UserIdentityHtmlHelper.php:28, lib/components/WordPressContent/AdminContent.php:1226, lib/components/Field/Renderer/AbstractRenderer.php:162, lib/components/View/Mode/AbstractMode.php:65
+#: lib/application/Helper/UserIdentityHtmlHelper.php:28, lib/components/WordPressContent/AdminContent.php:1212, lib/components/Field/Renderer/AbstractRenderer.php:162, lib/components/View/Mode/AbstractMode.php:65
 msgid "Thumbnail"
 msgstr ""
 
@@ -164,7 +164,7 @@ msgstr ""
 msgid "Thumbnail with link"
 msgstr ""
 
-#: lib/application/Helper/UserIdentityHtmlHelper.php:44, lib/components/WordPressContent/WordPressContentComponent.php:984, lib/components/WordPressContent/Helper/PermissionSettingsFormHelper.php:24
+#: lib/application/Helper/UserIdentityHtmlHelper.php:44, lib/components/WordPressContent/WordPressContentComponent.php:986, lib/components/WordPressContent/Helper/PermissionSettingsFormHelper.php:24
 msgid "Guest"
 msgstr ""
 
@@ -176,11 +176,11 @@ msgstr ""
 msgid "Folder %s is not writeable by the server."
 msgstr ""
 
-#: lib/components/CSV/CSVComponent.php:53, lib/components/WordPressContent/AdminContent.php:250
+#: lib/components/CSV/CSVComponent.php:53, lib/components/WordPressContent/AdminContent.php:238
 msgid "Import"
 msgstr ""
 
-#: lib/components/CSV/CSVComponent.php:59, lib/components/WordPressContent/AdminContent.php:251
+#: lib/components/CSV/CSVComponent.php:59, lib/components/WordPressContent/AdminContent.php:239
 msgid "Export"
 msgstr ""
 
@@ -251,55 +251,55 @@ msgstr ""
 msgid "Check this option to completely remove all directory data when the Directories plugin is deleted."
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:64, lib/application/Platform/WordPress/Template.php:128
+#: lib/components/Entity/EntityComponent.php:64, lib/application/Platform/WordPress/Template.php:127
 msgid "(no title)"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:1177, lib/components/Entity/Helper/BundleHelper.php:102
+#: lib/components/Entity/EntityComponent.php:1183, lib/components/Entity/Helper/BundleHelper.php:102
 msgid "Edit"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:1180, lib/components/Entity/Helper/BundleHelper.php:109
+#: lib/components/Entity/EntityComponent.php:1186, lib/components/Entity/Helper/BundleHelper.php:109
 msgid "Manage Fields"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:1182, lib/components/Entity/Helper/BundleHelper.php:118
+#: lib/components/Entity/EntityComponent.php:1188, lib/components/Entity/Helper/BundleHelper.php:118
 msgid "Manage Displays"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2011
+#: lib/components/Entity/EntityComponent.php:2017
 msgid "Unfeatured item: %s"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2043
+#: lib/components/Entity/EntityComponent.php:2049
 msgid "Clear and reload field cache"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2044
+#: lib/components/Entity/EntityComponent.php:2050
 msgid "Clear and reload taxonomy term cache"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2051
+#: lib/components/Entity/EntityComponent.php:2057
 msgid "Recount posts"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2052
+#: lib/components/Entity/EntityComponent.php:2058
 msgid "This tool will recount the number of posts associated with each content item."
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2059
+#: lib/components/Entity/EntityComponent.php:2065
 msgid "Recount term posts"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2067
+#: lib/components/Entity/EntityComponent.php:2073
 msgid "Recount child posts"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2071
+#: lib/components/Entity/EntityComponent.php:2077
 msgid "Sync taxonomy terms"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2072
+#: lib/components/Entity/EntityComponent.php:2078
 msgid "This tool will sync taxonomy terms assigned to each content item in WP with taxonomy term data in Directories Pro."
 msgstr ""
 
@@ -475,65 +475,65 @@ msgstr ""
 msgid "%s: Please enter your license key."
 msgstr ""
 
-#: lib/components/WordPressContent/AdminContent.php:256
+#: lib/components/WordPressContent/AdminContent.php:244
 msgctxt "generate content"
 msgid "Generate"
 msgstr ""
 
-#: lib/components/WordPressContent/AdminContent.php:346
+#: lib/components/WordPressContent/AdminContent.php:334
 msgid "%s Fields"
 msgstr ""
 
-#: lib/components/WordPressContent/AdminContent.php:391, lib/application/Component/Form/Form.php:528
+#: lib/components/WordPressContent/AdminContent.php:379, lib/application/Component/Form/Form.php:528
 msgid "Please correct the error(s) below."
 msgstr ""
 
-#: lib/components/WordPressContent/AdminContent.php:952
+#: lib/components/WordPressContent/AdminContent.php:938
 msgid "Select %s"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:128
+#: lib/components/WordPressContent/WordPressContentComponent.php:118
 msgctxt "admin tab"
 msgid "Permissions"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:318
+#: lib/components/WordPressContent/WordPressContentComponent.php:308
 msgid "Pages"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:324
+#: lib/components/WordPressContent/WordPressContentComponent.php:314
 msgid "Page Settings"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:987
+#: lib/components/WordPressContent/WordPressContentComponent.php:989
 msgid "Visible to selected roles only"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1098
+#: lib/components/WordPressContent/WordPressContentComponent.php:1100
 msgid "Content"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1125
+#: lib/components/WordPressContent/WordPressContentComponent.php:1127
 msgid "Permissions"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1141
+#: lib/components/WordPressContent/WordPressContentComponent.php:1143
 msgid "Single Item Page Settings"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1152
+#: lib/components/WordPressContent/WordPressContentComponent.php:1154
 msgid "Enable featured image (post thumbnail)"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1158
+#: lib/components/WordPressContent/WordPressContentComponent.php:1160
 msgid "Automatically generate featured image"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1166
+#: lib/components/WordPressContent/WordPressContentComponent.php:1168
 msgid "Check this option to automatically generate a featured image using the first image when submitted from the frontend."
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1234, lib/components/Search/Field/KeywordField.php:82
+#: lib/components/WordPressContent/WordPressContentComponent.php:1236, lib/components/Search/Field/KeywordField.php:82
 msgid "Search taxonomy term names"
 msgstr ""
 
@@ -686,7 +686,7 @@ msgstr ""
 msgid "Password is required."
 msgstr ""
 
-#: lib/application/Platform/WordPress/Platform.php:1799
+#: lib/application/Platform/WordPress/Platform.php:1802
 msgid "Please enter a license key for %s in Settings -> Licenses."
 msgstr ""
 
@@ -2073,7 +2073,7 @@ msgstr ""
 msgid "Enter taxonomy term IDs or slugs (may be mixed) separated with commas. Enter \"_current_\" for taxonomy terms of the curernt post if any."
 msgstr ""
 
-#: lib/components/Entity/FieldType/TermsFieldType.php:231
+#: lib/components/Entity/FieldType/TermsFieldType.php:237
 msgid "Enter taxonomy term IDs and/or slugs separated with commas."
 msgstr ""
 
@@ -2105,7 +2105,7 @@ msgstr ""
 msgid "Select list"
 msgstr ""
 
-#: lib/components/Entity/FieldWidget/TermParentFieldWidget.php:45, lib/components/WordPressContent/Helper/ContentTypesHelper.php:87, lib/components/WordPressContent/Helper/ContentTypesHelper.php:191
+#: lib/components/Entity/FieldWidget/TermParentFieldWidget.php:45, lib/components/WordPressContent/Helper/ContentTypesHelper.php:87, lib/components/WordPressContent/Helper/ContentTypesHelper.php:196
 msgid "Parent %s"
 msgstr ""
 
@@ -3332,11 +3332,11 @@ msgid "Allowed number of items per page"
 msgstr ""
 
 #: lib/components/View/Helper/FeatureSettingsFormHelper.php:151
-msgid "Enable filters"
+msgid "Show filter form"
 msgstr ""
 
 #: lib/components/View/Helper/FeatureSettingsFormHelper.php:158
-msgid "Show filters by default"
+msgid "Disable collapsing filter form"
 msgstr ""
 
 #: lib/components/View/Helper/FeatureSettingsFormHelper.php:170
@@ -3344,7 +3344,7 @@ msgid "Auto submit filter form"
 msgstr ""
 
 #: lib/components/View/Helper/FeatureSettingsFormHelper.php:186
-msgid "Show filters in modal window"
+msgid "Show filter form in modal window"
 msgstr ""
 
 #: lib/components/View/Helper/FeatureSettingsFormHelper.php:205
@@ -3371,11 +3371,15 @@ msgstr ""
 msgid "Show number of items found"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:286
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:281
+msgid "Customize \"Not found\" text"
+msgstr ""
+
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:308
 msgid "Show \"%s\" button"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:292
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:314
 msgid "Show \"%s\" button with label"
 msgstr ""
 
@@ -3849,7 +3853,7 @@ msgstr ""
 msgid "Image upload field"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:79, lib/components/WordPressContent/Helper/ContentTypesHelper.php:193
+#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:79, lib/components/WordPressContent/Helper/ContentTypesHelper.php:198
 msgid "Edit %s"
 msgstr ""
 
@@ -3857,15 +3861,15 @@ msgstr ""
 msgid "New %s"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:81, lib/components/WordPressContent/Helper/ContentTypesHelper.php:194
+#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:81, lib/components/WordPressContent/Helper/ContentTypesHelper.php:199
 msgid "View %s"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:82, lib/components/WordPressContent/Helper/ContentTypesHelper.php:196
+#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:82, lib/components/WordPressContent/Helper/ContentTypesHelper.php:201
 msgid "Search %s"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:83, lib/components/WordPressContent/Helper/ContentTypesHelper.php:197
+#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:83, lib/components/WordPressContent/Helper/ContentTypesHelper.php:202
 msgid "No %s found"
 msgstr ""
 
@@ -3903,31 +3907,31 @@ msgctxt "buddypress"
 msgid "%1$s commented on the <a href=\"%2$s\">%4$s</a>, on the site %3$s"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:190
+#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:195
 msgid "New %s Name"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:192
+#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:197
 msgid "Parent %s:"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:195
+#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:200
 msgid "Update %s"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:218
+#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:223
 msgid "Popular %s"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:219
+#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:224
 msgid "Separate %s with commas"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:220
+#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:225
 msgid "Add or remove %s"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:221
+#: lib/components/WordPressContent/Helper/ContentTypesHelper.php:226
 msgid "Choose from the most used %s"
 msgstr ""
 

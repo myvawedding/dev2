@@ -10,7 +10,7 @@ class CategoryEntityBundleType extends AbstractBundleType
         return array(
             'type' => $this->_name,
             'entity_type' => 'term',
-            'name' => 'dir_cat',
+            'suffix' => 'dir_cat',
             'slug' => 'categories',
             'component' => 'Directory',
             'is_taxonomy' => true,

@@ -19,7 +19,7 @@ class EntityComponent extends AbstractComponent implements
     System\IMainRouter,
     System\IAdminRouter
 {
-    const VERSION = '1.2.15', PACKAGE = 'directories';
+    const VERSION = '1.2.17', PACKAGE = 'directories';
     const FIELD_REALM_ALL = 0, FIELD_REALM_ENTITY_TYPE_DEFAULT = 1, FIELD_REALM_BUNDLE_DEFAULT = 2;
 
     protected $_system = true;
@@ -556,9 +556,15 @@ class EntityComponent extends AbstractComponent implements
 
     private function _createEntityBundle($componentName, $bundleType, array $info, $group, array &$newFields)
     {
-        if (empty($info['entity_type']) || empty($info['name'])) return;
+        if (empty($info['entity_type'])) return;
 
-        $bundle_name = empty($group) ? $info['name'] : $group . '_' . $info['name'];
+        if (isset($info['name'])) {
+            $bundle_name = $info['name'];
+        } elseif (isset($info['suffix'])) {
+            $bundle_name = $group . '_' . $info['suffix'];
+        } else {
+            return;
+        }
 
         // Get the model
         $model = $this->getModel();

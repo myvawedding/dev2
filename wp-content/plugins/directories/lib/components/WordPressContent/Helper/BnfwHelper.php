@@ -10,8 +10,7 @@ class BnfwHelper
         if (strpos($slug, 'drts-') === 0
             && ($parts = explode('-', $slug))
             && isset($parts[2])
-            && ($post_types = $application->getComponent('WordPressContent')->getPostTypes())
-            && isset($post_types[$parts[2]])
+            && $application->getComponent('WordPressContent')->hasPostType($parts[2])
             && ($post_type = get_post_type_object($parts[2]))
             && ($notification = $application->WordPressContent_Notifications_impl($parts[1], true))
         ) {
@@ -23,7 +22,10 @@ class BnfwHelper
     public function shortcodes(Application $application, $message, $notification, $postId, $engine)
     {
         if (strpos($notification, 'drts-') === 0
-            || (!empty($postId) && ($post_type = get_post_type($postId)) && $this->_isValidPostType($application, $post_type))
+            || (!empty($postId)
+                && ($post_type = get_post_type($postId))
+                && $application->getComponent('WordPressContent')->hasPostType($post_type)
+            )
         ) {
             $message = $application->WordPressContent_Notifications_shortcode($message, $postId, $engine);
         }
@@ -32,7 +34,7 @@ class BnfwHelper
 
     public function afterNotificationOptions(Application $application, $postType, $label, $setting)
     {
-        if ($this->_isValidPostType($application, $postType)
+        if ($application->getComponent('WordPressContent')->hasPostType($postType)
             && ($bundle = $application->Entity_Bundle($postType))
             && ($options = $application->WordPressContent_Notifications_options($bundle))
         ) {
@@ -42,11 +44,5 @@ class BnfwHelper
                     . '</option>';
             }
         }
-    }
-
-    protected function _isValidPostType(Application $application, $postType)
-    {
-        $post_types = $application->getComponent('WordPressContent')->getPostTypes();
-        return isset($post_types[$postType]);
     }
 }

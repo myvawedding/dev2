@@ -10,7 +10,7 @@ class TagEntityBundleType extends AbstractBundleType
         return array(
             'type' => $this->_name,
             'entity_type' => 'term',
-            'name' => 'dir_tag',
+            'suffix' => 'dir_tag',
             'component' => 'Directory',
             'slug' => 'tags',
             'is_taxonomy' => true,

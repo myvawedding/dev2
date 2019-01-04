@@ -20,7 +20,7 @@ class WordPressContentComponent extends AbstractComponent implements
     Display\IElements,
     Display\IStatistics
 {
-    const VERSION = '1.2.15', PACKAGE = 'directories';
+    const VERSION = '1.2.17', PACKAGE = 'directories';
 
     protected $_system = true;
 
@@ -82,16 +82,6 @@ class WordPressContentComponent extends AbstractComponent implements
             default:
                 return '';
         }
-    }
-
-    public function getPostTypes()
-    {
-        return $this->_postTypes;
-    }
-
-    public function getTaxonomies()
-    {
-        return $this->_taxonomies;
     }
 
     public function systemAdminRoutes()
@@ -266,7 +256,7 @@ class WordPressContentComponent extends AbstractComponent implements
             if (is_plugin_active('wp-all-import/plugin.php')
                 || is_plugin_active('wp-all-import-pro/wp-all-import-pro.php')
             ) {
-                new CSV\WPAllImport\Importer($this->_application, array_keys($this->_postTypes));
+                new CSV\WPAllImport\Importer($this->_application, $this->getPostTypeNames());
             }
         } else {
             add_shortcode('drts-entity', [$this->_application, 'WordPressContent_DoShortcode']);
@@ -356,6 +346,16 @@ class WordPressContentComponent extends AbstractComponent implements
         }
     }
 
+    public function getPostTypeNames()
+    {
+        return array_keys($this->_postTypes);
+    }
+
+    public function getTaxonomyNames()
+    {
+        return array_keys($this->_taxonomies);
+    }
+
     public function hasPostType($postType)
     {
         return isset($this->_postTypes[$postType]) ? $this->_postTypes[$postType] : false;
@@ -371,7 +371,7 @@ class WordPressContentComponent extends AbstractComponent implements
         if ($open
             && !isset($_POST['comment']) // make sure not submitting a comment
             && ($post_type = get_post_type($postId))
-            && isset($this->_postTypes[$post_type])
+            && $this->hasPostType($post_type)
             && !Display\Helper\RenderHelper::isRendering($post_type)
         ) $open = false;
 
@@ -401,14 +401,14 @@ class WordPressContentComponent extends AbstractComponent implements
 
     public function getPostMetadataFilter($value, $postId, $metaKey, $single)
     {
-        return ($post_type = get_post_type($postId)) && isset($this->_postTypes[$post_type]) ?
+        return ($post_type = get_post_type($postId)) && $this->hasPostType($post_type) ?
             $this->_getMetadata('post', $postId, $metaKey, $single, $value) :
             $value;
     }
 
     public function getTermMetadataFilter($value, $termId, $metaKey, $single)
     {
-        return ($taxonomy = self::getTermTaxonomy($termId)) && isset($this->_taxonomies[$taxonomy]) ?
+        return ($taxonomy = self::getTermTaxonomy($termId)) && $this->hasTaxonomy($taxonomy) ?
             $this->_getMetadata('term', $termId, $metaKey, $single, $value) :
             $value;
     }
@@ -422,7 +422,7 @@ class WordPressContentComponent extends AbstractComponent implements
         } else {
             if ($entityType === 'post') {
                 if ((!$post_type = get_post_type($entityId))
-                    || !isset($this->_postTypes[$post_type])
+                    || !$this->hasPostType($post_type)
                 ) return $value;
             }
         }
@@ -459,7 +459,7 @@ class WordPressContentComponent extends AbstractComponent implements
     public function postTypeLinkFilter($url, $post, $leavename, $sample)
     {
         $post_type = get_post_type($post);
-        if (isset($this->_postTypes[$post_type])) {
+        if ($this->hasPostType($post_type)) {
             $permalinks = $this->_application->getPlatform()->getPermalinkConfig();
             if ($pos = strpos($url, '?')) {
                 $query_args = substr($url, $pos);
@@ -535,7 +535,7 @@ class WordPressContentComponent extends AbstractComponent implements
 
     public function termLinkFilter($url, $term, $taxonomy)
     {
-        if (isset($this->_taxonomies[$taxonomy])
+        if ($this->hasTaxonomy($taxonomy)
             && ($permalinks = $this->_application->getPlatform()->getPermalinkConfig())
             && isset($permalinks[$taxonomy])
         ) {
@@ -564,7 +564,7 @@ class WordPressContentComponent extends AbstractComponent implements
 
     public function onViewEntityFallbackTaxonomyFilter(&$taxonomy, $bundle)
     {
-        if (isset($this->_postTypes[$bundle->name])) {
+        if ($this->hasPostType($bundle->name)) {
             $permalinks = $this->_application->getPlatform()->getPermalinkConfig();
             if (!empty($permalinks[$bundle->name]['taxonomies'])) {
                 $taxonomy = array_shift($permalinks[$bundle->name]['taxonomies']);
@@ -655,7 +655,7 @@ class WordPressContentComponent extends AbstractComponent implements
     protected function _isPostTypeAdmin($bundle)
     {
         return is_admin()
-            && isset($this->_postTypes[$bundle->name])
+            && $this->hasPostType($bundle->name)
             && isset($GLOBALS['pagenow'])
             && $GLOBALS['pagenow'] === 'post.php';
     }
@@ -729,11 +729,13 @@ class WordPressContentComponent extends AbstractComponent implements
     {
         static $processing = [];
 
-        if (!$post = get_post($postId)) return;
+        if ((!$post = get_post($postId))
+            || (!$post_type = $this->hasPostType($post->post_type))
+        ) return;
 
         $processing[$postId] = true;
 
-        if (!empty($this->_postTypes[$post->post_type]['children'])) {
+        if (!empty($post_type['children'])) {
             if ($trash) {
                 $func = 'wp_trash_post';
                 $child_post_status = 'any';
@@ -741,7 +743,7 @@ class WordPressContentComponent extends AbstractComponent implements
                 $func = 'wp_untrash_post';
                 $child_post_status = 'trash';
             }
-            foreach ($this->_postTypes[$post->post_type]['children'] as $child_post_type) {
+            foreach ($post_type['children'] as $child_post_type) {
                 foreach (get_children(['post_parent' => $post->ID, 'post_type' => $child_post_type, 'post_status' => $child_post_status]) as $child_post) {
                     $func($child_post->ID);
                 }
@@ -750,7 +752,7 @@ class WordPressContentComponent extends AbstractComponent implements
             if ($entity = $this->_maybeInvokeEntityUpdatedEvents($post)) {
                 $this->_application->getComponent('Entity')->updateParentPostStats($entity, true, true, true);
             }
-        } elseif (!empty($this->_postTypes[$post->post_type]['parent'])) {
+        } elseif (!empty($post_type['parent'])) {
             // Invoke entity updated events with new status
             if ($entity = $this->_maybeInvokeEntityUpdatedEvents($post)) {
                 // Update parent post status
@@ -1004,7 +1006,7 @@ class WordPressContentComponent extends AbstractComponent implements
 
     public function ampSkipPostFilter($skip, $postId, $post)
     {
-        if (isset($this->_postTypes[$post->post_type])) {
+        if ($this->hasPostType($post->post_type)) {
             if ((!$entity = $this->_application->Entity_Entity('post', $postId))
                 || ($this->_application->isComponentLoaded('Payment') && !$this->_application->Payment_Plan_hasFeature($entity, 'payment_amp')) // is feature enabled?
             ) {
@@ -1249,7 +1251,7 @@ class WordPressContentComponent extends AbstractComponent implements
     {
         if (!$removeData) return;
 
-        $this->_deleteContent(array_keys($this->_postTypes), array_keys($this->_taxonomies));
+        $this->_deleteContent($this->getPostTypeNames(), $this->getTaxonomyNames());
     }
 
     protected function _deleteContent(array $postTypes, array $taxonomies)
@@ -1284,11 +1286,11 @@ class WordPressContentComponent extends AbstractComponent implements
         foreach (array_keys($bundles) as $i) {
             $bundle_name = $bundles[$i]->name;
             if (!empty($bundles[$i]->info['is_taxonomy'])) {
-                if (isset($this->_taxonomies[$bundle_name])) {
+                if ($this->hasTaxonomy($bundle_name)) {
                     $taxonomies[] = $bundle_name;
                 }
             } else {
-                if (isset($this->_postTypes[$bundle_name])) {
+                if ($this->hasPostType($bundle_name)) {
                     $post_types[] = $bundle_name;
                 }
             }
