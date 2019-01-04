@@ -10,7 +10,7 @@ use SabaiApps\Directories\Request;
 
 class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
 {
-    const VERSION = '1.2.15', PACKAGE = 'directories-payments';
+    const VERSION = '1.2.17', PACKAGE = 'directories-payments';
 
     public static function description()
     {
@@ -547,7 +547,8 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
         }
         if (!empty($order_items)) {
             foreach ($order_items as $order_id => $_order_items) {
-                $order = wc_get_order($order_id);
+                if (!$order = wc_get_order($order_id)) continue;
+
                 foreach ($_order_items as $item_id => $item) {
                     $ret[] = new PaymentOrder($order, $item_id, $item[0], $item[1], $entityId);
                 }
@@ -603,7 +604,8 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
         }
         if (!empty($order_items)) {
             foreach ($order_items as $order_id => $_order_items) {
-                $order = wc_get_order($order_id);
+                if (!$order = wc_get_order($order_id)) continue;
+
                 foreach ($_order_items as $item_id => $item) {
                     $ret[] = new PaymentOrder($order, $item_id, $item[0], $item[1], $item[2]);
                 }

@@ -22,7 +22,7 @@ class PaymentComponent extends AbstractComponent implements
     CSV\IExporters,
     CSV\IImporters
 {
-    const VERSION = '1.2.15', PACKAGE = 'directories-payments';
+    const VERSION = '1.2.17', PACKAGE = 'directories-payments';
     const FEATURE_STATUS_PENDING = 0, FEATURE_STATUS_APPLIED = 1, FEATURE_STATUS_UNAPPLIED = 2;
     
     protected $_paymentComponentName;

@@ -1,4 +1,4 @@
-# Copyright (C) 2018 unnamed project
+# Copyright (C) 2019 unnamed project
 # This file is distributed under the same license as the unnamed project package.
 msgid ""
 msgstr ""
@@ -147,35 +147,35 @@ msgstr ""
 msgid "Plan Features"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:807
+#: lib/components/WooCommerce/WooCommerceComponent.php:809
 msgid "Purchase type"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:809
+#: lib/components/WooCommerce/WooCommerceComponent.php:811
 msgid "Purchase item"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:831
+#: lib/components/WooCommerce/WooCommerceComponent.php:833
 msgid "WooCommerce \"My account\" Page Integration"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:838
+#: lib/components/WooCommerce/WooCommerceComponent.php:840
 msgid "Show dashboard panels"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:842
+#: lib/components/WooCommerce/WooCommerceComponent.php:844
 msgid "Check this option to show dashboard panels on the WooCommerce \"My account\" page."
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:845
+#: lib/components/WooCommerce/WooCommerceComponent.php:847
 msgid "Redirect dashboard access"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:849
+#: lib/components/WooCommerce/WooCommerceComponent.php:851
 msgid "Check this option to redirect dashboard access to the WooCommerce \"My account\" page."
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:1109
+#: lib/components/WooCommerce/WooCommerceComponent.php:1111
 msgid "(Subscription plan)"
 msgstr ""
 

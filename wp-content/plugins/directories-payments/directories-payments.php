@@ -7,11 +7,11 @@
  * Author URI: https://codecanyon.net/user/onokazu/portfolio?ref=onokazu
  * Text Domain: directories-payments
  * Domain Path: /languages
- * Version: 1.2.15
+ * Version: 1.2.17
  */
 
 add_filter('drts_core_component_paths', function ($paths) {
-    $paths['directories-payments'] = [__DIR__ . '/lib/components', '1.2.15'];
+    $paths['directories-payments'] = [__DIR__ . '/lib/components', '1.2.17'];
     return $paths;
 });
 
