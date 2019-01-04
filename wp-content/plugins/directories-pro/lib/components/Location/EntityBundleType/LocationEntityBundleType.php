@@ -10,7 +10,7 @@ class LocationEntityBundleType extends AbstractBundleType
         return array(
             'type' => $this->_name,
             'entity_type' => 'term',
-            'name' => 'loc_loc',
+            'suffix' => 'loc_loc',
             'component' => 'Location',
             'slug' => 'locations',
             'is_taxonomy' => true,

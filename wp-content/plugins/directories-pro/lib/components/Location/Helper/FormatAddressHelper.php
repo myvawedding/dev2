@@ -6,17 +6,25 @@ use SabaiApps\Directories\Component\Entity;
 
 class FormatAddressHelper
 {
+    protected static $_tags = [
+        'street' => 'street',
+        'street2' => 'street2',
+        'city' => 'city',
+        'province' => 'province',
+        'zip' => 'zip',
+        'country' => 'country',
+        'address' => 'full_address',
+        'lat' => 'latitude',
+        'lng' => 'longitude',
+        'timezone' => 'timezone',
+    ];
+
     public function help(Application $application, array $value, $format, Entity\Type\IEntity $entity, array $locationHierarchy = null)
     {
-        $replace = array(
-            '{street}' => $application->H($value['street']),
-            '{street2}' => $application->H($value['street2']),
-            '{city}' => $application->H($value['city']),
-            '{province}' => $application->H($value['province']),
-            '{zip}' => $application->H($value['zip']),
-            '{country}' => $application->H($value['country']),
-            '{full_address}' => $application->H($value['address']),
-        );
+        $replace = [];
+        foreach (self::$_tags as $column => $tag) {
+            $replace['{' . $tag . '}'] = isset($value[$column]) && strlen($value[$column]) ? $application->H($value[$column]) : '';
+        }
         if (!empty($locationHierarchy)) {
             if (!empty($value['term_id'])) {
                 foreach ($entity->getFieldValue('location_location') as $term) {
@@ -46,7 +54,7 @@ class FormatAddressHelper
 
     public function tags(Application $application, Entity\Model\Bundle $bundle)
     {
-        $tags = array('{country}', '{province}', '{city}', '{street}', '{street2}', '{zip}', '{full_address}');
+        $tags = array_values(self::$_tags);
         if (($location_bundle = $application->Entity_Bundle('location_location', $bundle->component, $bundle->group))
             && ($location_hierarchy = $application->Location_Hierarchy($location_bundle))
         ) {

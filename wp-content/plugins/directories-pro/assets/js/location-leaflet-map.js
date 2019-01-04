@@ -262,22 +262,31 @@ function _inherits(subClass, superClass) {
       value: function clickMarker(marker, triggered) {
         var _this3 = this;
 
-        if (this.currentMarker && this.currentMarker._id === marker._id) {
-          this.showMarkerContent(marker, triggered);
-          if (!triggered) {
-            // make sure manually clicked
-            this.container.trigger('marker_click.sabai', {
-              map: this,
-              marker: marker
-            });
+        if (this.currentMarker) {
+
+          if (this.currentMarker === marker._id) {
+            this.showMarkerContent(marker, triggered);
+            this.currentMarker = marker._id;
+            if (!triggered) {
+              // make sure manually clicked
+              this.container.trigger('marker_click.sabai', {
+                map: this,
+                marker: marker
+              });
+            }
+            return;
           }
-          return;
+
+          this.markers[this.currentMarker].setZIndexOffset(0);
         }
+
+        marker.setZIndexOffset(2000);
 
         if (triggered && this.markerCluster) {
           // Add back previously removed marker
           if (this.currentMarker) {
-            this.markerCluster.addLayer(this.currentMarker);
+            this.map.removeLayer(this.markers[this.currentMarker]);
+            this.markerCluster.addLayer(this.markers[this.currentMarker]);
           }
           // Remove marker from cluster for better view of the marker
           this.markerCluster.removeLayer(marker);
@@ -296,12 +305,7 @@ function _inherits(subClass, superClass) {
           this.showMarkerContent(marker, triggered);
         }
 
-        if (this.currentMarker) {
-          this.currentMarker.setZIndexOffset(200);
-        }
-        marker.setZIndexOffset(1000);
-
-        this.currentMarker = marker;
+        this.currentMarker = marker._id;
 
         if (!triggered) {
           // make sure manually clicked

@@ -1,4 +1,4 @@
-# Copyright (C) 2018 unnamed project
+# Copyright (C) 2019 unnamed project
 # This file is distributed under the same license as the unnamed project package.
 msgid ""
 msgstr ""
@@ -937,11 +937,11 @@ msgstr ""
 msgid "Image size"
 msgstr ""
 
-#: lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:46, lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:255, lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:134
+#: lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:46, lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:255, lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:139
 msgid "Show thumbnails"
 msgstr ""
 
-#: lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:56, lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:261, lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:143
+#: lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:56, lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:261, lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:148
 msgid "Number of thumbnail columns"
 msgstr ""
 
@@ -949,19 +949,19 @@ msgstr ""
 msgid "Slider effect"
 msgstr ""
 
-#: lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:76, lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:272, lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:58
+#: lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:76, lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:272, lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:63
 msgid "Show slide indicators"
 msgstr ""
 
-#: lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:81, lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:277, lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:76
+#: lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:81, lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:277, lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:81
 msgid "Autoplay slides"
 msgstr ""
 
-#: lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:86, lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:163
+#: lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:86, lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:168
 msgid "Zoom on click image"
 msgstr ""
 
-#: lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:91, lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:282, lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:64
+#: lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:91, lib/components/PhotoSlider/FieldRenderer/PhotoSliderFieldRenderer.php:282, lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:69
 msgid "Show prev/next arrows"
 msgstr ""
 
@@ -1002,35 +1002,35 @@ msgctxt "view mode label"
 msgid "Photo slider"
 msgstr ""
 
-#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:49
+#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:54
 msgid "Number of columns"
 msgstr ""
 
-#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:70
+#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:75
 msgid "Show photo captions"
 msgstr ""
 
-#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:82
+#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:87
 msgid "Autoplay speed in milliseconds"
 msgstr ""
 
-#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:97
+#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:102
 msgid "Enable centered view"
 msgstr ""
 
-#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:103
+#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:108
 msgid "Fade in/out slides"
 msgstr ""
 
-#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:112
+#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:117
 msgid "Slider height"
 msgstr ""
 
-#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:123
+#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:128
 msgid "Photo padding"
 msgstr ""
 
-#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:157
+#: lib/components/PhotoSlider/ViewMode/PhotoSliderViewMode.php:162
 msgid "Link to post"
 msgstr ""
 

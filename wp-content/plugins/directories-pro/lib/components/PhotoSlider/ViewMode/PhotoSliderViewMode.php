@@ -37,6 +37,11 @@ class PhotoSliderViewMode extends View\Mode\AbstractMode
             ),
         );
     }
+
+    public function viewModeSupports(Entity\Model\Bundle $bundle)
+    {
+        return parent::viewModeSupports($bundle) && $this->imageSettingsForm($bundle);
+    }
     
     public function viewModeSettingsForm(Entity\Model\Bundle $bundle, array $settings, array $parents = [])
     {

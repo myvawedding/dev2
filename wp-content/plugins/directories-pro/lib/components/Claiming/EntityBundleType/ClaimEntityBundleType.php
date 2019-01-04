@@ -12,7 +12,7 @@ class ClaimEntityBundleType extends AbstractBundleType
             'entity_type' => 'post',
             'slug' => 'claims',
             'parent' => 'claiming_enable',
-            'name' => 'clm_clm',
+            'suffix' => 'clm_clm',
             'component' => 'Claiming',
             'label' => __('Claims', 'directories-pro'),
             'label_singular' => __('Claim', 'directories-pro'),
