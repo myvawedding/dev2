@@ -20,7 +20,7 @@ class FrontendSubmitComponent extends AbstractComponent implements
     CSV\IExporters,
     CSV\IImporters
 {
-    const VERSION = '1.2.15', PACKAGE = 'directories-frontend';
+    const VERSION = '1.2.17', PACKAGE = 'directories-frontend';
     
     public static function description()
     {
@@ -89,9 +89,17 @@ class FrontendSubmitComponent extends AbstractComponent implements
                 }
                 return true;
             case 'login':
-                if ($accessType === Application::ROUTE_ACCESS_LINK) return true;
-                
-                return $this->_application->getUser()->isAnonymous();
+                if ($accessType === Application::ROUTE_ACCESS_LINK
+                    || $this->_application->getUser()->isAnonymous()
+                ) return true;
+
+                // Redirect to frontend dashboard if enabled
+                if ($this->_application->isComponentLoaded('Dashboard')
+                    && ($dashboard_slug = $this->_application->getComponent('Dashboard')->getSlug('dashboard'))
+                ) {
+                    $context->setRedirect('/' . $dashboard_slug);
+                }
+                return false;
         }
     }
 
