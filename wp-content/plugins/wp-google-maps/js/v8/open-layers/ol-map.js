@@ -149,8 +149,13 @@ jQuery(function($) {
 	
 	WPGMZA.OLMap.prototype.getTileLayer = function()
 	{
+		var options = {};
+		
+		if(WPGMZA.settings.tile_server_url)
+			options.url = WPGMZA.settings.tile_server_url;
+		
 		return new ol.layer.Tile({
-			source: new ol.source.OSM()
+			source: new ol.source.OSM(options)
 		});
 	}
 	
@@ -221,6 +226,21 @@ jQuery(function($) {
 	 */
 	WPGMZA.OLMap.prototype.fitBounds = function(southWest, northEast)
 	{
+		if(southWest instanceof WPGMZA.LatLngBounds)
+		{
+			var bounds = southWest;
+			
+			southWest = {
+				lat: bounds.south,
+				lng: bounds.west,
+			};
+			
+			northEast = {
+				lat: southWest.north,
+				lng: southWest.east
+			};
+		}
+		
 		this.olMap.getView().fitExtent(
 			[southWest.lng, southWest.lat, northEast.lng, northEast.lat],
 			this.olMap.getSize()

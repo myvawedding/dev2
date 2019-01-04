@@ -322,13 +322,25 @@ jQuery(function($) {
 		},
 		
 		/**
-		 * This function will get the users position, it first attempts to get high accuracy position (mobile with GPS sensors etc.), if that fails (desktops will time out) then it tries again without high accuracy enabled.
-		 * @method getCurrentPosition
+		 * @function getCurrentPosition
+		 * @summary This function will get the users position, it first attempts to get
+		 * high accuracy position (mobile with GPS sensors etc.), if that fails
+		 * (desktops will time out) then it tries again without high accuracy
+		 * enabled
 		 * @static
 		 * @return {object} The users position as a LatLng literal
 		 */
-		getCurrentPosition: function(callback)
+		getCurrentPosition: function(callback, watch)
 		{
+			var trigger = "userlocationfound";
+			var nativeFunction = "getCurrentPosition";
+			
+			if(watch)
+			{
+				trigger = "userlocationupdated";
+				nativeFunction = "watchPosition";
+			}
+			
 			if(!navigator.geolocation)
 			{
 				console.warn("No geolocation available on this device");
@@ -339,7 +351,7 @@ jQuery(function($) {
 				enableHighAccuracy: true
 			};
 			
-			navigator.geolocation.getCurrentPosition(function(position) {
+			navigator.geolocation[nativeFunction](function(position) {
 				if(callback)
 					callback(position);
 				
@@ -349,7 +361,7 @@ jQuery(function($) {
 				
 				options.enableHighAccuracy = false;
 				
-				navigator.geolocation.getCurrentPosition(function(position) {
+				navigator.geolocation[nativeFunction](function(position) {
 					if(callback)
 						callback(position);
 					
@@ -362,6 +374,11 @@ jQuery(function($) {
 				
 			},
 			options);
+		},
+		
+		watchPosition: function(callback)
+		{
+			return WPGMZA.getCurrentPosition(callback, true);
 		},
 		
 		/**
@@ -1800,14 +1817,15 @@ jQuery(function($) {
 	 */
 	WPGMZA.LatLngBounds.prototype.extend = function(latLng)
 	{
-		if(this.isInInitialState())
-		{
-			this.north = this.south = this.west = this.east = new WPGMZA.LatLng(latLng);
-			return;
-		}
-		
 		if(!(latLng instanceof WPGMZA.LatLng))
 			latLng = new WPGMZA.LatLng(latLng);
+		
+		if(this.isInInitialState())
+		{
+			this.north = this.south = latLng.lat;
+			this.west = this.east = latLng.lng;
+			return;
+		}
 		
 		if(latLng.lat < this.north)
 			this.north = latLng.lat;
@@ -5293,8 +5311,23 @@ jQuery(function($) {
 			southWest = {lat: southWest.lat, lng: southWest.lng};
 		if(northEast instanceof WPGMZA.LatLng)
 			northEast = {lat: northEast.lat, lng: northEast.lng};
+		else if(southWest instanceof WPGMZA.LatLngBounds)
+		{
+			var bounds = southWest;
+			
+			southWest = {
+				lat: bounds.south,
+				lng: bounds.west
+			};
+			
+			northEast = {
+				lat: bounds.north,
+				lng: bounds.east
+			};
+		}
 		
-		this.googleMap.fitBounds(southWest, northEast);
+		var nativeBounds = new google.maps.LatLngBounds(southWest, northEast);
+		this.googleMap.fitBounds(nativeBounds);
 	}
 	
 	/**
@@ -6654,8 +6687,13 @@ jQuery(function($) {
 	
 	WPGMZA.OLMap.prototype.getTileLayer = function()
 	{
+		var options = {};
+		
+		if(WPGMZA.settings.tile_server_url)
+			options.url = WPGMZA.settings.tile_server_url;
+		
 		return new ol.layer.Tile({
-			source: new ol.source.OSM()
+			source: new ol.source.OSM(options)
 		});
 	}
 	
@@ -6726,6 +6764,21 @@ jQuery(function($) {
 	 */
 	WPGMZA.OLMap.prototype.fitBounds = function(southWest, northEast)
 	{
+		if(southWest instanceof WPGMZA.LatLngBounds)
+		{
+			var bounds = southWest;
+			
+			southWest = {
+				lat: bounds.south,
+				lng: bounds.west,
+			};
+			
+			northEast = {
+				lat: southWest.north,
+				lng: southWest.east
+			};
+		}
+		
 		this.olMap.getView().fitExtent(
 			[southWest.lng, southWest.lat, northEast.lng, northEast.lat],
 			this.olMap.getSize()
@@ -6959,7 +7012,7 @@ jQuery(function($) {
 			parseFloat(this.lat)
 		]);
 		
-		this.element = $("<div class='ol-marker'><img src='" + WPGMZA.settings.default_marker_icon + "'/></div>")[0];
+		this.element = $("<div class='ol-marker'><img src='" + WPGMZA.settings.default_marker_icon + "' alt=''/></div>")[0];
 		this.element.wpgmzaMarker = this;
 		
 		$(this.element).on("mouseover", function(event) {
