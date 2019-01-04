@@ -11,7 +11,7 @@ class ReviewEntityBundleType extends AbstractBundleType
             'type' => $this->_name,
             'entity_type' => 'post',
             'slug' => 'reviews',
-            'name' => 'rev_rev',
+            'suffix' => 'rev_rev',
             'component' => 'Review',
             'parent' => 'review_enable',
             'label' => __('Reviews', 'directories-reviews'),
