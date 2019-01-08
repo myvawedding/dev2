@@ -16,7 +16,7 @@ class ReviewComponent extends AbstractComponent implements
     CSV\IExporters,
     CSV\IImporters
 {
-    const VERSION = '1.2.17', PACKAGE = 'directories-reviews';
+    const VERSION = '1.2.19', PACKAGE = 'directories-reviews';
     
     public static function interfaces()
     {
