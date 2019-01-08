@@ -110,7 +110,10 @@ class PostsPanel extends AbstractPanel
                     'perpages' => array(20, 30, 50),
                 ),
                 'other' => array(
-                    'add' => ['show' => empty($bundle->info['parent']), 'show_label' => false],
+                    'add' => [
+                        'show' => empty($bundle->info['parent']),
+                        'show_label' => (bool)$this->_application->getComponent('Dashboard')->getConfig('add_show_label'),
+                    ],
                     'num' => true,
                 ),
                 'sort' => array(

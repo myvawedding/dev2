@@ -20,7 +20,7 @@ class FrontendSubmitComponent extends AbstractComponent implements
     CSV\IExporters,
     CSV\IImporters
 {
-    const VERSION = '1.2.17', PACKAGE = 'directories-frontend';
+    const VERSION = '1.2.19', PACKAGE = 'directories-frontend';
     
     public static function description()
     {
