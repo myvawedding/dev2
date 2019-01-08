@@ -26,7 +26,7 @@ class LocationComponent extends AbstractComponent implements
     IGeocodingApis,
     ITimezoneApis
 {
-    const VERSION = '1.2.17', PACKAGE = 'directories-pro';
+    const VERSION = '1.2.19', PACKAGE = 'directories-pro';
 
     public static function interfaces()
     {

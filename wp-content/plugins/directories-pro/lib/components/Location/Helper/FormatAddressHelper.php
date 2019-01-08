@@ -54,14 +54,17 @@ class FormatAddressHelper
 
     public function tags(Application $application, Entity\Model\Bundle $bundle)
     {
-        $tags = array_values(self::$_tags);
+        $tags = [];
+        foreach (array_values(self::$_tags) as $tag) {
+            $tags[$tag] = '{' . $tag . '}';
+        }
         if (($location_bundle = $application->Entity_Bundle('location_location', $bundle->component, $bundle->group))
             && ($location_hierarchy = $application->Location_Hierarchy($location_bundle))
         ) {
             foreach (array_keys($location_hierarchy) as $key) {
-                $tags[] = '{' . $key . '}';
+                $tags[$key] = '{' . $key . '}';
             }
         }
-        return $tags;
+        return array_values($tags);
     }
 }

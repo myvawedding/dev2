@@ -7,7 +7,7 @@ use SabaiApps\Directories\Component\Entity;
 
 class ContactComponent extends AbstractComponent implements Display\IElements
 {
-    const VERSION = '1.2.17', PACKAGE = 'directories-pro';
+    const VERSION = '1.2.19', PACKAGE = 'directories-pro';
     
     public static function interfaces()
     {
