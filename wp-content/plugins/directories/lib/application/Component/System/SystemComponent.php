@@ -10,7 +10,7 @@ use Monolog\Handler\StreamHandler;
 
 class SystemComponent extends AbstractComponent implements IAdminRouter
 {
-    const VERSION = '1.2.17', PACKAGE = 'directories'; 
+    const VERSION = '1.2.19', PACKAGE = 'directories'; 
     
     protected $_system = true;
 

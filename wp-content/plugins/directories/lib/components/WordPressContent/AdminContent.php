@@ -674,7 +674,7 @@ class AdminContent
         if (isset($this->_termFormHtml)) echo $this->_termFormHtml;
     }
 
-    protected function _getTermForm($term = null, array $values = null, $wrap = false)
+    protected function _getTermForm($term = null, array $values = null, $wrap = null)
     {
         $entity = null;
         if (is_object($term)) {
@@ -683,7 +683,13 @@ class AdminContent
         }
         $form = $this->_application->Entity_Form(
             isset($entity) ? $entity : $term,
-            array('values' => $values, 'is_admin' => true, 'wrap' => $wrap, 'pre_render_display' => true));
+            array(
+                'values' => $values,
+                'is_admin' => true,
+                'wrap' => isset($wrap) ? [$wrap] : [],
+                'pre_render_display' => true
+            )
+        );
 
         // Unwrap form settings if wrapped
         if ($wrap) {

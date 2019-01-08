@@ -114,7 +114,7 @@ class FilterDisplayElement extends Display\Element\AbstractElement
             ),
             'filter' => array(
                 '#type' => 'select',
-                '#title' => __('Field filter', 'directories'),
+                '#title' => __('Form field type', 'directories'),
                 '#options' => $filters,
                 '#weight' => -1,
                 '#default_value' => isset($filter) ? $filter->type : null,
@@ -326,7 +326,7 @@ class FilterDisplayElement extends Display\Element\AbstractElement
                 && isset($filters[$filter->type])
             ) {
                 $ret['filter'] = [
-                    'label' => __('Field filter', 'directories'),
+                    'label' => __('Form field type', 'directories'),
                     'value' => $filters[$filter->type],
                 ];
             }

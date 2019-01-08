@@ -152,7 +152,7 @@ msgstr ""
 msgid "Thumbnail (small)"
 msgstr ""
 
-#: lib/application/Helper/UserIdentityHtmlHelper.php:28, lib/components/WordPressContent/AdminContent.php:1212, lib/components/Field/Renderer/AbstractRenderer.php:162, lib/components/View/Mode/AbstractMode.php:65
+#: lib/application/Helper/UserIdentityHtmlHelper.php:28, lib/components/WordPressContent/AdminContent.php:1218, lib/components/Field/Renderer/AbstractRenderer.php:162, lib/components/View/Mode/AbstractMode.php:65
 msgid "Thumbnail"
 msgstr ""
 
@@ -488,7 +488,7 @@ msgstr ""
 msgid "Please correct the error(s) below."
 msgstr ""
 
-#: lib/components/WordPressContent/AdminContent.php:938
+#: lib/components/WordPressContent/AdminContent.php:944
 msgid "Select %s"
 msgstr ""
 
@@ -1860,7 +1860,7 @@ msgstr ""
 msgid "The following settings are applied automatically to all instances of the %s field."
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:341, lib/components/Entity/DisplayElement/FormDisplayElement.php:660, lib/components/Field/Filter/ColorFilter.php:30, lib/components/Field/Filter/OptionFilter.php:32, lib/components/View/FieldFilter/GlossaryFieldFilter.php:28
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:341, lib/components/Entity/DisplayElement/FormDisplayElement.php:660, lib/components/Field/Filter/ColorFilter.php:30, lib/components/Field/Filter/OptionFilter.php:32, lib/components/View/DisplayElement/FilterDisplayElement.php:117, lib/components/View/DisplayElement/FilterDisplayElement.php:329, lib/components/View/FieldFilter/GlossaryFieldFilter.php:28
 msgid "Form field type"
 msgstr ""
 
@@ -3264,10 +3264,6 @@ msgstr ""
 
 #: lib/components/View/DisplayElement/ChildEntitiesDisplayElement.php:22
 msgid "Displays %s of the current content"
-msgstr ""
-
-#: lib/components/View/DisplayElement/FilterDisplayElement.php:117, lib/components/View/DisplayElement/FilterDisplayElement.php:329
-msgid "Field filter"
 msgstr ""
 
 #: lib/components/View/DisplayElement/FilterDisplayElement.php:157, lib/components/View/DisplayElement/FilterDisplayElement.php:318

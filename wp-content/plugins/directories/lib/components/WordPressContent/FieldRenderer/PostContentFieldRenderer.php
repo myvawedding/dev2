@@ -30,7 +30,7 @@ class PostContentFieldRenderer extends Field\Renderer\TextRenderer
         $value = str_replace(']]>', ']]&gt;', apply_filters('the_content', get_the_content()));
         wp_reset_postdata();
 
-        return parent::_getContent($value, $settings, $entity);
+        return $value;
     }
 
     protected function _getTrimmedContent($value, $length, $marker, $link, array $settings, Entity\Type\IEntity $entity)

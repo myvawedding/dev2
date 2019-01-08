@@ -8,7 +8,14 @@ class TaxonomyTermsHelper
 {
     public function help(Application $application, $bundleName, $num = null, $parent = null, $lang = null, $force = false)
     {
-        $num = isset($num) ? intval($num) : 1000;
+        if (!isset($num)) {
+            if (defined('DRTS_ENTITY_TAXONOMY_TERMS_CACHE_NUM')) {
+                $num = DRTS_ENTITY_TAXONOMY_TERMS_CACHE_NUM;
+            } else {
+                $num = 1000;
+            }
+        }
+        $num = intval($num);
         $cache_id = $this->_getCacheId($application, $bundleName, $num, $parent, $lang);
         if ($force
             || (!$list = $application->getPlatform()->getOption($cache_id))

@@ -20,7 +20,7 @@ class WordPressContentComponent extends AbstractComponent implements
     Display\IElements,
     Display\IStatistics
 {
-    const VERSION = '1.2.17', PACKAGE = 'directories';
+    const VERSION = '1.2.19', PACKAGE = 'directories';
 
     protected $_system = true;
 

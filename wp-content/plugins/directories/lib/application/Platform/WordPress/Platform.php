@@ -15,7 +15,7 @@ use Monolog\Handler\ErrorLogHandler;
 
 class Platform extends AbstractPlatform
 {
-    const VERSION = '1.2.17';
+    const VERSION = '1.2.19';
     private $_mainContent, $_singlePageId, $_singlePageContent, $_userToBeDeleted,
         $_jqueryUiCoreLoaded, $_jqueryUiCssLoaded,
         $_moLoaded, $_i18n, $_flash = [], $_bsHandle, $_flushRewriteRules, $_pluginsUrl;

@@ -11,7 +11,7 @@ class WordPressComponent extends AbstractComponent implements
     Form\IFields,
     System\IMainRouter
 {
-    const VERSION = '1.2.17', PACKAGE = 'directories';
+    const VERSION = '1.2.19', PACKAGE = 'directories';
 
     protected $_system = true;
 

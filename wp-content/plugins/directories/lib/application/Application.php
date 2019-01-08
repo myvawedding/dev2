@@ -14,7 +14,7 @@ class Application extends AbstractHttpApplication
         $_components = [], $_componentsLoaded = [], $_componentsLoadedTimestamp;
 
     // System version constants
-    const VERSION = '1.2.17', PACKAGE = 'directories';
+    const VERSION = '1.2.19', PACKAGE = 'directories';
 
     const COMPONENT_NAME_REGEX = '/^[a-zA-Z0-9]{2,}$/';
     

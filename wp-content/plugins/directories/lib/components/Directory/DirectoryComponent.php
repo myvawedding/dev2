@@ -15,7 +15,7 @@ class DirectoryComponent extends AbstractComponent implements
     System\IAdminRouter,
     System\IWidgets
 {
-    const VERSION = '1.2.17', PACKAGE = 'directories';
+    const VERSION = '1.2.19', PACKAGE = 'directories';
     
     public static function description()
     {
