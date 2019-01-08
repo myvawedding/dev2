@@ -112,7 +112,7 @@ class FeaturesHelper
     public function _validateForm($form, &$value, $element, Application $application, Entity\Model\Bundle $bundle, $type)
     {
         // Extract settings for both features enabled and disabled as separate arrays
-        $enabled = ['payment_plan' => []];
+        $enabled = $type === 'addon' ? [] : ['payment_plan' => []];
         $disabled = [];
         foreach ($value as $feature_name => $feature_settings) {
             if (!$feature = $application->Payment_Features_impl($feature_name, true)) continue;
@@ -148,9 +148,14 @@ class FeaturesHelper
         // Add features to feature group
         $all_feature_settings = [];
         $features = $plan->paymentPlanFeatures();
-        if (!isset($features['payment_plan'])) {
-            $features['payment_plan'] = [];
+        if ($plan->paymentPlanType() !== 'addon') {
+            if (!isset($features['payment_plan'])) {
+                $features['payment_plan'] = [];
+            }
+        } else {
+            unset($features['payment_plan']);
         }
+
         foreach ($features as $feature_name => $feature_settings) {
             if (!$application->Payment_Features_impl($feature_name, true)) continue;
 

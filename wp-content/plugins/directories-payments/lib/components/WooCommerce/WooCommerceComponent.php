@@ -10,7 +10,7 @@ use SabaiApps\Directories\Request;
 
 class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
 {
-    const VERSION = '1.2.17', PACKAGE = 'directories-payments';
+    const VERSION = '1.2.19', PACKAGE = 'directories-payments';
 
     public static function description()
     {
@@ -530,7 +530,7 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
     {
         global $wpdb;
         $order_items = $ret = [];
-        $sql = 'SELECT items.order_item_id, items.order_item_name, items.order_id, itemmeta2.meta_value, itemmeta3.meta_value FROM ' . $wpdb->prefix . 'woocommerce_order_itemmeta itemmeta'
+        $sql = 'SELECT items.order_item_id, items.order_item_name, items.order_id, itemmeta2.meta_value AS action, itemmeta3.meta_value AS was_deactivated FROM ' . $wpdb->prefix . 'woocommerce_order_itemmeta itemmeta'
             . ' LEFT JOIN ' . $wpdb->prefix . 'woocommerce_order_items items ON itemmeta.order_item_id = items.order_item_id AND items.order_item_type = \'line_item\''
             . ' LEFT JOIN ' . $wpdb->prefix . 'woocommerce_order_itemmeta itemmeta2 ON itemmeta2.order_item_id = itemmeta.order_item_id AND itemmeta2.meta_key = \'_drts_action\''
             . ' LEFT JOIN ' . $wpdb->prefix . 'woocommerce_order_itemmeta itemmeta3 ON itemmeta3.order_item_id = itemmeta.order_item_id AND itemmeta3.meta_key = \'_drts_was_deactivated\''

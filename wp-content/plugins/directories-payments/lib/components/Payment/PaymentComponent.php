@@ -22,7 +22,7 @@ class PaymentComponent extends AbstractComponent implements
     CSV\IExporters,
     CSV\IImporters
 {
-    const VERSION = '1.2.17', PACKAGE = 'directories-payments';
+    const VERSION = '1.2.19', PACKAGE = 'directories-payments';
     const FEATURE_STATUS_PENDING = 0, FEATURE_STATUS_APPLIED = 1, FEATURE_STATUS_UNAPPLIED = 2;
     
     protected $_paymentComponentName;
@@ -554,7 +554,9 @@ class PaymentComponent extends AbstractComponent implements
         $isRoutable = false;
 
         if ($action === 'submit') {
-            if (!$this->_application->Payment_Plan($entity)) {
+            if (!$this->_application->Payment_Plan($entity)
+                || $entity->getSingleFieldValue('payment_plan', 'deactivated_at')
+            ) {
                 $plans = $this->_application->Payment_Plans(
                     $bundle->name,
                     $this->_application->Filter('payment_base_plan_types', ['base'], [$bundle->name])
