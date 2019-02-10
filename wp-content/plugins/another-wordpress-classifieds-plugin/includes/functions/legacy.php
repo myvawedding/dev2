@@ -342,24 +342,6 @@ function create_awpcp_random_seed() {
     return (int)$sec+(int)($usec*100000);
 }
 
-if (!function_exists('addslashes_mq')) {
-    function addslashes_mq($value) {
-        if (is_array($value)) {
-            $myreturn=array();
-            while (list($k,$v)=each($value)) {
-                $myreturn[addslashes_mq($k)]=addslashes_mq($v);
-            }
-        } else {
-            if(get_magic_quotes_gpc() == 0) {
-                $myreturn=addslashes($value);
-            } else {
-                $myreturn=$value;
-            }
-        }
-        return $myreturn;
-    }
-}
-
 /**
  * TODO: replace usage of this function with awpcp_pagination()
  */

@@ -1,6 +1,5 @@
 <?php
 
-
 class AWPCP_CAPTCHA {
 
     public function __construct() { }
@@ -64,9 +63,9 @@ class AWPCP_DefaultCAPTCHA extends AWPCP_CAPTCHA {
 
 class AWPCP_reCAPTCHA extends AWPCP_CAPTCHA {
 
-    private $site_key;
-    private $secret_key;
-    private $request;
+    protected $site_key;
+    protected $secret_key;
+    protected $request;
 
     public function __construct( $site_key, $secret_key, $request ) {
         parent::__construct();
@@ -82,13 +81,7 @@ class AWPCP_reCAPTCHA extends AWPCP_CAPTCHA {
             return $this->missing_key_message();
         }
 
-        wp_enqueue_script(
-            'awpcp-recaptcha',
-            'https://www.google.com/recaptcha/api.js?onload=AWPCPreCAPTCHAonLoadCallback&render=explicit',
-            array( 'awpcp' ),
-            'v2',
-            true
-        );
+        $this->enqueue_scripts();
 
         return $this->get_recaptcha_html( $this->site_key );
     }
@@ -99,7 +92,20 @@ class AWPCP_reCAPTCHA extends AWPCP_CAPTCHA {
         return sprintf( $message, $link );
     }
 
-    private function get_recaptcha_html( $site_key ) {
+    /**
+     * @since 3.9.4
+     */
+    protected function enqueue_scripts() {
+        wp_enqueue_script(
+            'awpcp-recaptcha',
+            'https://www.google.com/recaptcha/api.js?onload=AWPCPreCAPTCHAonLoadCallback&render=explicit',
+            array( 'awpcp' ),
+            'v2',
+            true
+        );
+    }
+
+    protected function get_recaptcha_html( $site_key ) {
         return '<div class="g-recaptcha awpcp-recaptcha" data-sitekey="' . esc_attr( $site_key ) . '"></div>';
     }
 
@@ -112,7 +118,7 @@ class AWPCP_reCAPTCHA extends AWPCP_CAPTCHA {
         $response = wp_remote_post( 'https://www.google.com/recaptcha/api/siteverify', array(
             'body' => array(
                 'secret' => $this->secret_key,
-                'response' => $this->request->post( 'g-recaptcha-response' ),
+                'response' => $this->get_recaptcha_response(),
                 $_SERVER['REMOTE_ADDR'],
             ),
         ) );
@@ -126,7 +132,7 @@ class AWPCP_reCAPTCHA extends AWPCP_CAPTCHA {
         $json = json_decode( $response['body'], true );
 
         if ( $json['success'] ) {
-            return true;
+            return $this->on_success( $json, $error );
         } else if ( $json['error-codes'] ) {
             $error = $this->process_error_codes( $json['error-codes'] );
             return false;
@@ -136,6 +142,16 @@ class AWPCP_reCAPTCHA extends AWPCP_CAPTCHA {
         }
     }
 
+    /**
+     * @since 3.9.4
+     */
+    protected function on_success( $response, &$error ) {
+        return true;
+    }
+
+    /**
+     * TODO: define error responses that are relevant for v3.
+     */
     private function process_error_codes( $error_codes ) {
         $errors = array();
 
@@ -159,10 +175,22 @@ class AWPCP_reCAPTCHA extends AWPCP_CAPTCHA {
 
         return implode( ' ', $errors );
     }
+
+    /**
+     * @since 3.9.4
+     */
+    protected function get_recaptcha_response() {
+        return $this->request->post( 'g-recaptcha-response' );
+    }
 }
 
 function awpcp_create_captcha($type='default') {
     switch ($type) {
+        case 'reCAPTCHAv3':
+            $site_key   = get_awpcp_option( 'recaptcha-public-key' );
+            $secret_key = get_awpcp_option( 'recaptcha-private-key' );
+
+            return new AWPCP_reCAPTCHAv3( $site_key, $secret_key, awpcp_request() );
         case 'recaptcha':
             $site_key = get_awpcp_option( 'recaptcha-public-key' );
             $secret_key = get_awpcp_option( 'recaptcha-private-key' );

@@ -18,6 +18,9 @@
     <input id="<?php echo esc_attr( $this->get_field_id( 'show_city' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'show_city' ) ); ?>" type="checkbox" value="1" <?php echo $show_city == 1 ? " checked='checked'" : "" ?> />
     <label for="<?php echo esc_attr( $this->get_field_id( 'show_city' ) ); ?>"><?php _e('Show City field?', 'another-wordpress-classifieds-plugin'); ?></label>
     <br/>
+    <input id="<?php echo esc_attr( $this->get_field_id( 'show_county' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'show_county' ) ); ?>" type="checkbox" value="1" <?php checked( $show_county, 1 ); ?>/>
+    <label for="<?php echo esc_attr( $this->get_field_id( 'show_county' ) ); ?>"><?php esc_html_e( 'Show County field?', 'another-wordpress-classifieds-plugin' ); ?></label>
+    <br/>
     <input id="<?php echo esc_attr( $this->get_field_id( 'show_state' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'show_state' ) ); ?>" type="checkbox" value="1" <?php echo $show_state == 1 ? " checked='checked'" : "" ?> />
     <label for="<?php echo esc_attr( $this->get_field_id( 'show_state' ) ); ?>"><?php _e('Show State field?', 'another-wordpress-classifieds-plugin'); ?></label>
     <br/>

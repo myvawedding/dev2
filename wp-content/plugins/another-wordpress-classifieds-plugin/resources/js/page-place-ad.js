@@ -242,7 +242,13 @@ AWPCP.run('awpcp/page-place-ads', [
                             return false;
                         }
 
-                        form.submit();
+                        if ( window['AWPCPGetReCaptchaResponse'] ) {
+                            window['AWPCPGetReCaptchaResponse']( function() {
+                                form.submit();
+                            } );
+                        } else {
+                            form.submit();
+                        }
                     }
                 });
             }

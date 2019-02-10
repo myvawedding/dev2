@@ -33,10 +33,29 @@ class AWPCP_ModulesUpdater {
     }
 
     public function watch( $module, $license ) {
+        // We are now retrieving version information for modules with an
+        // incompatible version as well. That means that the instance of the module
+        // may not support all the features known to the current version of the
+        // main plugin.
+        //
+        // To avoid unexpected problems we limit our interaction with the module's
+        // instance to carefully extracting the slug, name, version and path to
+        // the main file.
+        if (
+               ! isset( $module->slug )
+            || ! isset( $module->name )
+            || ! isset( $module->version )
+            || ! isset( $module->file )
+        ) {
+            return;
+        }
+
         $this->modules[ $module->slug ] = array(
-            'instance' => $module,
+            'slug'     => $module->slug,
+            'name'     => $module->name,
+            'version'  => $module->version,
             'basename' => plugin_basename( $module->file ),
-            'license' => $license,
+            'license'  => $license,
         );
     }
 
@@ -71,20 +90,18 @@ class AWPCP_ModulesUpdater {
             return $plugins_information;
         }
 
-        if ( version_compare( $module['instance']->version , $information->new_version, '<' ) ) {
+        if ( version_compare( $module['version'] , $information->new_version, '<' ) ) {
             $plugins_information->response[ $module['basename'] ] = $information;
         }
 
         $plugins_information->last_checked = time();
-        $plugins_information->checked[ $module['basename'] ] = $module['instance']->version;
+        $plugins_information->checked[ $module['basename'] ] = $module['version'];
 
         return $plugins_information;
     }
 
     private function get_information_for_module( $module ) {
-        $instance = $module['instance'];
-
-        $transient_key = md5( 'awpcp_module_' . sanitize_key( $instance->name ) . '_version_info' );
+        $transient_key = md5( 'awpcp_module_' . sanitize_key( $module['name'] ) . '_version_info' );
         $information = get_site_transient( $transient_key );
 
         if ( false !== $information ) {
@@ -92,8 +109,8 @@ class AWPCP_ModulesUpdater {
         }
 
         $information = $this->edd->get_version(
-            $instance->name,
-            $instance->slug,
+            $module['name'],
+            $module['slug'],
             'D. Rodenbaugh',
             $module['license']
         );

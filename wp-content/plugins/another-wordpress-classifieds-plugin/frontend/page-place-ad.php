@@ -669,6 +669,11 @@ class AWPCP_Place_Ad_Page extends AWPCP_Page {
         $data = array();
         foreach ($defaults as $name => $default) {
             $value = awpcp_array_data( $name, $default, $from );
+
+            if ( 'ad_item_price' === $name && isset( $from[ $name ] ) ) {
+                $value = $from[ $name ];
+            }
+
             $value = stripslashes_deep( $value );
 
             if ( $name != 'ad_details' ) {

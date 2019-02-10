@@ -43,6 +43,8 @@ class AWPCP_ModulesManager {
 
     private function load_module( $module ) {
         $module->load_textdomain();
+
+        $this->handle_module_updates( $module );
         $this->verify_version_compatibility( $module );
 
         if ( $this->is_premium_module( $module ) ) {
@@ -50,7 +52,6 @@ class AWPCP_ModulesManager {
             $this->verify_license_status( $module );
         }
 
-        $this->handle_module_updates( $module );
         $module->setup( $this->plugin );
     }
 

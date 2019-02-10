@@ -2,11 +2,11 @@
 Contributors: awpcp
 Donate link: https://awpcp.com/donate
 Tags: classifieds,listings,ads,classified ads,classified,awpcp,classifieds script,classified theme,wp classified
-Requires at least: 4.5
+Requires at least: 4.6
 Requires PHP: 5.6
-Tested up to: 4.9
-Last Updated: 2018-Nov-7
-Stable tag: 3.9.3
+Tested up to: 5.0
+Last Updated: 2019-Jan-25
+Stable tag: 3.9.5
 License: GPLv2 or later
 
 AWPCP Classifieds:  Great for increasing retention to your site, adding revenue for your business, and creating customer interaction.
@@ -17,11 +17,9 @@ AWPCP Classifieds:  Great for increasing retention to your site, adding revenue 
 
 Add a classified ads section to your WordPress site, quickly and easily.
 Lots of features, very configurable.  Easy to setup.  Great support.
-We're the #1 WordPress Classified Ads Plugin: 8+ years old and over 10,000 active sites
+We're the #1 WordPress Classified Ads Plugin: 10+ years old and over 10,000 active sites
 
-NEW module(s): [Stripe](https://awpcp.com/premium-modules/stripe-module?ref=wp)
-, [PayFast](https://awpcp.com/premium-modules/payfast-module?ref=wp) and [ZIP Search](https://awpcp.com/downloads/zip-code-search-module?ref=wp)
-
+NEW module(s): [Stripe](https://awpcp.com/premium-modules/stripe-module?ref=wp), [PayFast](https://awpcp.com/premium-modules/payfast-module?ref=wp) and [ZIP Search](https://awpcp.com/downloads/zip-code-search-module?ref=wp)
 
 = Features =
  = Ad Features =
@@ -168,7 +166,7 @@ If you love the plugin, [please consider purchasing a Premium Module](https://aw
 
 == Credits ==
 
-Copyright 2009-18 awpcp.com
+Copyright 2009-19 awpcp.com
 
 AWPCP Classifieds icons courtesy of http://www.famfamfam.com/lab/icons/silk/
 dcfunctions.php used with permission under GPL by Dan Caragea http://www.datemill.com
@@ -246,6 +244,21 @@ Yes it can. AWPCP comes with many user-provided translations under the /language
 Yes it is. However, you cannot "network-activate" the plugin (as this will share the database). Activate it on only the subsites on which you need a directory.  This can be done under Plugins->Add New as the Administrator user.  Do not "network activate" AWPCP as the "super admin".
 
 == Changelog ==
+
+= Version 3.9.5 =
+* Fix bug that prevents Regions module from being updated. 
+
+= Version 3.9.4 =
+* Add support for reCAPTCHA v3. 
+* Remove unused functions awpcp_process_mail(), awpcp_send_email() and addslashes_mq(). 
+* Remove unused method in widget-search.php.
+* Add support for County field in Search Ads widget. 
+* Strip Tracking Code Manager variables from $_GET and $_POST. 
+* Fix typo in awpcp_load_plugin_textdomain().
+* Quick fix to allow 0 as in ads price. 
+* Enqueue main scripts when the AWPCPSHOWCAT shortcode is used. 
+* Bring back the button class for Classifieds Menu items. 
+* Fix translation domain for several strings.
 
 = Version 3.9.3 =
 * Bring back BuddyPress Listings tab by changing plugins_loaded priority to load modules before bp_loaded.

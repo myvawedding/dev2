@@ -408,9 +408,12 @@ class AWPCP_PaymentsAPI {
     public function process_payment_completed($transaction, $redirect=true) {
         $errors = array();
 
-        // only attempt to complete the payment if we are in a previous state
-        // IPN notifications are likely to be associated to transactions that
-        // are already completed.
+        /**
+         * Only attempt to complete the payment if we are in a previous state.
+         *
+         * IPN notifications are likely to be associated to transactions that
+         * are already completed.
+         */
         if (!$transaction->is_payment_completed() && !$transaction->is_completed()) {
             $this->set_transaction_status_to_payment_completed($transaction, $errors);
 
@@ -421,7 +424,13 @@ class AWPCP_PaymentsAPI {
             }
         }
 
-        $this->process_transaction($transaction);
+        try {
+            $this->process_transaction( $transaction );
+        } catch ( AWPCP_Exception $e ) {
+            // We simply ignore exceptions here because we are currently using them
+            // in the Coupons module only for transactions that are doing checkout.
+        }
+
         $transaction->save();
 
         if ($redirect) {
@@ -439,40 +448,81 @@ class AWPCP_PaymentsAPI {
 
         $transaction = AWPCP_Payment_Transaction::find_by_id($id);
 
-        if ( !is_null( $transaction ) && $transaction->is_doing_checkout() ) {
-            $this->set_transaction_payment_method($transaction);
-            $this->process_transaction($transaction);
-
-            $errors = array();
-
-            $this->set_transaction_status_to_payment($transaction, $errors);
-
-            if ($transaction->payment_is_not_required() && empty($errors)) {
-                $this->set_transaction_status_to_payment_completed($transaction, $errors);
-
-                if (empty($errors)) {
-                    return; // nothing else to do here, pass control to the (api) user
-                }
-            }
-
-            if (empty($errors)) {
-                // no errors, so we must have a payment method defined
-                $payment_method = $this->get_transaction_payment_method($transaction);
-                $result = array('output' => $payment_method->process_payment($transaction));
-            } else {
-                // most likely the payment method hasn't been properly set
-                $result = array('errors' => $errors);
-            }
-
-            $this->cache[$transaction->id] = $result;
-
-        } else if (!is_null($transaction) && $transaction->is_processing_payment()) {
-            $this->process_transaction($transaction);
-
-            $payment_method = $this->get_transaction_payment_method($transaction);
-            $result = array('output' => $payment_method->process_payment($transaction));
-            $this->cache[$transaction->id] = $result;
+        if ( is_null( $transaction ) ) {
+            return;
         }
+
+        $result = null;
+
+        if ( $transaction->is_doing_checkout() ) {
+            $result = $this->process_payment_for_transaction_doing_checkout( $transaction );
+        } elseif ( $transaction->is_processing_payment() ) {
+            $result = $this->process_payment_for_transaction_processing_payment( $transaction );
+        }
+
+        if ( $result ) {
+            $this->cache[ $transaction->id ] = $result;
+        }
+    }
+
+    /**
+     * @since 3.9.4
+     */
+    private function process_payment_for_transaction_doing_checkout( $transaction ) {
+        $this->set_transaction_payment_method( $transaction );
+
+        try {
+            $this->process_transaction( $transaction );
+        } catch ( AWPCP_Exception $e ) {
+            return [
+                'errors' => [ $e->getMessage() ],
+            ];
+        }
+
+        $errors = array();
+
+        $this->set_transaction_status_to_payment( $transaction, $errors );
+
+        // No errors means we are now processing a payment. Stop if a real
+        // payment is not required.
+        if ( empty( $errors ) && $transaction->payment_is_not_required() ) {
+            $this->set_transaction_status_to_payment_completed( $transaction, $errors );
+
+            // Nothing else to do here, pass control to the (api) user.
+            if ( empty( $errors ) ) {
+                return null;
+            }
+        }
+
+        // Most likely because the payment method hasn't been properly set.
+        if ( ! empty( $errors ) ) {
+            return compact( 'errors' );
+        }
+
+        // No errors, so we must have a payment method defined.
+        $payment_method = $this->get_transaction_payment_method( $transaction );
+
+        return [
+            'output' => $payment_method->process_payment( $transaction ),
+        ];
+    }
+
+    /**
+     * @since 3.9.4
+     */
+    private function process_payment_for_transaction_processing_payment( $transaction ) {
+        try {
+            $this->process_transaction( $transaction );
+        } catch ( AWPCP_Exception $e ) {
+            // We simply ignore exceptions here because we are currently using them
+            // in the Coupons module only for transactions that are doing checkout.
+        }
+
+        $payment_method = $this->get_transaction_payment_method( $transaction );
+
+        return [
+            'output' => $payment_method->process_payment( $transaction ),
+        ];
     }
 
     public function wp() {

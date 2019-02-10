@@ -215,6 +215,8 @@ class AWPCP_Pages {
     }
 
     public function category_shortcode( $attrs ) {
+        wp_enqueue_script('awpcp');
+
         $cache_key = crc32( maybe_serialize( $attrs ) );
 
         if ( ! isset( $this->output[ $cache_key ] ) ) {

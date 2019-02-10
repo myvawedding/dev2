@@ -19,7 +19,7 @@
                 <li><span class="message-description" data-bind="html: description"></span><span class="message-content" data-bind="html: content"></span></li>
             </ul>
 
-            <p data-bind="visible: completed"><?php echo __( 'All rows were processed. You can change the Configuration & Restart the import operation, or click the Finish button to delete the source and temporary files created during this import session (imported listings and images will be kept, of course).' ); ?></p>
+            <p data-bind="visible: completed"><?php echo __( 'All rows were processed. You can change the Configuration & Restart the import operation, or click the Finish button to delete the source and temporary files created during this import session (imported listings and images will be kept, of course).', 'another-wordpress-classifieds-plugin' ); ?></p>
 
             <p class="submit">
                 <input type="submit" class="button" name="change_configuration" value="<?php echo esc_html( __( 'Change Configuration & Restart', 'another-wordpress-classifieds-plugin' ) ); ?>" data-bind="visible: paused() || completed()"></input>

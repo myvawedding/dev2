@@ -178,7 +178,8 @@ class AWPCP_GeneralSettings {
         );
 
         $options = array(
-            'recaptcha' => __( 'reCAPTCHA (recommended)', 'another-wordpress-classifieds-plugin' ),
+            'recaptcha'   => __( 'reCAPTCHA v2', 'another-wordpress-classifieds-plugin' ),
+            'reCAPTCHAv3' => __( 'reCAPTCHA v3', 'another-wordpress-classifieds-plugin' ),
             'math' => __( 'Math', 'another-wordpress-classifieds-plugin' ),
         );
 
@@ -188,7 +189,7 @@ class AWPCP_GeneralSettings {
             __( 'Type of CAPTCHA', 'another-wordpress-classifieds-plugin' ),
             'radio',
             'math',
-            __( 'reCAPTCHA: Uses distorted images that only humans should be able to read (recommended).', 'another-wordpress-classifieds-plugin' ) . '<br/>' . __( 'Math: Asks user to solve a simple arithmetic operation.', 'another-wordpress-classifieds-plugin' ),
+            '<br/>' . __( 'reCAPTCHA v2: requires the user to click a checkbox indicating the user is not a robot. This will either pass the user immediately (with No CAPTCHA) or challenge them to validate whether or not they are human.', 'another-wordpress-classifieds-plugin' ) . '<br/><br/>' . __( 'reCAPTCHA v3: returns a score for each request without user friction. The score is based on interactions with your site and enables you to take an appropriate action for your site.', 'another-wordpress-classifieds-plugin' ) . '<br/><br/>' . __( 'Math: Asks user to solve a simple arithmetic operation.', 'another-wordpress-classifieds-plugin' ),
             array( 'options' => $options )
         );
 
@@ -199,6 +200,19 @@ class AWPCP_GeneralSettings {
 
         $settings->add_setting( $key, 'recaptcha-public-key', __( 'reCAPTCHA Site Key', 'another-wordpress-classifieds-plugin' ), 'textfield', '', $help_text );
         $settings->add_setting( $key, 'recaptcha-private-key', __( 'reCAPTCHA Secret Key', 'another-wordpress-classifieds-plugin' ), 'textfield', '',$help_text );
+
+        $description = __( 'reCAPTCHA v3 returns a score (1.0 is very likely a good interaction, 0.0 is very likely a bot). The plugin will interrupt all interactions that receive a score under the configured threshold.', 'another-wordpress-classifieds-plugin' ) . '<br/><br/>' . __( "However, reCAPTCHA learns by seeing real traffic on your site. For this reason, scores in a staging environment or soon after implementing may differ from production. You can start using a threshold of 0.5 and find a better value looking at your traffic in the {console_link}admin console{/console_link}.", 'another-wordpress-classifieds-plugin' );
+        $description = str_replace( '{console_link}', '<a href="https://g.co/recaptcha/admin">', $description );
+        $description = str_replace( '{/console_link}', '</a>', $description );
+
+        $settings->add_setting(
+            $key,
+            'recaptcha-v3-score-threshold',
+            __( 'reCAPTCHA score threshold (v3 only)', 'another-wordpress-classifieds-plugin' ),
+            'textfield',
+            '0.5',
+            $description
+        );
 
         // Section: SEO Settings
 

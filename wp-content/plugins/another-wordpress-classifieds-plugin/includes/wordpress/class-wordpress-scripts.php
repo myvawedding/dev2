@@ -5,7 +5,7 @@
  */
 function awpcp_wordpress_scripts() {
     if ( ! isset( $GLOBALS['wp_scripts'] ) ) {
-        _doing_it_wrong( __FUNCTION__, __( 'The instance of WP_Scripts is not ready!' ), '3.5.4' );
+        _doing_it_wrong( __FUNCTION__, __( 'The instance of WP_Scripts is not ready!', 'another-wordpress-classifieds-plugin' ), '3.5.4' );
         $GLOBALS['wp_scripts'] = new WP_Scripts();
     }
 

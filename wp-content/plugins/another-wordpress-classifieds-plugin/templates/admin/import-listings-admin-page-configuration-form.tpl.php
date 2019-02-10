@@ -114,7 +114,7 @@
                             <td>
                                 <input type="hidden" name="define_default_user" value="0">
                                 <input type="checkbox" name="define_default_user" id="awpcp-importer-define-default-user" value="1" <?php echo $form_data['define_default_user'] == 1 ? 'checked="checked"' : ''; ?> />
-                                <label for="awpcp-importer-define-default-user" class="helptext"><?php echo esc_html( __( "The default user will be used when the username column is not present in the CSV file or there is no user with the specified username and we couldn't find a user with the contact email address specified in the CSV file.", 'csv-importer', 'another-wordpress-classifieds-plugin' ) ); ?></label>
+                                <label for="awpcp-importer-define-default-user" class="helptext"><?php echo esc_html( _x( "The default user will be used when the username column is not present in the CSV file or there is no user with the specified username and we couldn't find a user with the contact email address specified in the CSV file.", 'csv-importer', 'another-wordpress-classifieds-plugin' ) ); ?></label>
                                 <?php echo awpcp_form_error( 'define_default_user', $form_errors ); ?>
                             </td>
                         </tr>

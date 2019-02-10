@@ -16,6 +16,7 @@ class AWPCP_Search_Widget extends WP_Widget {
 			'show_keyword' => 1,
 			'show_by' => 1,
 			'show_city' => 1,
+            'show_county'   => false,
 			'show_state' => 1,
 			'show_country' => 1,
 			'show_category' => 1,
@@ -62,26 +63,13 @@ class AWPCP_Search_Widget extends WP_Widget {
             'enabled_fields' => array(
                 'country' => $instance['show_country'],
                 'state' => $instance['show_state'],
+                'county'  => $instance['show_county'],
                 'city' => $instance['show_city'],
-                'county' => false,
             ),
         );
 
         $selector = awpcp_multiple_region_selector( $regions, $options );
         echo $selector->render( 'search', array(), array() );
-    }
-
-    /**
-     * @since 3.0.2
-     */
-    private function render_region_field( $label, $options, $name ) {
-        if ( isset( $_REQUEST['regions'][0][ $name ] ) ) {
-            $selected = stripslashes_deep( $_REQUEST['regions'][0][ $name ] );
-        } else {
-            $selected = null;
-        }
-
-        return $this->select( $options, $label, "regions[0][$name]", $selected );
     }
 
 	/**
@@ -176,6 +164,7 @@ class AWPCP_Search_Widget extends WP_Widget {
 		$instance['show_keyword'] = absint( $new_instance['show_keyword'] );
 		$instance['show_by'] = absint( $new_instance['show_by'] );
 		$instance['show_city'] = absint( $new_instance['show_city'] );
+		$instance['show_county']   = absint( $new_instance['show_county'] );
 		$instance['show_state'] = absint( $new_instance['show_state'] );
 		$instance['show_country'] = absint( $new_instance['show_country'] );
 		$instance['show_category'] = absint( $new_instance['show_category'] );
@@ -190,6 +179,7 @@ class AWPCP_Search_Widget extends WP_Widget {
 		$show_keyword = absint( $instance['show_keyword'] );
 		$show_by = absint( $instance['show_by'] );
 		$show_city = absint( $instance['show_city'] );
+        $show_county   = absint( $instance['show_county'] );
 		$show_state = absint( $instance['show_state'] );
 		$show_country = absint( $instance['show_country'] );
 		$show_category = absint( $instance['show_category'] );

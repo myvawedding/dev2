@@ -3,7 +3,7 @@
  * Plugin Name: Another WordPress Classifieds Plugin (AWPCP)
  * Plugin URI: http://www.awpcp.com
  * Description: AWPCP - A plugin that provides the ability to run a free or paid classified ads service on your WP site. <strong>!!!IMPORTANT!!!</strong> It's always a good idea to do a BACKUP before you upgrade AWPCP!
- * Version: 3.9.3
+ * Version: 3.9.5
  * Author: D. Rodenbaugh
  * License: GPLv2 or any later version
  * Author URI: http://www.skylineconsult.com
@@ -161,6 +161,7 @@ require_once(AWPCP_DIR . "/includes/helpers/list-table.php");
 require_once(AWPCP_DIR . "/includes/helpers/email.php");
 require_once(AWPCP_DIR . "/includes/helpers/javascript.php");
 require_once(AWPCP_DIR . "/includes/helpers/captcha.php");
+require_once AWPCP_DIR . '/includes/helpers/class-recaptcha-v3.php';
 require_once(AWPCP_DIR . "/includes/helpers/widgets/categories-dropdown.php");
 require_once(AWPCP_DIR . "/includes/helpers/widgets/multiple-region-selector.php");
 require_once(AWPCP_DIR . "/includes/helpers/widgets/class-asynchronous-tasks-component.php");
@@ -947,7 +948,7 @@ class AWPCP {
 					'url' => 'http://awpcp.com/downloads/regions-module/?ref=panel',
 					'installed' => defined( 'AWPCP_REGION_CONTROL_MODULE' ),
 					'version' => 'AWPCP_REGION_CONTROL_MODULE_DB_VERSION',
-					'required' => '3.6.8',
+					'required' => '3.6.11',
 				),
 				'restricted-categories' => array(
 					'name' => __( 'Restricted Categories', 'another-wordpress-classifieds-plugin' ),
