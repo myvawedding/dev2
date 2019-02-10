@@ -2,81 +2,156 @@
 
 namespace WPGMZA;
 
-class GlobalSettings
+
+
+require_once(plugin_dir_path(__DIR__) . 'lib/codecabin/class.settings.php');
+
+class GlobalSettings extends \codecabin\Settings
 {
-	private static $migrationRequired = false;
+	const TABLE_NAME = 'wpgmza_global_settings';
+	const LEGACY_TABLE_NAME = 'WPGMZA_OTHER_SETTINGS';
 	
-	private $data;
+	private $updatingLegacySettings = false;
 	
 	public function __construct()
 	{
-		$this->reload();
-			
-		if(empty($this->data))
-			$this->migrate();
-	}
-	
-	public function reload()
-	{
-		$string = get_option('wpgmza_global_settings');
-		if(empty($string))
-			$this->data = (object)array();
-		else
-		{
-			$this->data = json_decode($string);
-			
-			if(!$this->data)
-				throw new \Exception('wpgmza_global_settings is not valid JSON');
-		}
-	}
-	
-	protected static function createInstanceDelegate()
-	{
-		//var_dump("It doesn't work");
-		//exit;
+		$self = $this;
 		
-		return new GlobalSettings();
+		$legacy_settings_exist = (get_option(GlobalSettings::LEGACY_TABLE_NAME) ? true : false);
+		$settings_exist = (get_option(GlobalSettings::TABLE_NAME) ? true : false);
+		
+		if($legacy_settings_exist && !$settings_exist)
+			$this->migrate();
+		
+		\codecabin\Settings::__construct(GlobalSettings::TABLE_NAME);
+		
+		$this->wpgmza_google_maps_api_key = get_option('wpgmza_google_maps_api_key');
+		
+		if(!$legacy_settings_exist && !$settings_exist)
+			$this->install();
+		
+		// Legacy Pro support. Users with older Pro will lose settings 
+		add_filter('pre_update_option_WPGMZA_OTHER_SETTINGS', array($this, 'onPreUpdateLegacySettings'), 10, 2);
 	}
 	
+	public function __get($name)
+	{
+		if($name == 'useLegacyHTML')
+			return true;
+		
+		return \codecabin\Settings::__get($name);
+	}
+	
+	// TODO: This should inherit from Factory when traits are available
 	public static function createInstance()
 	{
-		return static::createInstanceDelegate();
-	}
-
-	/**
-	 * Migrates old settings (< 7.11.*), merges WPGMZA_SETTINGS and WPGMZA_OTHER_SETTINGS into wpgmza_global_settings (JSON)
-	 * @return void
-	 */
-	private function migrate()
-	{
-		if(GlobalSettings::$migrationRequired)
-			return;
+		$class = get_called_class();
+		$args = func_get_args();
+		$count = count($args);
+		$filter = "wpgmza_create_$class";
 		
-		$settings 			= get_option('WPGMZA_SETTINGS');
-		$other_settings		= get_option('WPGMZA_OTHER_SETTINGS');
+		if(empty($args))
+			$filter_args = array($filter, null);
+		else
+			$filter_args = array_merge(array($filter), $args);
 		
-		$json = json_encode( array_merge($settings, $other_settings) );
+		$override = call_user_func_array('apply_filters', $filter_args);
 		
-		update_option('wpgmza_global_settings', $json);
+		if($override)
+			return $override;
 		
-		$this->reload();
+		$reflect = new \ReflectionClass($class);
+		$instance = $reflect->newInstanceArgs($args);
+		
+		return $instance;
 	}
 	
-	/**
-	 * Used to set values, optionally in bulk
-	 * @param $arg (string|array) Either a string naming the setting to be set, or an object / array of settings to set in bulk
-	 * @param $val (optional) Where a string is given as the first parameter, pass the value you want to assign here
-	 * @return $this
-	 */
-	public function set($arg, $val=null)
+	public function getDefaults()
 	{
-		throw new \Exception('Not yet implemented');
+		$settings = apply_filters('wpgmza_plugin_get_default_settings', array(
+			'engine' 				=> 'google-maps',
+			'google_maps_api_key'	=> get_option('wpgmza_google_maps_api_key'),
+			'default_marker_icon'	=> Marker::DEFAULT_ICON,
+			'developer_mode'		=> !empty($this->legacySettings['developer_mode'])
+		));
 		
-		return $this;
+		return $settings;
+	}
+	
+	public function onPreUpdateLegacySettings($new_value, $old_value)
+	{
+		// Merge legacy settings into this settings
+		if(!$this->updatingLegacySettings)
+			$this->set($new_value);
+		
+		return $new_value;
+	}
+	
+	protected function update()
+	{
+		/*echo "<pre>";
+		debug_print_backtrace();
+		echo "</pre>";*/
+		
+		\codecabin\Settings::update();
+		
+		// Legacy Pro support
+		$this->updatingLegacySettings = true;
+		
+		//var_dump($this->wpgmza_settings_map_full_screen_control);
+		
+		//if(empty($this->wpgmza_settings_map_full_screen_control))
+			//throw new \Exception('why');
+		
+		$legacy = $this->toArray();
+		
+		//var_dump($legacy['wpgmza_settings_map_full_screen_control']);
+		
+		//var_dump("Updating " . GlobalSettings::LEGACY_TABLE_NAME, $legacy);
+		
+		//if(empty($legacy['wpgmza_settings_map_full_screen_control']))
+			//throw new \Exception('Can you not');
+		
+		update_option(GlobalSettings::LEGACY_TABLE_NAME, $legacy);
+		
+		//var_dump("Read back ", get_option(GlobalSettings::LEGACY_TABLE_NAME));
+		
+		$this->updatingLegacySettings = false;
+	}
+	
+	protected function install()
+	{
+		$this->set( $this->getDefaults() );
+	}
+	
+	protected function migrate()
+	{
+		$legacy = get_option(GlobalSettings::LEGACY_TABLE_NAME);
+		
+		$json = json_encode($legacy);
+		
+		update_option(GlobalSettings::TABLE_NAME, $json);
+	}
+	
+	public function jsonSerialize()
+	{
+		$src = \codecabin\Settings::jsonSerialize();
+		$data = clone $src;
+		
+		if(isset($data->wpgmza_settings_ugm_email_address))
+			unset($data->wpgmza_settings_ugm_email_address);
+		
+		return $data;
 	}
 	
 	public function toArray()
 	{
-		throw new \Exception('Not yet implemented');
+		$src = \codecabin\Settings::toArray();
+		$data = (array)$src;
+		
+		if(isset($data['wpgmza_settings_ugm_email_address']))
+			unset($data['wpgmza_settings_ugm_email_address']);
+		
+		return $data;
 	}
 }

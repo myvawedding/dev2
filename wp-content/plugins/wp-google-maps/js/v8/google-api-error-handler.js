@@ -45,6 +45,10 @@ jQuery(function($) {
 			
 			_error.apply(this, arguments);
 		}
+		
+		// Check for no API key
+		if(WPGMZA.settings.engine == "google-maps" && (!WPGMZA.settings.wpgmza_google_maps_api_key || !WPGMZA.settings.wpgmza_google_maps_api_key.length))
+			this.addErrorMessage(WPGMZA.localized_strings.no_google_maps_api_key, "https://www.wpgmaps.com/get-a-google-maps-api-key/");
 	}
 	
 	/**
@@ -58,7 +62,7 @@ jQuery(function($) {
 		var m;
 		var regexURL = /http(s)?:\/\/[^\s]+/gm;
 		
-		if((m = message.match(/You have exceeded your (daily )?request quota for this API/)) || (m = message.match(/This API project is not authorized to use this API/)))
+		if((m = message.match(/You have exceeded your (daily )?request quota for this API/)) || (m = message.match(/This API project is not authorized to use this API/)) || (m = message.match(/^Geocoding Service: .+/)))
 		{
 			var urls = message.match(regexURL);
 			this.addErrorMessage(m[0], urls);

@@ -5,6 +5,7 @@
  * @summary This is the core Javascript module. Some code exists in ../core.js, the functionality there will slowly be handed over to this module.
  */
 jQuery(function($) {
+	
 	var core = {
 		/**
 		 * Indexed array of map instances
@@ -339,6 +340,9 @@ jQuery(function($) {
 			{
 				trigger = "userlocationupdated";
 				nativeFunction = "watchPosition";
+				
+				// Call again immediatly to get current position, watchPosition won't fire until the user moves
+				WPGMZA.getCurrentPosition(callback, false);
 			}
 			
 			if(!navigator.geolocation)
@@ -452,6 +456,13 @@ jQuery(function($) {
 		 * @return {object} The map object, or null if no such map exists
 		 */
 		getMapByID: function(id) {
+			
+			// Workaround for map ID member not set correctly
+			
+			if(WPGMZA.isProVersion())
+				return MYMAP[id].map;
+			return MYMAP.map;
+			
 			for(var i = 0; i < WPGMZA.maps.length; i++) {
 				if(WPGMZA.maps[i].id == id)
 					return WPGMZA.maps[i];
@@ -745,6 +756,13 @@ jQuery(function($) {
  */
 jQuery(function($) {
 	
+	var earthRadiusMeters = 6371;
+	var piTimes360 = Math.PI / 360;
+	
+	function deg2rad(deg) {
+	  return deg * (Math.PI/180)
+	};
+	
 	/**
 	 * @class WPGMZA.Distance
 	 * @memberof WPGMZA
@@ -782,6 +800,8 @@ jQuery(function($) {
 		 * @static
 		 */
 		KILOMETERS_PER_MILE:	1.60934,
+		
+		// TODO: Implement WPGMZA.settings.distance_units
 		
 		/**
 		 * Converts a UI distance (eg from a form control) to meters,
@@ -837,6 +857,45 @@ jQuery(function($) {
 			if(WPGMZA.settings.distance_units == WPGMZA.Distance.MILES)
 				return km * WPGMZA.Distance.MILES_PER_KILOMETER;
 			return km;
+		},
+		
+		/**
+		 * Returns the distance, in kilometers, between two LatLng's
+		 * @method between
+		 * @static
+		 * @memberof WPGMZA.Distance
+		 * @param {WPGMZA.Latlng} The first point
+		 * @param {WPGMZA.Latlng} The second point
+		 * @return {number} The distance, in kilometers
+		 */
+		between: function(a, b)
+		{
+			if(!(a instanceof WPGMZA.LatLng))
+				throw new Error("First argument must be an instance of WPGMZA.LatLng");
+			
+			if(!(b instanceof WPGMZA.LatLng))
+				throw new Error("Second argument must be an instance of WPGMZA.LatLng");
+			
+			if(a === b)
+				return 0.0;
+			
+			var lat1 = a.lat;
+			var lon1 = a.lng;
+			var lat2 = b.lat;
+			var lon2 = b.lng;
+			
+			var dLat = deg2rad(lat2-lat1);
+			var dLon = deg2rad(lon2-lon1); 
+			
+			var a = 
+				Math.sin(dLat/2) * Math.sin(dLat/2) +
+				Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+				Math.sin(dLon/2) * Math.sin(dLon/2); 
+				
+			var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+			var d = earthRadiusMeters * c; // Distance in km
+			
+			return d;
 		}
 		
 	};
@@ -1327,6 +1386,10 @@ jQuery(function($) {
 			
 			_error.apply(this, arguments);
 		}
+		
+		// Check for no API key
+		if(WPGMZA.settings.engine == "google-maps" && (!WPGMZA.settings.wpgmza_google_maps_api_key || !WPGMZA.settings.wpgmza_google_maps_api_key.length))
+			this.addErrorMessage(WPGMZA.localized_strings.no_google_maps_api_key, "https://www.wpgmaps.com/get-a-google-maps-api-key/");
 	}
 	
 	/**
@@ -1340,7 +1403,7 @@ jQuery(function($) {
 		var m;
 		var regexURL = /http(s)?:\/\/[^\s]+/gm;
 		
-		if((m = message.match(/You have exceeded your (daily )?request quota for this API/)) || (m = message.match(/This API project is not authorized to use this API/)))
+		if((m = message.match(/You have exceeded your (daily )?request quota for this API/)) || (m = message.match(/This API project is not authorized to use this API/)) || (m = message.match(/^Geocoding Service: .+/)))
 		{
 			var urls = message.match(regexURL);
 			this.addErrorMessage(m[0], urls);
@@ -1744,6 +1807,14 @@ jQuery(function($) {
 		});
 	}
 	
+	WPGMZA.LatLng.prototype.toLatLngLiteral = function()
+	{
+		return {
+			lat: this.lat,
+			lng: this.lng
+		};
+	}
+	
 	/**
 	 * Moves this latLng by the specified kilometers along the given heading. This function operates in place, as opposed to creating a new instance of WPGMZA.LatLng. With many thanks to Hu Kenneth - https://gis.stackexchange.com/questions/234473/get-a-lonlat-point-by-distance-or-between-2-lonlat-points
 	 * @method
@@ -1774,6 +1845,45 @@ jQuery(function($) {
 		
 		this.lat		= phi2 * 180 / Math.PI;
 		this.lng		= lambda2 * 180 / Math.PI;
+	}
+	
+	/**
+	 * @function getGreatCircleDistance
+	 * @summary Uses the haversine formula to get the great circle distance between this and another LatLng / lat & lng pair
+	 * @param arg1 [WPGMZA.LatLng|Object|Number] Either a WPGMZA.LatLng, an object representing a lat/lng literal, or a latitude
+	 * @param arg2 (optional) If arg1 is a Number representing latitude, pass arg2 to represent the longitude
+	 * @return number The distance "as the crow files" between this point and the other
+	 */
+	WPGMZA.LatLng.prototype.getGreatCircleDistance = function(arg1, arg2)
+	{
+		var lat1 = this.lat;
+		var lon1 = this.lng;
+		var other;
+		
+		if(arguments.length == 1)
+			other = new WPGMZA.LatLng(arg1);
+		else if(arguments.length == 2)
+			other = new WPGMZA.LatLng(arg1, arg2);
+		else
+			throw new Error("Invalid number of arguments");
+		
+		var lat2 = other.lat;
+		var lon2 = other.lng;
+		
+		var R = 6371; // Kilometers
+		var phi1 = lat1.toRadians();
+		var phi2 = lat2.toRadians();
+		var deltaPhi = (lat2-lat1).toRadians();
+		var deltaLambda = (lon2-lon1).toRadians();
+
+		var a = Math.sin(deltaPhi/2) * Math.sin(deltaPhi/2) +
+				Math.cos(phi1) * Math.cos(phi2) *
+				Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2);
+		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+		var d = R * c;
+		
+		return d;
 	}
 	
 });
@@ -2188,30 +2298,53 @@ jQuery(function($) {
 	 */
 	WPGMZA.MapSettings = function(element)
 	{
+		var self = this;
 		var str = element.getAttribute("data-settings");
-		var json = JSON.parse(str);
+		var json;
 		
-		//var id = $(element).attr("data-map-id");
-		//var json = JSON.parse(window["wpgmza_map_settings_" + id]);
+		try{
+			json = JSON.parse(str);
+		}catch(e) {
+			
+			str = str.replace(/\\%/g, "%");
+			str = str.replace(/\\\\"/g, '\\"');
+			
+			try{
+				json = JSON.parse(str);
+			}catch(e) {
+				json = {};
+				console.warn("Failed to parse map settings JSON");
+			}
+			
+		}
 		
 		WPGMZA.assertInstanceOf(this, "MapSettings");
 		
-		for(var key in WPGMZA.settings)
+		function addSettings(input)
 		{
-			var value = WPGMZA.settings[key];
+			if(!input)
+				return;
 			
-			this[key] = value;
+			for(var key in input)
+			{
+				if(key == "other_settings")
+					continue; // Ignore other_settings
+				
+				var value = input[key];
+				
+				if(String(value).match(/^-?\d+$/))
+					value = parseInt(value);
+					
+				self[key] = value;
+			}
 		}
 		
-		for(var key in json)
-		{
-			var value = json[key];
-			
-			if(String(value).match(/^-?\d+$/))
-				value = parseInt(value);
-				
-			this[key] = value;
-		}
+		addSettings(WPGMZA.settings);
+		
+		addSettings(json);
+		
+		if(json && json.other_settings)
+			addSettings(json.other_settings);
 	}
 	
 	/**
@@ -2265,10 +2398,11 @@ jQuery(function($) {
 		
 		// Zoom limits
 		// TODO: This matches the Google code, so some of these could be potentially put on a parent class
-		if(!empty("min_zoom"))
-			options.minZoom = parseInt(this.min_zoom);
-		if(!empty("max_zoom"))
-			options.maxZoom = parseInt(this.max_zoom);
+		if(this.map_min_zoom && this.map_max_zoom)
+		{
+			options.minZoom = Math.min(this.map_min_zoom, this.map_max_zoom);
+			options.maxZoom = Math.max(this.map_min_zoom, this.map_max_zoom);
+		}
 		
 		return options;
 	}
@@ -2320,10 +2454,11 @@ jQuery(function($) {
 				lng: parseFloat(this.center.lng)
 			});
 		
-		if(!empty("min_zoom"))
-			options.minZoom = parseInt(this.min_zoom);
-		if(!empty("max_zoom"))
-			options.maxZoom = parseInt(this.max_zoom);
+		if(this.map_min_zoom && this.map_max_zoom)
+		{
+			options.minZoom = Math.min(this.map_min_zoom, this.map_max_zoom);
+			options.maxZoom = Math.max(this.map_min_zoom, this.map_max_zoom);
+		}
 		
 		// These settings are all inverted because the checkbox being set means "disabled"
 		options.zoomControl				= !(this.wpgmza_settings_map_zoom == 'yes');
@@ -2341,7 +2476,7 @@ jQuery(function($) {
 		else
 			options.gestureHandling = "cooperative";
 		
-		switch(parseInt(this.map_type))
+		switch(parseInt(this.type))
 		{
 			case 2:
 				options.mapTypeId = google.maps.MapTypeId.SATELLITE;
@@ -2417,6 +2552,10 @@ jQuery(function($) {
 		this.circles = [];
 		
 		this.loadSettings(options);
+		
+		this.initStoreLocator();
+		
+		this.markerFilter = WPGMZA.MarkerFilter.createInstance(this);
 	}
 	
 	WPGMZA.Map.prototype = Object.create(WPGMZA.EventDispatcher.prototype);
@@ -2485,6 +2624,22 @@ jQuery(function($) {
 		this.settings = settings;
 	}
 	
+	WPGMZA.Map.prototype.initStoreLocator = function()
+	{
+		var storeLocatorElement = $(".wpgmza_sl_main_div");
+		if(storeLocatorElement.length)
+			this.storeLocator = WPGMZA.StoreLocator.createInstance(this, storeLocatorElement[0]);
+	}
+	
+	/**
+	 * This override should automatically dispatch a .wpgmza scoped event on the element
+	 * TODO: Implement
+	 */
+	/*WPGMZA.Map.prototype.trigger = function(event)
+	{
+		
+	}*/
+	
 	/**
 	 * Sets options in bulk on map
 	 * @method
@@ -2496,6 +2651,11 @@ jQuery(function($) {
 			this.settings[name] = options[name];
 	}
 	
+	/**
+	 * Gets the distance between two latLngs in kilometers
+	 * NB: Static function
+	 * @return number
+	 */
 	var earthRadiusMeters = 6371;
 	var piTimes360 = Math.PI / 360;
 	
@@ -2958,25 +3118,6 @@ jQuery(function($) {
 		$(this.element).trigger("idle");
 	}
 	
-	/*$(document).ready(function() {
-		function createMaps()
-		{
-			// TODO: Test that this works for maps off screen (which borks google)
-			$(".wpgmza-map").each(function(index, el) {
-				if(!el.wpgmzaMap)
-				{
-					WPGMZA.runCatchableTask(function() {
-						WPGMZA.Map.createInstance(el);
-					}, el);
-				}
-			});
-		}
-		
-		createMaps();
-		
-		// Call again each second to load AJAX maps
-		setInterval(createMaps, 1000);
-	});*/
 });
 
 // js/v8/maps-engine-dialog.js
@@ -3051,9 +3192,59 @@ jQuery(function($) {
 		if(WPGMZA.settings.wpgmza_maps_engine_dialog_done)
 			return;
 		
+		if(WPGMZA.settings.wpgmza_google_maps_api_key && WPGMZA.settings.wpgmza_google_maps_api_key.length)
+			return;
+		
 		WPGMZA.mapsEngineDialog = new WPGMZA.MapsEngineDialog(element);
 		
 	});
+	
+});
+
+// js/v8/marker-filter.js
+/**
+ * @namespace WPGMZA
+ * @module MarkerFilter
+ * @requires WPGMZA.EventDispatcher
+ */
+jQuery(function($) {
+	
+	WPGMZA.MarkerFilter = function(map)
+	{
+		var self = this;
+		
+		WPGMZA.EventDispatcher.call(this);
+		
+		this.map = map;
+	}
+	
+	WPGMZA.MarkerFilter.prototype = Object.create(WPGMZA.EventDispatcher.prototype);
+	WPGMZA.MarkerFilter.prototype.constructor = WPGMZA.MarkerFilter;
+	
+	WPGMZA.MarkerFilter.createInstance = function(map)
+	{
+		return new WPGMZA.MarkerFilter(map);
+	}
+	
+	WPGMZA.MarkerFilter.prototype.getFilteringParameters = function()
+	{
+		var params = {map_id: this.map.id};
+		
+		if(this.map.storeLocator)
+			params = $.extend(params, this.map.storeLocator.getFilteringParameters());
+		
+		return params;
+	}
+	
+	WPGMZA.MarkerFilter.prototype.update = function()
+	{
+		// NB: This function takes no action. The client can hide and show markers based on radius without putting load on the server. This function is only used by the ProMarkerFilter module
+	}
+	
+	WPGMZA.MarkerFilter.prototype.onFilteringComplete = function(results)
+	{
+		
+	}
 	
 });
 
@@ -3076,6 +3267,8 @@ jQuery(function($) {
 	WPGMZA.Marker = function(row)
 	{
 		var self = this;
+		
+		this._offset = {x: 0, y: 0};
 		
 		WPGMZA.assertInstanceOf(this, "Marker");
 		
@@ -3150,6 +3343,36 @@ jQuery(function($) {
 	WPGMZA.Marker.ANIMATION_NONE			= "0";
 	WPGMZA.Marker.ANIMATION_BOUNCE			= "1";
 	WPGMZA.Marker.ANIMATION_DROP			= "2";
+	
+	Object.defineProperty(WPGMZA.Marker.prototype, "offsetX", {
+		
+		get: function()
+		{
+			return this._offset.x;
+		},
+		
+		set: function(value)
+		{
+			this._offset.x = value;
+			this.updateOffset();
+		}
+		
+	});
+	
+	Object.defineProperty(WPGMZA.Marker.prototype, "offsetY", {
+		
+		get: function()
+		{
+			return this._offset.y;
+		},
+		
+		set: function(value)
+		{
+			this._offset.y = value;
+			this.updateOffset();
+		}
+		
+	});
 	
 	/**
 	 * Called when the marker has been added to a map
@@ -3251,6 +3474,9 @@ jQuery(function($) {
 			return url.replace(/^http(s?):/, "");
 		}
 		
+		if(WPGMZA.defaultMarkerIcon)
+			return stripProtocol(WPGMZA.defaultMarkerIcon);
+		
 		return stripProtocol(WPGMZA.settings.default_marker_icon);
 	}
 	
@@ -3288,6 +3514,19 @@ jQuery(function($) {
 		}
 	}
 	
+	WPGMZA.Marker.prototype.setOffset = function(x, y)
+	{
+		this._offset.x = x;
+		this._offset.y = y;
+		
+		this.updateOffset();
+	}
+	
+	WPGMZA.Marker.prototype.updateOffset = function()
+	{
+		
+	}
+	
 	/**
 	 * Returns the animation set on this marker (see WPGMZA.Marker ANIMATION_* constants).
 	 * @method
@@ -3312,6 +3551,7 @@ jQuery(function($) {
 	/**
 	 * Get the marker visibility
 	 * @method
+	 * @todo Implement
 	 * @memberof WPGMZA.Marker
 	 */
 	WPGMZA.Marker.prototype.getVisible = function()
@@ -3910,6 +4150,7 @@ jQuery(function($) {
  * @namespace WPGMZA
  * @module ModernStoreLocator
  * @requires WPGMZA
+ * @pro-requires WPGMZA.UseMyLocationButton
  */
 jQuery(function($) {
 	
@@ -4044,7 +4285,7 @@ jQuery(function($) {
 
 		
 		if(numCategories) {
-			this.optionsButton = $('<span class="wpgmza_store_locator_options_button"><i class="fas fa-list"></i></span>');
+			this.optionsButton = $('<span class="wpgmza_store_locator_options_button"><i class="fa fa-list"></i></span>');
 			$(this.searchButton).before(this.optionsButton);
 		}
 		
@@ -4330,7 +4571,7 @@ jQuery(function($) {
 	WPGMZA.PopoutPanel = function()
 	{
 		
-	};
+	}
 	
 	/**
 	 * Opens the direction box
@@ -4396,7 +4637,125 @@ jQuery(function($) {
 		if(WPGMZA.RestAPI.URL.match(/\/$/))
 			route = route.replace(/^\//, "");
 		
+		if(!params)
+			params = {};
+		
+		params.beforeSend = function(xhr) {
+			xhr.setRequestHeader('X-WP-Nonce', WPGMZA.restnonce);
+		};
+		
 		$.ajax(WPGMZA.RestAPI.URL + route, params);
+	}
+	
+});
+
+// js/v8/store-locator.js
+/**
+ * @namespace WPGMZA
+ * @module StoreLocator
+ * @requires WPGMZA.EventDispatcher
+ */
+jQuery(function($) {
+	
+	WPGMZA.StoreLocator = function(map, element)
+	{
+		var self = this;
+		
+		WPGMZA.EventDispatcher.call(this);
+		
+		this._center = null;
+		
+		this.map = map;
+		this.element = element;
+		
+		// TODO: This will be moved into this module instead of listening to the map event
+		this.map.on("storelocatorgeocodecomplete", function(event) {
+			self.onGeocodeComplete(event);
+		});
+		
+		// Legacy store locator reset
+		$(document.body).on("click", ".wpgmza_sl_reset_button_" + map.id, function(event) {
+			self.onReset(event);
+		});
+	}
+	
+	WPGMZA.StoreLocator.prototype = Object.create(WPGMZA.EventDispatcher.prototype);
+	WPGMZA.StoreLocator.prototype.constructor = WPGMZA.StoreLocator;
+	
+	WPGMZA.StoreLocator.createInstance = function(map, element)
+	{
+		return new WPGMZA.StoreLocator(map, element);
+	}
+	
+	Object.defineProperty(WPGMZA.StoreLocator.prototype, "radius", {
+		"get": function() {
+			return $(this.element).find(".wpgmza_sl_radius_select").val();
+		}
+	});
+	
+	Object.defineProperty(WPGMZA.StoreLocator.prototype, "center", {
+		"get": function() {
+			return this._center;
+		}
+	});
+	
+	WPGMZA.StoreLocator.prototype.onGeocodeComplete = function(event)
+	{
+		if(!event.results || !event.results.length)
+			this._center = null;
+		else
+			this._center = new WPGMZA.LatLng( event.results[0].latLng );
+		
+		this.map.markerFilter.update();
+	}
+	
+	WPGMZA.StoreLocator.prototype.onReset = function(event)
+	{
+		this._center = null;
+		
+		this.map.markerFilter.update();
+	}
+	
+	WPGMZA.StoreLocator.prototype.getFilteringParameters = function()
+	{
+		if(!this.center)
+			return {};
+		
+		return {
+			center: this.center,
+			radius: this.radius
+		};
+	}
+	
+});
+
+// js/v8/text.js
+/**
+ * @namespace WPGMZA
+ * @module Text
+ * @requires WPGMZA
+ */
+jQuery(function($) {
+	
+	WPGMZA.Text = function(options)
+	{
+		if(options)
+			for(var name in options)
+				this[name] = options[name];
+	}
+	
+	WPGMZA.Text.createInstance = function(options)
+	{
+		switch(WPGMZA.settings.engine)
+		{
+			case "open-layers":
+				break;
+				
+			default:
+				break;
+		}
+		
+		return new WPGMZA.Text(options);
 	}
 	
 });
@@ -4665,7 +5024,7 @@ jQuery(function ($) {
 	};
 
 	// Allow the Pro module to extend and create the module, only create here when Pro isn't loaded
-	if (!WPGMZA.isProVersion()) WPGMZA.integrationModules.gutenberg = WPGMZA.Integration.Gutenberg.createInstance();
+	if(!WPGMZA.isProVersion() && !(/^6/.test(WPGMZA.pro_version))) WPGMZA.integrationModules.gutenberg = WPGMZA.Integration.Gutenberg.createInstance();
 });
 
 // js/v8/compatibility/google-ui-compatibility.js
@@ -5072,6 +5431,8 @@ jQuery(function($) {
 		// Dispatch event
 		if(!WPGMZA.isProVersion())
 		{
+			this.trigger("init");
+			
 			this.dispatchEvent("created");
 			WPGMZA.events.dispatchEvent({type: "mapcreated", map: this});
 		}
@@ -5100,6 +5461,7 @@ jQuery(function($) {
 		var options = this.settings.toGoogleMapsOptions();
 		
 		this.googleMap = new google.maps.Map(this.engineElement, options);
+		
 		google.maps.event.addListener(this.googleMap, "bounds_changed", function() { 
 			self.onBoundsChanged();
 		});
@@ -5120,10 +5482,12 @@ jQuery(function($) {
 	{
 		Parent.prototype.setOptions.call(this, options);
 		
-		this.googleMap.setOptions(this.settings.toGoogleMapsOptions());
+		var converted = $.extend(options, this.settings.toGoogleMapsOptions());
 		
-		var clone = $.extend({}, options);
-		if(clone.center instanceof WPGMZA.LatLng || typeof clone.center == "object")
+		//this.googleMap.setOptions(converted);
+		
+		var clone = $.extend({}, converted);
+		if(!clone.center instanceof google.maps.LatLng && (clone.center instanceof WPGMZA.LatLng || typeof clone.center == "object"))
 			clone.center = {
 				lat: parseFloat(clone.center.lat),
 				lng: parseFloat(clone.center.lng)
@@ -5628,12 +5992,17 @@ jQuery(function($) {
 	 * Sets the position offset of a marker
 	 * @return void
 	 */
-	WPGMZA.GoogleMarker.prototype.setOffset = function(x, y)
+	WPGMZA.GoogleMarker.prototype.updateOffset = function()
 	{
 		var self = this;
 		var icon = this.googleMarker.getIcon();
 		var img = new Image();
 		var params;
+		var x = this._offset.x;
+		var y = this._offset.y;
+		
+		if(!icon)
+			icon = WPGMZA.settings.default_marker_icon;
 		
 		if(typeof icon == "string")
 			params = {
@@ -5680,7 +6049,7 @@ jQuery(function($) {
 	{
 		Parent.prototype.setVisible.call(this, visible);
 		
-		this.googleMarker.setVisible(visible);
+		this.googleMarker.setVisible(visible ? true : false);
 	}
 	
 	WPGMZA.GoogleMarker.prototype.setDraggable = function(draggable)
@@ -5868,16 +6237,10 @@ jQuery(function($) {
 	{
 		var googleMap, self = this;
 		
+		this.map = WPGMZA.getMapByID(map_id);
+		
 		WPGMZA.ModernStoreLocator.call(this, map_id);
-		
-		if(WPGMZA.isProVersion())
-			googleMap = MYMAP[map_id].map.googleMap;
-		else
-			googleMap = MYMAP.map.googleMap;
-		
-		googleMap.controls[google.maps.ControlPosition.TOP_CENTER].push(this.element);
-		
-		// Address autocomplete
+
 		var options = {
 			fields: ["name", "formatted_address"],
 			types: ["geocode"]
@@ -5898,6 +6261,9 @@ jQuery(function($) {
 				options
 			);
 		}
+		
+		// Positioning for Google
+		this.map.googleMap.controls[google.maps.ControlPosition.TOP_CENTER].push(this.element);
 	}
 	
 	WPGMZA.GoogleModernStoreLocator.prototype = Object.create(WPGMZA.ModernStoreLocator.prototype);
@@ -6062,6 +6428,47 @@ jQuery(function($) {
 		
 		return result;
 	}
+	
+});
+
+// js/v8/google-maps/google-text-overlay.js
+/**
+ * @namespace WPGMZA
+ * @module GoogleTextOverlay
+ * @requires WPGMZA.Text
+ */
+jQuery(function($) {
+	
+	WPGMZA.GoogleTextOverlay = function()
+	{
+		this.element = $("<div></div>");
+		
+	}
+	
+	if(window.google && google.maps && google.maps.OverlayView)
+		WPGMZA.GoogleTextOverlay.prototype = new google.maps.OverlayView();
+	
+	WPGMZA.GoogleTextOverlay.prototype.onAdd = function()
+	{
+		
+	}
+	
+});
+
+// js/v8/google-maps/google-text.js
+/**
+ * @namespace WPGMZA
+ * @module GoogleText
+ * @requires WPGMZA.Text
+ */
+jQuery(function($) {
+	
+	WPGMZA.GoogleText = function()
+	{
+		
+	}
+	
+	
 	
 });
 
@@ -6285,12 +6692,12 @@ jQuery(function($) {
 	 * @param {function} callback Where to send the results, as an array
 	 * @return {void}
 	 */
-	WPGMZA.OLGeocoder.prototype.getResponseFromCache = function(address, callback)
+	WPGMZA.OLGeocoder.prototype.getResponseFromCache = function(query, callback)
 	{
 		$.ajax(WPGMZA.ajaxurl, {
 			data: {
 				action: "wpgmza_query_nominatim_cache",
-				query: address
+				query: JSON.stringify(query)
 			},
 			success: function(response, xhr, status) {
 				// Legacy compatibility support
@@ -6315,8 +6722,8 @@ jQuery(function($) {
 			format: "json"
 		};
 		
-		if(options.country)
-			data.countrycodes = options.country;
+		if(options.componentRestrictions && options.componentRestrictions.country)
+			data.countryCodes = options.componentRestrictions.country;
 		
 		$.ajax("https://nominatim.openstreetmap.org/search/", {
 			data: data,
@@ -6337,12 +6744,12 @@ jQuery(function($) {
 	 * @param {object|array} response The response to cache
 	 * @returns {void}
 	 */
-	WPGMZA.OLGeocoder.prototype.cacheResponse = function(address, response)
+	WPGMZA.OLGeocoder.prototype.cacheResponse = function(query, response)
 	{
 		$.ajax(WPGMZA.ajaxurl, {
 			data: {
 				action: "wpgmza_store_nominatim_cache",
-				query: address,
+				query: JSON.stringify(query),
 				response: JSON.stringify(response)
 			},
 			method: "POST"
@@ -6411,7 +6818,8 @@ jQuery(function($) {
 		else
 			throw new Error("You must supply either a latLng or address")
 		
-		this.getResponseFromCache(location, function(response) {
+		var query = {location: location, options: options};
+		this.getResponseFromCache(query, function(response) {
 			if(response.length)
 			{
 				finish(response, WPGMZA.Geocoder.SUCCESS);
@@ -6433,7 +6841,7 @@ jQuery(function($) {
 				
 				finish(response, WPGMZA.Geocoder.SUCCESS);
 				
-				self.cacheResponse(location, response);
+				self.cacheResponse(query, response);
 			});
 		});
 	}
@@ -6572,11 +6980,11 @@ jQuery(function($) {
 			
 			// NB: The true and false values are flipped because these settings represent the "disabled" state when true
 			if(interaction instanceof ol.interaction.DragPan)
-				interaction.setActive( (this.settings.wpgmza_settings_map_draggable == "yes" ? false : true) );
+				interaction.setActive( (self.settings.wpgmza_settings_map_draggable == "yes" ? false : true) );
 			else if(interaction instanceof ol.interaction.DoubleClickZoom)
-				interaction.setActive( (this.settings.wpgmza_settings_map_clickzoom ? false : true) );
+				interaction.setActive( (self.settings.wpgmza_settings_map_clickzoom ? false : true) );
 			else if(interaction instanceof ol.interaction.MouseWheelZoom)
-				interaction.setActive( (this.settings.wpgmza_settings_map_scroll == "yes" ? false : true) );
+				interaction.setActive( (self.settings.wpgmza_settings_map_scroll == "yes" ? false : true) );
 			
 		}, this);
 		
@@ -6585,7 +6993,7 @@ jQuery(function($) {
 			
 			// NB: The true and false values are flipped because these settings represent the "disabled" state when true
 			if(control instanceof ol.control.Zoom && WPGMZA.settings.wpgmza_settings_map_zoom == "yes")
-				this.olMap.removeControl(control);
+				self.olMap.removeControl(control);
 			
 		}, this);
 		
@@ -6672,6 +7080,8 @@ jQuery(function($) {
 		// Dispatch event
 		if(!WPGMZA.isProVersion())
 		{
+			this.trigger("init");
+			
 			this.dispatchEvent("created");
 			WPGMZA.events.dispatchEvent({type: "mapcreated", map: this});
 		}
@@ -7012,7 +7422,7 @@ jQuery(function($) {
 			parseFloat(this.lat)
 		]);
 		
-		this.element = $("<div class='ol-marker'><img src='" + WPGMZA.settings.default_marker_icon + "' alt=''/></div>")[0];
+		this.element = $("<div class='ol-marker'><img src='" + WPGMZA.defaultMarkerIcon + "' alt=''/></div>")[0];
 		this.element.wpgmzaMarker = this;
 		
 		$(this.element).on("mouseover", function(event) {
@@ -7020,7 +7430,9 @@ jQuery(function($) {
 		});
 		
 		this.overlay = new ol.Overlay({
-			element: this.element
+			element: this.element,
+			position: origin,
+			positioning: "bottom-center"
 		});
 		this.overlay.setPosition(origin);
 		
@@ -7090,8 +7502,11 @@ jQuery(function($) {
 		this.overlay.setPosition(origin);
 	}
 	
-	WPGMZA.OLMarker.prototype.setOffset = function(x, y)
+	WPGMZA.OLMarker.prototype.updateOffset = function(x, y)
 	{
+		var x = this._offset.x;
+		var y = this._offset.y;
+		
 		this.element.style.position = "relative";
 		this.element.style.left = x + "px";
 		this.element.style.top = y + "px";
@@ -7583,5 +7998,191 @@ jQuery(function($) {
 		
 		return result;
 	}
+	
+});
+
+// js/v8/open-layers/ol-text.js
+/**
+ * @namespace WPGMZA
+ * @module OLText
+ * @requires WPGMZA.Text
+ */
+jQuery(function($) {
+	
+	WPGMZA.OLText = function()
+	{
+		
+	}
+	
+});
+
+// js/v8/tables/datatable.js
+/**
+ * @namespace WPGMZA
+ * @module DataTable
+ * @requires WPGMZA
+ */
+jQuery(function($) {
+	
+	WPGMZA.DataTable = function(element)
+	{
+		$.fn.dataTable.ext.errMode = "throw";
+		
+		this.element = element;
+		this.element.wpgmzaDataTable = this;
+		this.dataTableElement = this.getDataTableElement();
+
+		this.phpClass			= $(element).attr("data-wpgmza-php-class");
+		this.dataTable			= $(this.dataTableElement).DataTable(this.getDataTableSettings());
+		this.wpgmzaDataTable	= this;
+	}
+	
+	WPGMZA.DataTable.prototype.getDataTableElement = function()
+	{
+		return $(this.element).find("table");
+	}
+	
+	WPGMZA.DataTable.prototype.getDataTableSettings = function()
+	{
+		var self = this;
+		var element = this.element;
+		var options = {};
+		var ajax;
+		
+		if($(element).attr("data-wpgmza-datatable-options"))
+			options = JSON.parse($(element).attr("data-wpgmza-datatable-options"));
+		
+		if(ajax = $(element).attr("data-wpgmza-rest-api-route"))
+		{
+			options.ajax = {
+				url: WPGMZA.resturl + ajax,
+				method: "POST",	// We don't use GET because the request can get bigger than some browsers maximum URL lengths
+				data: function(data, settings) {
+					return self.onAJAXRequest(data, settings);
+				}
+			};
+			
+			options.processing = true;
+			options.serverSide = true;
+		}
+		
+		if($(this.element).attr("data-wpgmza-php-class") == "WPGMZA\\MarkerListing\\AdvancedTable" && WPGMZA.settings.wpgmza_default_items)
+		{
+			options.iDisplayLength = parseInt(WPGMZA.settings.wpgmza_default_items);
+			options.aLengthMenu = [5, 10, 25, 50, 100];
+		}
+		
+		return options;
+	}
+	
+	/**
+	 * This function wraps the request so it doesn't collide with WP query vars,
+	 * it also adds the PHP class so that the controller knows which class to 
+	 * instantiate
+	 * @return object
+	 */
+	WPGMZA.DataTable.prototype.onAJAXRequest = function(data, settings)
+	{
+		var params = {
+			"phpClass":	this.phpClass
+		};
+		
+		var attr = $(this.element).attr("data-wpgmza-ajax-parameters");
+		if(attr)
+			$.extend(params, JSON.parse(attr));
+		
+		$.extend(data, params);
+		
+		return {
+			wpgmzaDataTableRequestData: data
+		};
+	}
+	
+	WPGMZA.DataTable.prototype.onAJAXResponse = function(response)
+	{
+		
+	}
+	
+	WPGMZA.DataTable.prototype.reload = function()
+	{
+		this.dataTable.ajax.reload(null, false); // null callback, false for resetPaging
+	}
+	
+});
+
+// js/v8/tables/admin-marker-datatable.js
+/**
+ * @namespace WPGMZA
+ * @module AdminMarkerDataTable
+ * @requires WPGMZA.DataTable
+ */
+jQuery(function($) {
+	
+	WPGMZA.AdminMarkerDataTable = function(element)
+	{
+		var self = this;
+		
+		WPGMZA.DataTable.call(this, element);
+		
+		$(element).find(".select_all_markers").on("click", function(event) {
+			self.onSelectAll(event);
+		});
+		
+		$(element).find(".bulk_delete").on("click", function(event) {
+			self.onBulkDelete(event);
+		});
+	}
+	
+	WPGMZA.AdminMarkerDataTable.prototype = Object.create(WPGMZA.DataTable.prototype);
+	WPGMZA.AdminMarkerDataTable.prototype.constructor = WPGMZA.AdminMarkerDataTable;
+	
+	WPGMZA.AdminMarkerDataTable.prototype.getDataTableSettings = function()
+	{
+		var self = this;
+		var options = WPGMZA.DataTable.prototype.getDataTableSettings.call(this);
+		
+		options.createdRow = function(row, data, index)
+		{
+			var ajax = self.dataTable.ajax.json();
+			var meta = ajax.meta[index];
+			row.wpgmzaMarkerData = meta;
+		}
+		
+		return options;
+	}
+	
+	WPGMZA.AdminMarkerDataTable.prototype.onSelectAll = function(event)
+	{
+		$(this.element).find("input[name='mark']").prop("checked", true);
+	}
+	
+	WPGMZA.AdminMarkerDataTable.prototype.onBulkDelete = function(event)
+	{
+		var self = this;
+		var ids = [];
+		
+		$(this.element).find("input[name='mark']:checked").each(function(index, el) {
+			var row = $(el).closest("tr")[0];
+			ids.push(row.wpgmzaMarkerData.id);
+		});
+		
+		WPGMZA.restAPI.call("/markers/", {
+			method: "DELETE",
+			data: {
+				ids: ids
+			},
+			complete: function() {
+				self.reload();
+			}
+		});
+	}
+	
+	$(document).ready(function(event) {
+		
+		$("[data-wpgmza-admin-marker-datatable]").each(function(index, el) {
+			new WPGMZA.AdminMarkerDataTable(el);
+		});
+		
+	});
 	
 });
