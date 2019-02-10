@@ -30,6 +30,7 @@ class Jetpack_Photon_Static_Assets_CDN {
 		add_action( 'admin_print_scripts', array( __CLASS__, 'cdnize_assets' ) );
 		add_action( 'admin_print_styles', array( __CLASS__, 'cdnize_assets' ) );
 		add_action( 'wp_footer', array( __CLASS__, 'cdnize_assets' ) );
+		add_filter( 'load_script_textdomain_relative_path', array( __CLASS__, 'fix_script_relative_path' ), 10, 2 );
 	}
 
 	/**
@@ -81,6 +82,17 @@ class Jetpack_Photon_Static_Assets_CDN {
 		if ( class_exists( 'WooCommerce' ) ) {
 			self::cdnize_plugin_assets( 'woocommerce', WC_VERSION );
 		}
+	}
+
+	/**
+	 * Ensure use of the correct relative path when determining the JavaScript file names.
+	 *
+	 * @param string $relative The relative path of the script. False if it could not be determined.
+	 * @param string $src      The full source url of the script.
+	 * @return string The expected relative path for the CDN-ed URL.
+	 */
+	public static function fix_script_relative_path( $relative, $src ) {
+		return substr( $src, 1 + strpos( $src, '/wp-includes/' ) );
 	}
 
 	/**
@@ -148,10 +160,14 @@ class Jetpack_Photon_Static_Assets_CDN {
 	 *
 	 * @param string $plugin plugin slug string.
 	 * @param string $version plugin version number string.
-	 * @return array
+	 * @return array|bool Will return false if not a public version.
 	 */
 	public static function get_plugin_assets( $plugin, $version ) {
 		if ( 'jetpack' === $plugin && JETPACK__VERSION === $version ) {
+			if ( ! self::is_public_version( $version ) ) {
+				return false;
+			}
+
 			$assets = array(); // The variable will be redefined in the included file.
 
 			include JETPACK__PLUGIN_DIR . 'modules/photon-cdn/jetpack-manifest.php';
@@ -236,8 +252,8 @@ class Jetpack_Photon_Static_Assets_CDN {
 		if ( preg_match( '/^\d+(\.\d+)+$/', $version ) ) {
 			// matches `1` `1.2` `1.2.3`.
 			return true;
-		} elseif ( $include_beta_and_rc && preg_match( '/^\d+(\.\d+)+(-(beta|rc)\d?)$/i', $version ) ) {
-			// matches `1.2.3` `1.2.3-beta` `1.2.3-beta1` `1.2.3-rc` `1.2.3-rc2`.
+		} elseif ( $include_beta_and_rc && preg_match( '/^\d+(\.\d+)+(-(beta|rc|pressable)\d?)$/i', $version ) ) {
+			// matches `1.2.3` `1.2.3-beta` `1.2.3-pressable` `1.2.3-beta1` `1.2.3-rc` `1.2.3-rc2`.
 			return true;
 		}
 		// unrecognized version.

@@ -40,7 +40,7 @@ abstract class Publicize_Base {
 	 * All users with this cap can un-globalize all other global connections, and globalize any of their own
 	 * Globalized connections cannot be unselected by users without this capability when publishing
 	 */
-	public $GLOBAL_CAP = 'edit_others_posts';
+	public $GLOBAL_CAP = 'publish_posts';
 
 	/**
 	* Sets up the basics of Publicize
@@ -116,6 +116,10 @@ abstract class Publicize_Base {
 
 		// Connection test callback
 		add_action( 'wp_ajax_test_publicize_conns', array( $this, 'test_publicize_conns' ) );
+
+		add_action( 'init', array( $this, 'add_post_type_support' ) );
+		add_action( 'init', array( $this, 'register_post_meta' ), 20 );
+		add_action( 'jetpack_register_gutenberg_extensions', array( $this, 'register_gutenberg_extension' ) );
 	}
 
 /*
@@ -135,6 +139,10 @@ abstract class Publicize_Base {
 	 * @return array
 	 */
 	abstract function get_services( $filter = 'all', $_blog_id = false, $_user_id = false );
+
+	function can_connect_service( $service_name ) {
+		return 'google_plus' !== $service_name;
+	}
 
 	/**
 	 * Does the given user have a connection to the service on the given blog?
@@ -442,6 +450,26 @@ abstract class Publicize_Base {
 	 * @return void
 	 */
 	function test_publicize_conns() {
+		wp_send_json_success( $this->get_publicize_conns_test_results() );
+	}
+
+	/**
+	 * Run connection tests on all Connections
+	 *
+	 * @return array {
+	 *     Array of connection test results.
+	 *
+	 *     @type string 'connectionID'          Connection identifier string that is unique for each connection
+	 *     @type string 'serviceName'           Slug of the connection's service (facebook, twitter, ...)
+	 *     @type bool   'connectionTestPassed'  Whether the connection test was successful
+	 *     @type string 'connectionTestMessage' Test success or error message
+	 *     @type bool   'userCanRefresh'        Whether the user can re-authenticate their connection to the service
+	 *     @type string 'refreshText'           Message instructing user to re-authenticate their connection to the service
+	 *     @type string 'refreshURL'            URL, which, when visited by the user, re-authenticates their connection to the service.
+	 *     @type string 'unique_id'             ID string representing connection
+	 * }
+	 */
+	function get_publicize_conns_test_results() {
 		$test_results = array();
 
 		foreach ( (array) $this->get_services( 'connected' ) as $service_name => $connections ) {
@@ -474,7 +502,7 @@ abstract class Publicize_Base {
 					if ( ! $this->is_valid_facebook_connection( $connection ) ) {
 						$connection_test_passed = false;
 						$user_can_refresh = false;
-						$connection_test_message = __( 'Facebook no longer supports Publicize connections to Facebook Profiles, but you can still connect Facebook Pages. Please select a Facebook Page to publish updates to.' );
+						$connection_test_message = __( 'Please select a Facebook Page to publish updates.', 'jetpack' );
 					}
 				}
 
@@ -498,7 +526,7 @@ abstract class Publicize_Base {
 			}
 		}
 
-		wp_send_json_success( $test_results );
+		return $test_results;
 	}
 
 	/**
@@ -742,6 +770,95 @@ abstract class Publicize_Base {
 	 * @return void
 	 */
 	abstract function flag_post_for_publicize( $new_status, $old_status, $post );
+
+	/**
+	 * Ensures the Post internal post-type supports `publicize`
+	 *
+	 * This feature support flag is used by the REST API.
+	 */
+	function add_post_type_support() {
+		add_post_type_support( 'post', 'publicize' );
+	}
+
+	/**
+	 * Register the Publicize Gutenberg extension
+	 */
+	function register_gutenberg_extension() {
+		// TODO: The `gutenberg/available-extensions` endpoint currently doesn't accept a post ID,
+		// so we cannot pass one to `$this->current_user_can_access_publicize_data()`.
+
+		if ( $this->current_user_can_access_publicize_data() ) {
+			jetpack_register_plugin( 'publicize' );
+		} else {
+			jetpack_set_extension_unavailability_reason( 'publicize', 'unauthorized' );
+
+		}
+	}
+
+	/**
+	 * Can the current user access Publicize Data.
+	 *
+	 * @param int $post_id. 0 for general access. Post_ID for specific access.
+	 * @return bool
+	 */
+	function current_user_can_access_publicize_data( $post_id = 0 ) {
+		/**
+		 * Filter what user capability is required to use the publicize form on the edit post page. Useful if publish post capability has been removed from role.
+		 *
+		 * @module publicize
+		 *
+		 * @since 4.1.0
+		 *
+		 * @param string $capability User capability needed to use publicize
+		 */
+		$capability = apply_filters( 'jetpack_publicize_capability', 'publish_posts' );
+
+		if ( 'publish_posts' === $capability && $post_id ) {
+			return current_user_can( 'publish_post', $post_id );
+		}
+
+		return current_user_can( $capability );
+	}
+
+	/**
+	 * Auth callback for the protected ->POST_MESS post_meta
+	 *
+	 * @param bool $allowed
+	 * @param string $meta_key
+	 * @param int $object_id Post ID
+	 * @return bool
+	 */
+	function message_meta_auth_callback( $allowed, $meta_key, $object_id ) {
+		return $this->current_user_can_access_publicize_data( $object_id );
+	}
+
+	/**
+	 * Registers the ->POST_MESS post_meta for use in the REST API.
+	 *
+	 * Registers for each post type that with `publicize` feature support.
+	 */
+	function register_post_meta() {
+		$args = array(
+			'type' => 'string',
+			'description' => __( 'The message to use instead of the title when sharing to Publicize Services', 'jetpack' ),
+			'single' => true,
+			'default' => '',
+			'show_in_rest' => array(
+				'name' => 'jetpack_publicize_message'
+			),
+			'auth_callback' => array( $this, 'message_meta_auth_callback' ),
+		);
+
+		foreach ( get_post_types() as $post_type ) {
+			if ( ! $this->post_type_is_publicizeable( $post_type ) ) {
+				continue;
+			}
+
+			$args['object_subtype'] = $post_type;
+
+			register_meta( 'post', $this->POST_MESS, $args );
+		}
+	}
 
 	/**
 	 * Fires when a post is saved, checks conditions and saves state in postmeta so that it
