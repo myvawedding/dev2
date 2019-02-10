@@ -21,7 +21,7 @@ msgstr ""
 msgid "Enable reviews"
 msgstr ""
 
-#: lib/components/Review/ReviewComponent.php:175, lib/components/Review/FieldType/RatingFieldType.php:15
+#: lib/components/Review/ReviewComponent.php:175, lib/components/Review/FieldType/RatingFieldType.php:15, lib/components/Review/FieldType/RatingFieldType.php:136
 msgid "Review Rating"
 msgstr ""
 
@@ -178,10 +178,6 @@ msgstr ""
 
 #: lib/components/Review/FieldRenderer/RatingFieldRenderer.php:154
 msgid "Bar height"
-msgstr ""
-
-#: lib/components/Review/FieldType/RatingFieldType.php:136
-msgid "Review rating"
 msgstr ""
 
 #: lib/components/Review/FieldType/RatingFieldType.php:137

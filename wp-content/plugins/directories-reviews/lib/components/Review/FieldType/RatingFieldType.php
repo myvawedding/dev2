@@ -133,7 +133,7 @@ class RatingFieldType extends Field\Type\AbstractType implements
     public function fieldSortableOptions(Field\IField $field)
     {
         return [
-            ['label' => $label = __('Review rating', 'directories-reviews')],
+            ['label' => $label = __('Review Rating', 'directories-reviews')],
             ['args' => ['asc'], 'label' => sprintf(__('%s (asc)', 'directories-reviews'), $label)],
         ];
     }

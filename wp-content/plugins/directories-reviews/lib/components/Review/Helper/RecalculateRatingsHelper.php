@@ -20,7 +20,54 @@ class RecalculateRatingsHelper
 
         if (empty($bundle->info['review_enable'])) return;
 
+        if (!$review_bundle = $application->Entity_Bundle('review_review', $bundle->component, $bundle->group)) return;
+
         $voting_model = $application->getModel(null, 'Voting');
+
+        $entity_type_info = $application->Entity_Types_impl($review_bundle->entitytype_name)->entityTypeInfo();
+
+        // Delete votes for trashed reviews
+        $voting_model->getGateway('Vote')->deleteEntityVotes(
+            $entity_type_info['table_name'],
+            $entity_type_info['properties']['id']['column'],
+            @$entity_type_info['properties']['bundle_name']['column'],
+            $review_bundle->name,
+            @$entity_type_info['properties']['status']['column'],
+            $application->Entity_Status($review_bundle->entitytype_name, 'trash'),
+            true
+        );
+        $progress->set('Deleting votes for trashed reviews');
+
+        // Fetch reviews without vote entry and cast vote
+        $reviews_without_votes = $voting_model->getGateway('Vote')->getMissingEntityIds(
+            $entity_type_info['table_name'],
+            $entity_type_info['properties']['id']['column'],
+            @$entity_type_info['properties']['bundle_name']['column'],
+            $review_bundle->name,
+            @$entity_type_info['properties']['status']['column'],
+            $application->Entity_Status($review_bundle->entitytype_name, 'publish'),
+            true
+        );
+        if (!empty($reviews_without_votes)) {
+            foreach ($application->Entity_Entities($review_bundle->entitytype_name, $reviews_without_votes) as $review) {
+                if (!$parent_entity = $application->Entity_ParentEntity($review, false)) continue;
+
+                $rating = $review->getSingleFieldValue('review_rating');
+                foreach (array_keys($rating) as $rating_name) {
+                    $rating[$rating_name] = $rating[$rating_name]['value'];
+                }
+                $application->Voting_CastVote(
+                    $parent_entity,
+                    'review_ratings',
+                    $rating,
+                    array(
+                        'reference_id' => $review->getId(),
+                        'user_id' => $review->getAuthorId(),
+                    )
+                );
+            }
+            $progress->set('Creating missing votes for reviews');
+        }
 
         // Get review IDs
         $review_ids = [];
@@ -42,20 +89,7 @@ class RecalculateRatingsHelper
             }
         }
 
-        // Make sure votes for non-published reviews do not exist in votes table
-        $reviews_delete_vote = [];
-        foreach (array_keys($review_ids) as $entity_id) {
-            foreach ($application->Entity_Entities($bundle->entitytype_name, $review_ids[$entity_id], false) as $review) {
-                if (!$review->isPublished()) {
-                    // delete vote for this review
-                    $reviews_delete_vote[] = $review->getId();
-                }
-            }
-        }
-        if (!empty($reviews_delete_vote)) {
-            $criteria = $voting_model->createCriteria('Vote')->referenceId_in($reviews_delete_vote);
-            $voting_model->getGateway('Vote')->deleteByCriteria($criteria);
-        }
+        if (empty($review_ids)) return;
 
         // Recalculate review ratings
         $paginator = $application->Entity_Query($bundle->entitytype_name)
