@@ -28,12 +28,12 @@ function gmw_register_google_maps_api() {
 					'url_data' => http_build_query(
 						apply_filters(
 							'gmw_google_maps_api_args', array(
-								'libraries' => 'google_maps' == GMW()->maps_provider ? 'places' : '',
-								'key'       => gmw_get_option( 'api_providers', 'google_maps_server_api_key', '' ),
 								'region'    => gmw_get_option( 'general_settings', 'country_code', 'us' ),
+								'libraries' => 'google_maps' == GMW()->maps_provider ? 'places' : '',
+								'key'       => trim( gmw_get_option( 'api_providers', 'google_maps_client_side_api_key', '' ) ),
 								'language'  => gmw_get_option( 'general_settings', 'language_code', 'en' ),
 							)
-						), '', '&amp;'
+						)
 					),
 				), gmw_get_options_group()
 			);
@@ -94,7 +94,7 @@ function gmw_enqueue_scripts() {
 	wp_register_script( 'gmw', GMW_URL . '/assets/js/gmw.core.min.js', $main_scripts, GMW_VERSION, true );
 
 	// Variables to localize as JavaScript.
-	$options = array(
+	$options = apply_filters( 'gmw_localize_options', array(
 		'settings'          => array(
 			'general' 		=> $gmw_options['general_settings'],
 			'api'           => isset( $gmw_options['api_providers'] ) ? $gmw_options['api_providers'] : array(),
@@ -104,7 +104,7 @@ function gmw_enqueue_scripts() {
 		'defaultIcons'		=> GMW()->default_icons,
 		'isAdmin'           => IS_ADMIN,
 		'ajaxUrl'           => GMW()->ajax_url,
-	);
+	), $gmw_options );
 
 	wp_localize_script( 'gmw', 'gmwVars', $options );
 
@@ -152,10 +152,10 @@ function gmw_enqueue_scripts() {
 
 		// register chosen scripts/style in back-end
 		if ( ! wp_style_is( 'chosen', 'registered' ) ) {
-			wp_register_style( 'chosen', GMW_URL . '/assets/lib/chosen/chosen.min.css', array(), GMW_VERSION );
+			wp_register_style( 'chosen', GMW_URL . '/assets/lib/chosen/chosen.min.css', array(), '1.8.7' );
 		}
 		if ( ! wp_script_is( 'chosen', 'registered' ) ) {
-			wp_register_script( 'chosen', GMW_URL . '/assets/lib/chosen/chosen.jquery.min.js', array( 'jquery' ), GMW_VERSION, true );
+			wp_register_script( 'chosen', GMW_URL . '/assets/lib/chosen/chosen.jquery.min.js', array( 'jquery' ), '1.8.7', true );
 		}
 	}
 }

@@ -1,7 +1,16 @@
 <?php
-// Exit if accessed directly
+/**
+ * GEO my WP Form class.
+ *
+ * Generates the proximity search forms.
+ *
+ * This class should be extended for different object types.
+ *
+ * @package geo-my-wp
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -33,6 +42,8 @@ class GMW_Form {
 	 * The form being displayed
 	 *
 	 * @since 2.6.1
+	 *
+	 * @var array
 	 *
 	 * @access public
 	 */
@@ -105,7 +116,7 @@ class GMW_Form {
 	public $query_cache_args = array();
 
 	/**
-	 * gmw_location database fields that will be pulled in the search query
+	 * The gmw_location database fields that will be pulled in the search query
 	 *
 	 * The fields can be modified using the filter 'gmw_location_query_db_fields'
 	 *
@@ -116,11 +127,13 @@ class GMW_Form {
 		'ID as location_id',
 		'object_type',
 		'object_id',
-		'featured as featured_location',
 		'user_id',
 		'latitude as lat',
 		'longitude as lng',
+		'street_name',
+		'street_number',
 		'street',
+		'premise',
 		'city',
 		'region_name',
 		'region_code',
@@ -129,7 +142,6 @@ class GMW_Form {
 		'country_code',
 		'address',
 		'formatted_address',
-		//'map_icon',
 	);
 
 	/**
@@ -176,20 +188,11 @@ class GMW_Form {
 	public $map_locations = array();
 
 	/**
-	 * $query
-	 *
-	 * holder for the search query performed for each object
+	 * The holder for the search query.
 	 *
 	 * @var array|object
 	 */
 	public $query = array();
-
-	/**
-	 * If query is doing proximity search ( when address entered ) or not.
-	 *
-	 * @var boolean
-	 */
-	public $is_proximity_query = false;
 
 	/**
 	 * Results message
@@ -218,7 +221,7 @@ class GMW_Form {
 	protected $render_map = false;
 
 	/**
-	 * get_info_window_args
+	 * Info window arguments.
 	 *
 	 * This is where some data that will pass to the map info-window is generated
 	 *
@@ -239,8 +242,9 @@ class GMW_Form {
 	 *      'location_meta'   => array( 'phone', 'fax', 'email' )
 	 * );
 	 *
-	 * @param  [type] $location [description]
-	 * @return [type]           [description]
+	 * @param  array $object the object data.
+	 *
+	 * @return array of arguments.
 	 */
 	public function get_info_window_args( $object ) {
 
@@ -269,44 +273,56 @@ class GMW_Form {
 		return array();
 	}
 
+	/**
+	 * Do or output something before the search results.
+	 */
 	public function before_search_results() {}
 
+	/**
+	 * Do or output something after the search results.
+	 */
 	public function after_search_results() {}
 
 	/**
-	 * [__construct description]
+	 * __construct
 	 *
-	 * verify some data and generate default values.
+	 * Verify some data and generate default values.
 	 *
-	 * @param array $attr shortcode attributes
-	 * @param array $form the form being processed
+	 * @param array $form the form being processed.
 	 */
 	public function __construct( $form ) {
 
 		$this->form = $form;
 
-		// get current form element ( form, map, results... )
+		/**
+		 * Get current form element ( form, map, results... )
 		// $this->form['current_element'] = key( $attr );
 		// set form="results" as search results element
 		// if ( isset( $attr['form'] ) && $attr['form'] == 'results' ) {
 		// $this->form['current_element'] = 'search_results';
 		// }
-		// verify that the form element is lagit
-		if ( ! in_array( $this->form['current_element'], $this->allowed_form_elements ) ) {
+		*/
+
+		// verify that the form element is lagit.
+		if ( ! in_array( $this->form['current_element'], $this->allowed_form_elements, true ) ) {
 
 			$this->element_allowed = false;
 
-			return trigger_error( sprintf( __( '"%s" is invalid form type.', 'geo-my-wp' ), $this->form['current_element'] ), E_USER_NOTICE );
+			$message = sprintf(
+				/* translators: %s replaced with form type */
+				__( '%s is invalid form type.', 'geo-my-wp' ),
+				$this->form['current_element']
+			);
+
+			return gmw_trigger_error( $message );
 		}
 
-		// get from default values
+		// get from default values.
 		$this->setup_defaults();
 	}
 
 	/**
 	 * Verify default form args
-	 *
-	 * @return array
 	 */
 	public function setup_defaults() {
 
@@ -333,17 +349,15 @@ class GMW_Form {
 		$this->form['paged_name']       = $page_name;
 		$this->form['paged']            = get_query_var( $page_name ) ? get_query_var( $page_name ) : 1;
 		$this->form['per_page']         = -1;
-		// $this->form['labels']          = gmw_get_labels( $this->form );
-		//$this->form['user_marker']   = 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png';
-		$this->form['has_locations'] = false;
-		$this->form['results']       = array();
-		$this->form['results_count'] = 0;
-		$this->form['total_results'] = 0;
-		$this->form['max_pages']     = 0;
-		$this->form['in_widget']     = ! empty( $this->form['params']['widget'] ) ? true : false;
+		$this->form['has_locations']    = false;
+		$this->form['results']          = array();
+		$this->form['results_count']    = 0;
+		$this->form['total_results']    = 0;
+		$this->form['max_pages']        = 0;
+		$this->form['in_widget']        = ! empty( $this->form['params']['widget'] ) ? true : false;
 
-		// check if form submitted
-		if ( isset( $_GET[ $this->url_px . 'form' ] ) ) {
+		// check if form submitted.
+		if ( isset( $_GET[ $this->url_px . 'form' ] ) ) { // WPCS: CSRF ok.
 
 			$this->form['submitted']    = true;
 			$this->form['form_values']  = $this->get_form_values();
@@ -351,32 +365,33 @@ class GMW_Form {
 			$this->form['map_usage']    = $this->form['form_submission']['display_map'];
 			$this->form['display_list'] = $this->form['form_submission']['display_results'];
 
-			// otherwise check if page load results is set
+			// otherwise check if page load results is set.
 		} elseif ( $this->form['page_load_results']['enabled'] ) {
 
 			$this->form['page_load_action'] = true;
 			$this->form['form_values']      = $this->get_form_values();
-			// $this->form['display_map']        = $gmw['form_submission']['display_map'] = $this->form['page_load_results']['display_map'];
-			$this->form['map_enabled']  = '' === $this->form['page_load_results']['display_map'] ? false : true;
-			$this->form['map_usage']    = $this->form['page_load_results']['display_map'];
-			$this->form['display_list'] = $this->form['page_load_results']['display_results'];
+			$this->form['map_enabled']      = '' === $this->form['page_load_results']['display_map'] ? false : true;
+			$this->form['map_usage']        = $this->form['page_load_results']['display_map'];
+			$this->form['display_list']     = $this->form['page_load_results']['display_results'];
 		}
 
 		// for older version. to prevent PHP warnings.
 		$this->form['search_results']['results_page'] = $this->form['form_submission']['results_page'];
 		$this->form['search_results']['display_map']  = $this->form['map_usage'];
 
-		/***** temporary to support previous version of template files ( will be removed ) */
+		/* temporary to support previous version of template files ( will be removed ) */
 		if ( function_exists( 'gmw_3_deprecated_form_settings' ) ) {
 			$this->form = gmw_3_deprecated_form_settings( $this->form );
 		}
-		/****** End deprecated */
+		/* End deprecated */
 
-		$this->enable_objects_without_location = apply_filters( 'enable_objects_without_location', $this->enable_objects_without_location, $this->form );
+		$this->enable_objects_without_location = apply_filters( 'gmw_form_enable_objects_without_location', $this->enable_objects_without_location, $this->form, $this );
 
-		// can modify form values
-		$this->form = apply_filters( 'gmw_default_form_values', $this->form );
-		$this->form = apply_filters( "gmw_{$this->form['prefix']}_default_form_values", $this->form );
+		$this->db_fields = apply_filters( 'gmw_form_db_fields', $this->db_fields, $this->form, $this );
+
+		// can modify form values.
+		$this->form = apply_filters( 'gmw_default_form_values', $this->form, $this );
+		$this->form = apply_filters( "gmw_{$this->form['prefix']}_default_form_values", $this->form, $this );
 	}
 
 	/**
@@ -385,7 +400,8 @@ class GMW_Form {
 	 * @return [type] [description]
 	 */
 	public function get_form_values() {
-		return gmw_get_form_values( $this->url_px, $_SERVER['QUERY_STRING'] );
+		$qs = isset( $_SERVER['QUERY_STRING'] ) ? wp_unslash( $_SERVER['QUERY_STRING'] ) : ''; // WPCS: CSRF ok, sanitization ok.
+		return gmw_get_form_values( $this->url_px, wp_unslash( $qs ) );
 	}
 
 	/**
@@ -395,21 +411,24 @@ class GMW_Form {
 	 */
 	public function get_results_page() {
 
-		// if already contains URL do nothing
+		// if already contains URL do nothing.
 		if ( ! empty( $this->form['form_submission']['results_page'] ) && strpos( $this->form['form_submission']['results_page'], 'http' ) !== false ) {
 
 			return $this->form['form_submission']['results_page'];
 		}
 
-		// if this is page ID
+		// if this is page ID.
 		if ( ! empty( $this->form['form_submission']['results_page'] ) ) {
 
 			return get_permalink( $this->form['form_submission']['results_page'] );
 		}
 
-		// if no page ID set and its in widget, get the results page from settings page
+		// if no page ID set and its in widget, get the results page from settings page.
 		if ( $this->form['in_widget'] ) {
-			return $this->form['form_submission']['results_page'] = get_permalink( GMW()->options['general_settings']['results_page'] );
+
+			$this->form['form_submission']['results_page'] = get_permalink( GMW()->options['general_settings']['results_page'] );
+
+			return $this->form['form_submission']['results_page'];
 		}
 
 		// otherwise false.
@@ -423,26 +442,25 @@ class GMW_Form {
 	 */
 	public function search_form() {
 
-		// enable/disable form filter
-		if ( apply_filters( "gmw_{$this->form['ID']}_disable_search_form", false ) ) {
+		// enable/disable form filter.
+		if ( apply_filters( "gmw_{$this->form['ID']}_disable_search_form", false, $this ) ) {
 			return;
 		}
 
-		// verify search form tempalte
-		if ( empty( $this->form['search_form']['form_template'] ) || '-1' == $this->form['search_form']['form_template'] || 'no_form' == $this->form['search_form']['form_template'] ) {
+		// verify search form tempalte.
+		if ( empty( $this->form['search_form']['form_template'] ) || '-1' === $this->form['search_form']['form_template'] || 'no_form' === $this->form['search_form']['form_template'] ) {
 			return;
 		}
 
-		// get search form template files
+		// get search form template files.
 		$search_form = gmw_get_search_form_template( $this->form['component'], $this->form['search_form']['form_template'], $this->form['addon'] );
 
-		// enqueue style only once
+		// enqueue style only once.
 		if ( ! wp_style_is( $search_form['stylesheet_handle'], 'enqueued' ) ) {
 			wp_enqueue_style( $search_form['stylesheet_handle'], $search_form['stylesheet_uri'], array( 'gmw-frontend' ), GMW_VERSION );
 		}
 
-		// temporary for older versions.
-		// This function should be used in the search form
+		// temporary for older versions. This function should be used in the search form.
 		$this->form['form_submission']['results_page'] = $this->get_results_page();
 
 		// to support older versions of search form tempalte files.
@@ -454,12 +472,12 @@ class GMW_Form {
 		$gmw      = $this->form;
 		$gmw_form = $this;
 
-		include( $search_form['content_path'] );
+		include $search_form['content_path'];
 
 		do_action( 'gmw_after_search_form', $this->form, $this );
 		do_action( "gmw_{$this->form['prefix']}_after_search_form", $this->form, $this );
 
-		// load main JavaScript file
+		// load main JavaScript file.
 		if ( ! wp_script_is( 'gmw', 'enqueued' ) ) {
 			wp_enqueue_script( 'gmw' );
 		}
@@ -479,12 +497,10 @@ class GMW_Form {
 			'map_width'      => $this->form['results_map']['map_width'],
 			'map_height'     => $this->form['results_map']['map_height'],
 			'expand_on_load' => ! empty( $this->form['results_map']['expand_on_load'] ) ? true : false,
-			'init_visible'   => $this->form['map_usage'] == 'shortcode' ? false : true,
+			'init_visible'   => 'shortcode' === $this->form['map_usage'] ? false : true,
 		);
 
-		echo GMW_Maps_API::get_map_element( $args );
-
-		// gmw_shortcode_map( $this->form );
+		echo GMW_Maps_API::get_map_element( $args ); // WPCS: XSS ok.
 	}
 
 	/**
@@ -494,8 +510,8 @@ class GMW_Form {
 	 */
 	public function map_element() {
 
-		// disable map dynamically
-		if ( ! apply_filters( 'gmw_trigger_map', true, $this->form ) ) {
+		// disable map dynamically.
+		if ( ! apply_filters( 'gmw_trigger_map', true, $this->form, $this ) ) {
 			return;
 		}
 
@@ -529,7 +545,7 @@ class GMW_Form {
 			'iw_open'    => ! empty( $this->form['results_map']['yl_icon'] ) ? true : false,
 		);
 
-		// generate the map
+		// generate the map.
 		return gmw_get_map_object( $map_args, $map_options, $this->map_locations, $user_position, $this->form );
 	}
 
@@ -542,10 +558,10 @@ class GMW_Form {
 
 		$this->form = apply_filters( 'gmw_pre_search_query_args', $this->form, $this );
 
-		// run search query on form submission or page load results
+		// run search query on form submission or page load results.
 		if ( $this->form['submitted'] || $this->form['page_load_action'] ) {
 
-			// on page load results
+			// on page load results.
 			if ( $this->form['page_load_action'] ) {
 
 				$this->page_load_results();
@@ -554,40 +570,43 @@ class GMW_Form {
 				$this->query_cache_args = $this->form['page_load_results'];
 
 				// Otherwise, on form submission
-				// make sure that the form that was submitted is the one we query and display
-			} elseif ( $this->form['ID'] == absint( $this->form['form_values']['form'] ) ) {
+				// make sure that the form that was submitted is the one we query and display.
+			} elseif ( absint( $this->form['ID'] ) === absint( $this->form['form_values']['form'] ) ) {
 
 				$this->form_submission();
 
 				// collect values as query cache arguments.
 				$this->query_cache_args = $this->form['form_values'];
 
-				// otherwise abort
+				// otherwise abort.
 			} else {
 
 				return;
 			}
 
+			$this->query_cache_args['db_fields']                        = $this->db_fields;
+			$this->query_cache_args['showing_objects_without_location'] = $this->enable_objects_without_location;
+
 			do_action( 'gmw_form_before_search_query', $this->form, $this );
 
-			// run the search query using child class
+			// run the search query using child class.
 			$results = $this->search_query();
 
 			$this->form['has_locations'] = ! empty( $results ) ? true : false;
 
-			// generate map if needed
+			// generate map if needed.
 			if ( $this->form['map_enabled'] && ( $this->form['has_locations'] || ! empty( $this->form['results_map']['no_results_enabled'] ) ) ) {
 				$this->render_map = true;
 			}
 
-			// load main JavaScript and Google APIs
+			// load main JavaScript and Google APIs.
 			if ( ! wp_script_is( 'gmw', 'enqueued' ) ) {
 				wp_enqueue_script( 'gmw' );
 			}
 
 			$this->show_results = true;
 
-			// Otherwise, do something custom
+			// Otherwise, do something custom.
 		} else {
 
 			do_action( 'gmw_main_shortcode_custom_function', $this->form, $this );
@@ -596,7 +615,7 @@ class GMW_Form {
 	}
 
 	/**
-	 * form_submission
+	 * Form_submission
 	 *
 	 * Generate some data on form submitted
 	 *
@@ -608,7 +627,7 @@ class GMW_Form {
 	 */
 	public function form_submission() {
 
-		// get form values
+		// get form values.
 		$form_values = $this->form['form_values'];
 
 		$this->form['radius']       = isset( $form_values['distance'] ) ? $form_values['distance'] : 500;
@@ -618,23 +637,24 @@ class GMW_Form {
 		$this->form['units']        = isset( $form_values['units'] ) ? $form_values['units'] : 'imperial';
 		$this->form['units_array']  = gmw_get_units_array( $this->form['units'] );
 
-		// Get lat/lng if exist in URL
+		// Get lat/lng if exist in URL.
 		if ( ! empty( $form_values['lat'] ) && ! empty( $form_values['lng'] ) ) {
 
 			$this->form['lat'] = $form_values['lat'];
 			$this->form['lng'] = $form_values['lng'];
 
-			// Otherwise look for an address to geocode
+			// Otherwise look for an address to geocode.
 		} elseif ( ! empty( $this->form['org_address'] ) ) {
 
-			// include geocoder
-			include_once( GMW_PATH . '/includes/gmw-geocoder.php' );
+			// include geocoder.
+			include_once GMW_PATH . '/includes/gmw-geocoder.php';
 
 			if ( function_exists( 'gmw_geocoder' ) ) {
-				$this->geocoded_location = $this->form['location'] = gmw_geocoder( $this->form['org_address'] );
+				$this->geocoded_location = gmw_geocoder( $this->form['org_address'] );
+				$this->form['location']  = $this->geocoded_location;
 			}
 
-			// if geocode was unsuccessful return error message
+			// if geocode was unsuccessful return error message.
 			if ( isset( $this->form['location']['error'] ) ) {
 
 				return;
@@ -646,13 +666,13 @@ class GMW_Form {
 			}
 		}
 
-		// filter the form values before running search query
-		$this->form = apply_filters( 'gmw_form_submitted_before_results', $this->form );
-		$this->form = apply_filters( "gmw_{$this->form['prefix']}_form_submitted_before_results", $this->form );
+		// filter the form values before running search query.
+		$this->form = apply_filters( 'gmw_form_submitted_before_results', $this->form, $this );
+		$this->form = apply_filters( "gmw_{$this->form['prefix']}_form_submitted_before_results", $this->form, $this );
 	}
 
 	/**
-	 * page_load_results
+	 * Page_load_results
 	 *
 	 * Generate some data on page load
 	 *
@@ -671,52 +691,55 @@ class GMW_Form {
 		$this->form['units']        = ! empty( $page_load_options['units'] ) ? $page_load_options['units'] : 'imperial';
 		$this->form['units_array']  = gmw_get_units_array( $page_load_options['units'] );
 
-		// display results based on user's current location
-		if ( ! empty( $page_load_options['user_location'] ) && false !== ( $user_location = gmw_get_user_current_location() ) ) {
+		$user_location = gmw_get_user_current_location();
 
-			// get user's current location
+		// display results based on user's current location.
+		if ( ! empty( $page_load_options['user_location'] ) && ! empty( $user_location ) ) {
+
+			// get user's current location.
 			$this->form['org_address'] = $user_location->address;
 
 			// append it to page load results as well to easier add it to query cache args.
-			$this->form['lat'] = $this->form['page_load_results']['lat'] = $user_location->lat;
-			$this->form['lng'] = $this->form['page_load_results']['lng'] = $user_location->lng;
+			$this->form['lat']                      = $user_location->lat;
+			$this->form['lng']                      = $user_location->lng;
+			$this->form['page_load_results']['lat'] = $user_location->lat;
+			$this->form['page_load_results']['lng'] = $user_location->lng;
 
-			// Otherwise look for an address filter
+			// Otherwise look for an address filter.
 		} elseif ( ! empty( $page_load_options['address_filter'] ) ) {
 
-			// get the addres value
+			// get the addres value.
 			$this->form['org_address'] = sanitize_text_field( $page_load_options['address_filter'] );
 
-			// include the geocoder
-			include( GMW_PATH . '/includes/gmw-geocoder.php' );
+			// include the geocoder.
+			include GMW_PATH . '/includes/gmw-geocoder.php';
 
-			// try to geocode the address
+			// try to geocode the address.
 			if ( function_exists( 'gmw_geocoder' ) ) {
 				$this->form['location'] = gmw_geocoder( $this->form['org_address'] );
 			}
 
-			// if geocode was unsuccessful return error message
+			// if geocode was unsuccessful return error message.
 			if ( isset( $this->form['location']['error'] ) ) {
 
-				// return $this->no_results( $this->form['location']['error'] );
 				return false;
 
 			} else {
 
-				// append it to page load results as well to easier add it to query cache args
-				$this->form['lat'] = $this->form['page_load_results']['lat'] = $this->form['location']['lat'];
-				$this->form['lng'] = $this->form['page_load_results']['lng'] = $this->form['location']['lng'];
+				// append it to page load results as well to easier add it to query cache args.
+				$this->form['lat']                      = $this->form['location']['lat'];
+				$this->form['lng']                      = $this->form['location']['lng'];
+				$this->form['page_load_results']['lat'] = $this->form['location']['lat'];
+				$this->form['page_load_results']['lng'] = $this->form['location']['lng'];
 			}
 		}
 
-		// filter the form value before query
-		$this->form = apply_filters( 'gmw_page_load_results_before_results', $this->form );
-		$this->form = apply_filters( "gmw_{$this->form['prefix']}_page_load_results_before_results", $this->form );
+		// filter the form value before query.
+		$this->form = apply_filters( 'gmw_page_load_results_before_results', $this->form, $this );
+		$this->form = apply_filters( "gmw_{$this->form['prefix']}_page_load_results_before_results", $this->form, $this );
 	}
 
 	/**
-	 * get_address_filters
-	 *
 	 * Get address fields to filter the search query
 	 *
 	 * @since 3.0
@@ -727,7 +750,7 @@ class GMW_Form {
 
 		$address_filters = array();
 
-		// if on page load results
+		// if on page load results.
 		if ( $this->form['page_load_action'] ) {
 
 			if ( ! empty( $this->form['page_load_results']['city_filter'] ) ) {
@@ -747,16 +770,16 @@ class GMW_Form {
 			}
 		}
 
-		// if searching within state or country only is enabled
-		if ( apply_filters( 'gmw_search_within_boundaries', true, $this->form ) && $this->form['submitted'] ) {
+		// if searching within state or country only is enabled.
+		if ( apply_filters( 'gmw_search_within_boundaries', true, $this->form, $this ) && $this->form['submitted'] ) {
 
-			// if searching state boundaries
-			if ( isset( $this->form['form_values']['state'] ) && '' != $this->form['form_values']['state'] ) {
+			// if searching state boundaries.
+			if ( isset( $this->form['form_values']['state'] ) && '' !== $this->form['form_values']['state'] ) {
 				$address_filters['region_name'] = $this->form['form_values']['state'];
 			}
 
-			// When searchin boundaries of a country
-			if ( isset( $this->form['form_values']['country'] ) && '' != $this->form['form_values']['country'] ) {
+			// When searchin boundaries of a country.
+			if ( isset( $this->form['form_values']['country'] ) && '' !== $this->form['form_values']['country'] ) {
 				$address_filters['country_code'] = $this->form['form_values']['country'];
 			}
 		}
@@ -765,9 +788,9 @@ class GMW_Form {
 	}
 
 	/**
-	 * pre_get_locations_data
-	 *
 	 * Prepare data before quering locations
+	 *
+	 * @param array $object__in array of object ids to include.
 	 *
 	 * @return [type] [description]
 	 */
@@ -783,15 +806,15 @@ class GMW_Form {
 			'db_fields'   => $this->db_fields,
 		);
 
-		// address filters
+		// address filters.
 		$address_filters = $this->get_address_filters();
 
 		$location_meta = ! empty( $this->form['search_results']['location_meta'] ) ? $this->form['search_results']['location_meta'] : false;
 
-		// query locations from database
+		// query locations from database.
 		$locations = GMW_Location::get_locations_data( $args, $address_filters, $location_meta, $this->locations_table, $this->db_fields, $this->form );
 
-		// get locations data
+		// get locations data.
 		if ( ! empty( $locations ) ) {
 			$this->locations_data = $locations['locations_data'];
 			$this->objects_id     = $locations['objects_id'];
@@ -808,32 +831,36 @@ class GMW_Form {
 	 *
 	 * We can use this data to display it on the map or calculate directions and so on.
 	 *
-	 * @param  string $url the original URL
+	 * @param  string $url the original URL.
 	 *
 	 * @return string modified URL with address
 	 */
 	public function append_address_to_permalink( $url ) {
 
-		// abort if no address
+		// abort if no address.
 		if ( empty( $this->form['org_address'] ) ) {
 			return $url;
 		}
 
-		// get the permalink args
+		// get the permalink args.
 		$url_args = array(
 			'address' => str_replace( ' ', '+', $this->form['org_address'] ),
 			'lat'     => $this->form['lat'],
 			'lng'     => $this->form['lng'],
 		);
 
-		// append the address to the permalink
+		// append the address to the permalink.
 		return esc_url( apply_filters( "gmw_{$this->form['prefix']}_location_permalink", $url . '?' . http_build_query( $url_args ), $url, $url_args ) );
 	}
 
 	/**
 	 * Generate location data to pass to the map.
 	 *
-	 * array contains latitude, longitude, map icon and info window content.
+	 * Array contains latitude, longitude, map icon and info window content.
+	 *
+	 * @param object  $object the object data.
+	 *
+	 * @param boolean $info_window if in.
 	 *
 	 * @return array
 	 */
@@ -853,12 +880,12 @@ class GMW_Form {
 		} else {
 
 			$map_icon  = isset( $object->map_icon ) ? $object->map_icon : GMW()->default_icons['location_icon_url'];
-			//$map_icon  = GMW()->default_icons['location_icon_url'];
 			$icon_size = null;
 		}
 
 		$args = apply_filters(
-			'gmw_form_map_location_args', array(
+			'gmw_form_map_location_args',
+			array(
 				'ID'                  => $object->object_id,
 				'location_id'         => $object->location_id,
 				'object_id'           => $object->object_id,
@@ -870,10 +897,13 @@ class GMW_Form {
 				'map_icon'            => apply_filters( 'gmw_' . $this->form['prefix'] . '_map_icon', $map_icon, $object, $this->form, $this ),
 				'icon_size'           => $icon_size,
 				'info_window_content' => $info_window,
-			), $object, $this->form, $this
+			),
+			$object,
+			$this->form,
+			$this
 		);
 
-		return apply_filters( 'gmw_' . $this->form['prefix'] . '_form_map_location_args', $args, $object, $this->form );
+		return apply_filters( 'gmw_' . $this->form['prefix'] . '_form_map_location_args', $args, $object, $this->form, $this );
 	}
 
 	/**
@@ -885,27 +915,35 @@ class GMW_Form {
 	 *
 	 * You need to call it using parent::the_location( $object ) in your child class.
 	 *
+	 * @param integer $object_id the object ID.
+	 *
+	 * @param object  $object the object data.
+	 *
 	 * @return $object modified object
 	 */
 	public function the_location( $object_id, $object ) {
 
-		// setup class tag
-		$object->location_class = 'single-' . $this->form['object_type'];
+		// setup class tag.
+		$object->location_class  = 'single-' . $this->form['object_type'];
+		$object->location_class .= ' gmw-single-item gmw-single-' . $this->form['object_type'] . ' gmw-object-' . $object->object_id . ' gmw-location-' . $object->location_id;
 
-		// check if this is first location in the loop
+		// check if this is first location in the loop.
 		if ( empty( $this->form['location_count'] ) ) {
 
-			// temporary fix for page load results when setting
-			// per page to -1
-			if ( -1 == $this->form['get_per_page'] ) {
+			// temporary fix for page load results when setting per page to -1.
+			if ( -1 === $this->form['get_per_page'] ) {
 				$this->form['get_per_page'] = 1;
 			}
 
-			// count loop to be able to set the last location at the end of this function
-			$this->form['loop_count'] = 1;
+			// count loop to be able to set the last location at the end of this function.
+			$this->form['loop_count']     = 1;
+			$this->form['location_count'] = 1;
 
-			// start counting the locations
-			(int) $this->form['location_count'] = ( 1 == $this->form['paged'] ) ? 1 : ( $this->form['get_per_page'] * ( $this->form['paged'] - 1 ) ) + 1;
+			if ( 1 !== absint( $this->form['paged'] ) ) {
+				$this->form['location_count'] = ( $this->form['get_per_page'] * ( $this->form['paged'] - 1 ) ) + 1;
+			}
+
+			$this->form['location_count'] = (int) $this->form['location_count'];
 
 			$object = apply_filters( 'gmw_form_the_location_first', $object, $this->form, $this );
 
@@ -913,66 +951,68 @@ class GMW_Form {
 
 		} else {
 
-			// increase count
+			// increase count.
 			$this->form['loop_count']++;
 			$this->form['location_count']++;
 		}
 
-		// location count to display in map markers and list of results
+		// location count to display in map markers and list of results.
 		$object->location_count = $this->form['location_count'];
 
-		// if location exists, merge it with the object
+		// if location exists, merge it with the object.
 		if ( isset( $this->locations_data[ $object_id ] ) ) {
 
 			$location = $this->locations_data[ $object_id ];
 
 			foreach ( $location as $key => $value ) {
-				// add location data into object
+				// add location data into object.
 				$object->$key = $value;
 			}
 		}
 
 		if ( isset( $object->location_id ) ) {
 
-			if ( $object->featured_location ) {
+			if ( isset( $object->featured_location ) && 1 === $object->featured_location ) {
 				$object->location_class .= ' gmw-featured-location';
 			}
 
-			// append address to each permalink in the loop
+			// append address to each permalink in the loop.
 			if ( apply_filters( 'gmw_append_address_to_permalink', true, $object->object_type, $this ) && ! empty( $this->object_permalink_hook ) ) {
 				add_filter( $this->object_permalink_hook, array( $this, 'append_address_to_permalink' ) );
 			}
 
-			// get location meta from database if needed
+			// get location meta from database if needed.
 			if ( ! empty( $this->form['search_results']['location_meta'] ) ) {
 				$object->location_meta = gmw_get_location_meta( $object->location_id, $this->form['search_results']['location_meta'] );
 			}
 
-			// if map enabled, collect some data to pass to the map script
+			// if map enabled, collect some data to pass to the map script.
 			if ( $this->form['map_enabled'] ) {
 
+				/**
 				// $info_window = false;
 				// allow disabling info window data. If using AJAX for example.
 				// if ( apply_filters( 'gmw_form_get_info_window_content', true, $this->form, $this ) ) {
 				// $info_window = gmw_get_info_window_content( $object, $this->get_info_window_args( $object ), $this->form );
 				// }
+				*/
 				$this->map_locations[] = $this->get_map_location( $object, false );
 			}
 		}
 
-		// check if last location in the loop
-		if ( $this->form['loop_count'] == $this->form['results_count'] ) {
+		// check if last location in the loop.
+		if ( absint( $this->form['loop_count'] ) === absint( $this->form['results_count'] ) ) {
 
 			$object->location_class .= ' last-location';
 
-			// filter the location when loop ends
+			// filter the location when loop ends.
 			$object = apply_filters( 'gmw_form_the_location_last', $object, $this->form, $this );
 
-			// unset loop count. We don't need it outside the loop
+			// unset loop count. We don't need it outside the loop.
 			unset( $this->form['loop_count'] );
 		}
 
-		// filter each location in the loop
+		// filter each location in the loop.
 		$object = apply_filters( 'gmw_form_the_location', $object, $this->form, $this );
 
 		return $object;
@@ -998,21 +1038,21 @@ class GMW_Form {
 			return;
 		}
 
-		// get results template file
+		// get results template file.
 		$results_template = gmw_get_search_results_template( $this->form['component'], $this->form['search_results']['results_template'], $this->form['addon'] );
 
-		// enqueue stylesheet if not already enqueued
+		// enqueue stylesheet if not already enqueued.
 		if ( ! wp_style_is( $results_template['stylesheet_handle'], 'enqueued' ) ) {
 			wp_enqueue_style( $results_template['stylesheet_handle'], $results_template['stylesheet_uri'] );
 		}
 
 		$this->before_search_results();
 
-		// if locations found
+		// if locations found.
 		do_action( 'gmw_have_locations_start', $this->form, $this );
 		do_action( 'gmw_have_' . $this->form['prefix'] . '_locations_start', $this->form, $this );
 
-		// generate no results message
+		// generate no results message.
 		if ( ! $this->form['has_locations'] ) {
 			$this->form['no_results_message'] = $this->no_results_message();
 		} else {
@@ -1027,7 +1067,7 @@ class GMW_Form {
 		// This global should now be at the begining of the results template file.
 		global $members_template, $groups_template;
 
-		include( $results_template['content_path'] );
+		include $results_template['content_path'];
 
 		do_action( 'gmw_have_locations_end', $this->form, $this );
 		do_action( 'gmw_have_' . $this->form['prefix'] . '_locations_end', $this->form, $this );
@@ -1067,7 +1107,7 @@ class GMW_Form {
 	 */
 	public function no_results_message() {
 
-		// display geocoder error if failed. Otherwise, show no results message
+		// display geocoder error if failed. Otherwise, show no results message.
 		if ( ! empty( $this->form['location']['error'] ) ) {
 
 			$message = $this->form['location']['error'];
@@ -1087,33 +1127,33 @@ class GMW_Form {
 	 */
 	public function output() {
 
-		// do something before the output
-		do_action( 'gmw_shortcode_start', $this->form );
-		do_action( "gmw_{$this->form['prefix']}_shortcode_start", $this->form );
+		// do something before the output.
+		do_action( 'gmw_shortcode_start', $this->form, $this );
+		do_action( "gmw_{$this->form['prefix']}_shortcode_start", $this->form, $this );
 
-		// if using the "elements" shortcode attribute to display the form
-		if ( 'form' == $this->form['current_element'] && ! empty( $this->form['elements'] ) ) {
+		// if using the "elements" shortcode attribute to display the form.
+		if ( 'form' === $this->form['current_element'] && ! empty( $this->form['elements'] ) ) {
 
-			if ( in_array( 'map', $this->form['elements'] ) ) {
+			if ( in_array( 'map', $this->form['elements'], true ) ) {
 				$this->form['map_usage'] = 'shortcode';
 			}
 
-			if ( in_array( 'search_results', $this->form['elements'] ) ) {
+			if ( in_array( 'search_results', $this->form['elements'], true ) ) {
 				$this->form['display_list'] = true;
 			} else {
 				$this->form['display_list'] = false;
 			}
 
-			// loop through and generate the elements
+			// loop through and generate the elements.
 			foreach ( $this->form['elements'] as $element ) {
 
-				if ( ! in_array( $element, array( 'search_form', 'map', 'search_results' ) ) ) {
+				if ( ! in_array( $element, array( 'search_form', 'map', 'search_results' ), true ) ) {
 					continue;
 				}
 
 				if ( method_exists( $this, $element ) ) {
 
-					if ( 'search_results' == $element || ( 'map' == $element && ! $this->form['display_list'] ) ) {
+					if ( 'search_results' === $element || ( 'map' === $element && ! $this->form['display_list'] ) ) {
 						$this->pre_search_query();
 					}
 
@@ -1121,16 +1161,16 @@ class GMW_Form {
 				}
 			}
 
-			// otherwise, generate in normal order
+			// otherwise, generate in normal order.
 		} else {
 
-			// display search form
-			if ( 'search_form' == $this->form['current_element'] || 'form' == $this->form['current_element'] ) {
+			// display search form.
+			if ( 'search_form' === $this->form['current_element'] || 'form' === $this->form['current_element'] ) {
 				$this->search_form();
 			}
 
-			// display map using shortcode
-			if ( 'map' == $this->form['current_element'] && 'shortcode' == $this->form['map_usage'] ) {
+			// display map using shortcode.
+			if ( 'map' === $this->form['current_element'] && 'shortcode' === $this->form['map_usage'] ) {
 
 				$this->map();
 
@@ -1139,8 +1179,8 @@ class GMW_Form {
 				}
 			}
 
-			// display search results
-			if ( $this->form['display_list'] && in_array( $this->form['current_element'], array( 'form', 'search_results' ) ) ) {
+			// display search results.
+			if ( $this->form['display_list'] && in_array( $this->form['current_element'], array( 'form', 'search_results' ), true ) ) {
 
 				$this->pre_search_query();
 
@@ -1154,8 +1194,8 @@ class GMW_Form {
 			$this->map_element();
 		}
 
-		// do something after the output
-		do_action( 'gmw_shortcode_end', $this->form );
-		do_action( "gmw_{$this->form['prefix']}_shortcode_end", $this->form );
+		// do something after the output.
+		do_action( 'gmw_shortcode_end', $this->form, $this );
+		do_action( "gmw_{$this->form['prefix']}_shortcode_end", $this->form, $this );
 	}
 }

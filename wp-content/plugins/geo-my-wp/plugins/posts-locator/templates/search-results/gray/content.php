@@ -56,12 +56,12 @@
 
 					<li id="single-post-<?php echo absint( $post->ID ); ?>" class="<?php echo esc_attr( $post->location_class ); ?>">
 						
-						<?php do_action( 'gmw_search_results_loop_item_start' , $gmw, $post ); ?>
+						<?php do_action( 'gmw_search_results_loop_item_start', $gmw, $post ); ?>
 
 						<div class="top-wrapper">	
 
 							<h2 class="post-title">
-								<a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>">
+								<a href="<?php the_permalink(); ?>">
 									<?php the_title(); ?> 
 								</a>
 							</h2>

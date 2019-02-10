@@ -19,6 +19,15 @@
  */
 var GMW_Maps = {};
 
+/**
+ * Deprecated object.
+ *
+ * It is here to prevent errors with custom functions that still uses this.
+ *
+ * @type {Object}
+ */
+var gmwMapOptions = {};
+
 /************************************************/
 /************ GMW General functions *************/
 /************************************************/
@@ -1025,7 +1034,7 @@ var GMW = {
      */
     rangeslider : function() {
         jQuery( 'form' ).find( 'input.gmw-range-slider' ).on( 'input change', function() {
-            jQuery( this ).next( 'span' ).find( 'output' ).html( jQuery( this ).val() );
+            jQuery( this ).prev( 'span, label' ).find( 'output' ).html( jQuery( this ).val() );
         });
     },
 

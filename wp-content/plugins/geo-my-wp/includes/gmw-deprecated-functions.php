@@ -292,17 +292,21 @@ function gmw_get_post_info( $args = array(), $from_shortcode = false ) {
 
 	$output = '';
 
-	$post_id   = ! empty( $args['post_id'] ) ? $args['post_id'] : 0;
-   	$fields    = ! empty( $args['info'] )    ? $args['info']    : 'formatted_address';
-    $separator = ! empty( $args['divider'] ) ? $args['divider'] : ', ';
-  
+	$args = array(
+		'object_id'   => ! empty( $args['post_id'] ) ? $args['post_id'] : 0,
+		'object_type' => 'post',
+   		'fields'      => ! empty( $args['info'] )    ? $args['info']    : 'formatted_address',
+    	'separator'   => ! empty( $args['divider'] ) ? $args['divider'] : ', ',
+    	'output'      => 'string',
+    );
+  	
 	// try to get address fields
-	$output = gmw_get_address_fields( 'post', $post_id, $fields, $separator );
+	$output = gmw_get_address_fields( $args );
 
 	// if no address fields found, maybe this is location meta
 	if ( empty( $output ) ) {
 
-		$output = gmw_get_location_meta_values( 'post', $post_id, $fields, $separator );
+		$output = gmw_get_location_meta_values( array( 'object_type' => 'post', 'object_id' => $args['post_id'] ), $args['fields'], $args['separator'] );
 	}
 
 	return $output;
@@ -412,7 +416,7 @@ function gmw_pt_update_location( $args = array(), $force_refresh = false ) {
 			$user_id = 1;
 		}
 
-		gmw_update_post_location( $post_id, $address, $user_id, $force_refresh );
+		gmw_update_post_location( $post_id, $address, $user_id, '', $force_refresh );
 
 		if ( ! empty( $args['additional_info'] ) ) {
 			gmw_update_post_location_meta( $post_id, $args['additional_info'] );
@@ -441,8 +445,8 @@ function gmw_pt_thumbnail( $gmw, $post ) {
 
 
 function gmw_pt_get_taxonomies( $gmw, $post ) {
-	_deprecated_function( 'gmw_pt_get_taxonomies', '3.0', 'gmw_search_results_taxonomies_terms_list' );
-	gmw_search_results_taxonomies_terms_list( $post, $gmw );
+	_deprecated_function( 'gmw_pt_get_taxonomies', '3.0', 'gmw_get_post_taxonomies_terms_list' );
+	gmw_get_post_taxonomies_terms_list( $post, $gmw );
 }
 
 function gmw_pt_taxonomies( $gmw, $post ) {
@@ -981,6 +985,44 @@ function gmw_ps_pt_read_more_link( $post, $label, $class ) {
 	return;
 }
 
+function gmw_insert_pt_location_to_db( $location ) {
+
+	return gmw_replace_pt_location_in_db( $location, true );
+}
+
+function gmw_ps_gmapsul_set_map_icons_via_query( $clauses, $gmw ) {
+	_deprecated_function( 'gmw_ps_gmapsul_set_map_icons_via_query', '2.2.2', 'gmw_ps_ul_set_map_icons_via_query' );
+	return gmw_ps_ul_set_map_icons_via_query( $clauses, $gmw );
+}
+
+function gmw_replace_pt_location_in_db( $location, $insert = false ) {
+
+	$function_name = $insert ? 'gmw_insert_pt_location_to_db' : 'gmw_replace_pt_location_in_db';
+
+	_deprecated_function( $function_name, '3.0', 'gmw_update_location_data' );
+
+	$location_data = array(
+		'object_type'       => 'post',
+		'object_id'         => $location['post_id'],
+		'title'             => $location['post_title'],
+		'latitude'          => $location['lat'],
+		'longitude'         => $location['long'],
+		'street_number'     => $location['street_number'],
+		'street_name'       => $location['street_name'],
+		'street'            => $location['street'],
+		'premise'           => $location['apt'],
+		'city'              => $location['city'],
+		'region_code'       => $location['state'],
+		'region_name'       => $location['state_long'],
+		'postcode'          => $location['zipcode'],
+		'country_code'      => $location['country'],
+		'country_name'      => $location['country_long'],
+		'address'           => $location['address'],
+		'formatted_address' => $location['formatted_address'],
+	);
+
+	return gmw_update_location_data( $location_data );
+}
 
 /**
  * Deprecated current location functions

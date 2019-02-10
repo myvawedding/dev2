@@ -1,7 +1,12 @@
 <?php
-// Exit if accessed directly.
+/**
+ * GEO my WP - Members Locator Loader.
+ *
+ * @package geo-my-wp
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
 if ( ! class_exists( 'GMW_Addon' ) ) {
@@ -34,29 +39,60 @@ class GMW_Members_Locator_Addon extends GMW_Addon {
 	 */
 	public $prefix = 'fl';
 
-	// version.
+	/**
+	 * Version.
+	 *
+	 * @var [type]
+	 */
 	public $version = GMW_VERSION;
 
-	// description.
+	/**
+	 * Description
+	 *
+	 * @var string
+	 */
 	public $description = 'Geotag Buddypress members and create proximity form to search and find BuddyPress members location based.';
 
-	// object.
+	/**
+	 * Object type.
+	 *
+	 * @var string
+	 */
 	public $object = 'bp_member';
 
-	// database object type.
+	/**
+	 * Database object type.
+	 *
+	 * @var string
+	 */
 	public $object_type = 'user';
 
-	// db table prefix. We use the base prefix table to save users across all subsites
-	// in multisite installation.
+	/**
+	 * DB table prefix. We use the base prefix table to save users across all subsites in multisite installation.
+	 *
+	 * @var boolean
+	 */
 	public $global_db = true;
 
-	// templates folder name.
+	/**
+	 * Templates folder name.
+	 *
+	 * @var string
+	 */
 	public $templates_folder = 'members-locator';
 
-	// path.
+	/**
+	 * Path.
+	 *
+	 * @var [type]
+	 */
 	public $full_path = __FILE__;
 
-	// is core add-on.
+	/**
+	 * Core add-on.
+	 *
+	 * @var boolean
+	 */
 	public $is_core = true;
 
 	/**
@@ -73,6 +109,11 @@ class GMW_Members_Locator_Addon extends GMW_Addon {
 		);
 	}
 
+	/**
+	 * Instance.
+	 *
+	 * @var null
+	 */
 	private static $instance = null;
 
 	/**
@@ -83,12 +124,15 @@ class GMW_Members_Locator_Addon extends GMW_Addon {
 	public static function get_instance() {
 
 		if ( null === self::$instance ) {
-			self::$instance = new self;
+			self::$instance = new self();
 		}
 
 		return self::$instance;
 	}
 
+	/**
+	 * [__construct description]
+	 */
 	public function __construct() {
 
 		// When multisite enabled, and buddypress is multisite activated,
@@ -122,16 +166,21 @@ class GMW_Members_Locator_Addon extends GMW_Addon {
 
 		parent::pre_init();
 
+		add_action( 'bp_init', array( $this, 'bp_init_functions' ) );
+
 		if ( IS_ADMIN ) {
-			include( 'includes/admin/class-gmw-members-locator-form-editor.php' );
+			include 'includes/admin/class-gmw-members-locator-form-editor.php';
 		}
 
-		include( 'includes/gmw-members-locator-functions.php' );
-		include( 'includes/class-gmw-members-locator-location-tab.php' );
-		include( 'includes/gmw-members-locator-actions.php' );
-		include( 'includes/gmw-members-locator-activity.php' );
-		include( 'includes/gmw-members-locator-template-functions.php' );
-		include( 'includes/class-gmw-members-locator-form.php' );
+		include 'includes/gmw-members-locator-functions.php';
+		include 'includes/class-gmw-members-locator-location-tab.php';
+		include 'includes/gmw-members-locator-actions.php';
+		include 'includes/gmw-members-locator-activity.php';
+		include 'includes/gmw-members-locator-template-functions.php';
+		include 'includes/class-gmw-members-locator-form.php';
+
+		// init the location tab.
+		add_action( 'bp_setup_nav', array( 'GMW_Members_Locator_Addon', 'init_location_tab' ), 20 );
 
 		// load single member location.
 		if ( gmw_is_addon_active( 'single_location' ) ) {
@@ -141,7 +190,7 @@ class GMW_Members_Locator_Addon extends GMW_Addon {
 				/**
 				 * Add post object to objects dropdown in single location widget.
 				 *
-				 * @param  [type] $args [description]
+				 * @param  array $args arguments.
 				 */
 				function gmw_fl_single_location_widget_object( $args ) {
 
@@ -154,9 +203,46 @@ class GMW_Members_Locator_Addon extends GMW_Addon {
 			}
 
 			if ( ! IS_ADMIN || defined( 'DOING_AJAX' ) ) {
-				include( 'includes/class-gmw-single-member-location.php' );
+				include 'includes/class-gmw-single-member-location.php';
 			}
 		}
+	}
+
+	/**
+	 * Custom functions on bp_init
+	 */
+	public function bp_init_functions() {
+
+		// Handle members cache.
+		if ( GMW()->internal_cache ) {
+
+			// clear internal cache when friendship status changes.
+			foreach ( array( 'post_delete', 'accepted', 'requested', 'rejected', 'withdrawn' ) as $action ) {
+				add_action( 'friends_friendship_' . $action, array( $this, 'flush_user_cache' ) );
+			}
+
+			// // clear internal cache when updating settings and profile fields
+			add_action( 'xprofile_data_after_save', array( $this, 'flush_user_cache' ) );
+			add_action( 'xprofile_data_after_delete', array( $this, 'flush_user_cache' ) );
+
+			// clear internal cache when changing privacy ( BuddyPress Profile Visibility Manager plugin ).
+			if ( bp_is_settings_component() && is_user_logged_in() && ! empty( $_POST['bppv_save_submit'] ) ) { // WPCS: CSRF ok.
+				$this->flush_user_cache();
+			}
+		}
+	}
+	/**
+	 * Clear internal cache.
+	 */
+	public function flush_user_cache() {
+		GMW_Cache_Helper::flush_cache_by_object( 'user' );
+	}
+
+	/**
+	 * Init the location tab.
+	 */
+	public static function init_location_tab() {
+		$location_tab = new GMW_Members_Locator_Location_Tab();
 	}
 }
 GMW_Addon::register( 'GMW_Members_Locator_Addon' );
