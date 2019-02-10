@@ -126,7 +126,7 @@ class FileFieldType extends Field\Type\AbstractType implements Field\Type\IHuman
             'max_file_size' => array(
                 '#type' => 'textfield',
                 '#title' => __('Maximum file size', 'directories'),
-                '#description' => __('The maximum file size of uploaded files in kilobytes. Leave this field blank for no limit.', 'directories'),
+                '#description' => __('The maximum file size of uploaded files in kilobytes. Leave blank for server default.', 'directories'),
                 '#size' => 7,
                 '#integer' => true,
                 '#field_suffix' => 'KB',
@@ -140,7 +140,7 @@ class FileFieldType extends Field\Type\AbstractType implements Field\Type\IHuman
                 '#required' => true,
                 '#weight' => 1,
                 '#options' => [
-                    '' => _x('Any', 'option', 'directories'),
+                    '' => _x('Custom', 'option', 'directories'),
                     'image' => _x('Image files', 'directories'),
                     'video' => _x('Video files', 'directories'),
                     'audio' => _x('Audio files', 'directories'),
@@ -151,7 +151,7 @@ class FileFieldType extends Field\Type\AbstractType implements Field\Type\IHuman
                 '#type' => 'checkboxes',
                 '#title' => __('Allowed file extensions', 'directories'),
                 '#default_value' => $settings['allowed_extensions'],
-                '#required' => true,
+                '#required' => function($form) use ($parents) { return $form->getValue(array_merge($parents, ['allowed_files'])) === ''; },
                 '#weight' => 1,
                 '#options' => $options,
                 '#columns' => 3,

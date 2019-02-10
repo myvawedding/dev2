@@ -110,9 +110,9 @@ class ScriptsHelper
 
     public function select2(Application $application)
     {
-        $application->getPlatform()->addJsFile('select2.min.js', 'select2', array('jquery'), null, true, true)
-            ->addCssFile('select2.min.css', 'select2', null, null, null, true)
-            ->addCssFile('form-select2.min.css', 'drts-form-select2', 'select2');
+        $application->getPlatform()->addJsFile('select2.min.js', 'drts-select2', array('jquery'), null, true, true)
+            ->addCssFile('select2.min.css', 'drts-select2', null, null, null, true)
+            ->addCssFile('form-select2.min.css', 'drts-form-select2', 'drts-select2');
     }
 
     public function iconpicker(Application $application)

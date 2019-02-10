@@ -18,7 +18,7 @@ class ViewComponent extends AbstractComponent implements
     IModes,
     Field\IFilters
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories';
+    const VERSION = '1.2.23', PACKAGE = 'directories';
 
     protected $_system = true;
 
@@ -46,7 +46,7 @@ class ViewComponent extends AbstractComponent implements
             if (!$this->_application->isComponentLoaded($bundle->component)) continue;
 
             if (empty($bundle->info['parent'])) {
-                $routes[$this->_application->Entity_BundlePath($bundle, false, $lang)] = array(
+                $routes[$bundle->getPath(false, $lang)] = array(
                     'controller' => 'ViewEntities',
                     'access_callback' => true,
                     'title_callback' => true,
@@ -58,7 +58,7 @@ class ViewComponent extends AbstractComponent implements
                     ),
                     'priority' => 3,
                 );
-                $routes[$this->_application->Entity_BundlePath($bundle, true, $lang) . '/:slug'] = array(
+                $routes[$bundle->getPath(true, $lang) . '/:slug'] = array(
                     'controller' => empty($bundle->info['is_taxonomy']) ? 'ViewEntity' : 'ViewEntities',
                     'access_callback' => true,
                     'title_callback' => true,
@@ -69,8 +69,8 @@ class ViewComponent extends AbstractComponent implements
             } else {
                 if (!$this->_application->Entity_Bundle($bundle->info['parent'])) return $routes;
 
-                $permalink_path = $this->_application->Entity_BundlePath($bundle, true, $lang);
-                $routes[$this->_application->Entity_BundlePath($bundle, false, $lang)] = array(
+                $permalink_path = $bundle->getPath(true, $lang);
+                $routes[$bundle->getPath(false, $lang)] = array(
                     'controller' => 'ViewEntities',
                     'access_callback' => true,
                     'callback_path' => 'child_entities',
@@ -90,7 +90,7 @@ class ViewComponent extends AbstractComponent implements
                         'bundle_type' => $bundle->type,
                         'component' => $bundle->component,
                         'bundle_group' => $bundle->group,
-                        'embed_only' => true,
+                        'embed_only' => empty($bundle->info['public']),
                     ),
                     'priority' => 3,
                 );
@@ -158,7 +158,7 @@ class ViewComponent extends AbstractComponent implements
                                 && ($fallback_taxonomy = $this->_application->Filter('view_entity_fallback_taxonomy', null, [$context->bundle]))
                                 && ($fallback_taxonomy_bundle = $this->_application->Entity_Bundle($fallback_taxonomy, $context->bundle->component, $context->bundle->group))
                             ) {
-                                $route['forward'] = $this->_application->Entity_BundlePath($fallback_taxonomy_bundle, true) . '/' . $slug;
+                                $route['forward'] = $fallback_taxonomy_bundle->getPath(true) . '/' . $slug;
                             } else {
                                 $context->setNotFoundError();
                             }
@@ -542,7 +542,7 @@ class ViewComponent extends AbstractComponent implements
         );
 
         // Show detailed display of term and list of entities
-        $context->setTitle($this->_application->Entity_PageTitle($context->entity));
+        $context->setTitle($this->_application->Entity_PageTitle($context->entity, true));
         if (!$context->getRequest()->isAjax()) {
             $display = 'detailed';
             $context->addTemplate('view_term_entities')

@@ -106,6 +106,7 @@ div.drts-display-element > .drts-display-element-control .drts-bs-btn-group {
 
 .drts-display-element-control .drts-bs-btn {
     opacity: 0.85;
+    min-width: 30px;
 }
 
 .drts-display-element-handle {

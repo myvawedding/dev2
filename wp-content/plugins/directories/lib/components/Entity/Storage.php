@@ -372,7 +372,7 @@ class Storage
                         $id_column = 'entity_id';
                     } else {
                         $table = $entity_type_info['table_name'];
-                        $id_column = $entity_type_info['table_id_key'];
+                        $id_column = $entity_type_info['properties']['id']['column'];
                     }
                     if (isset($otherColumns)) {
                         foreach ($otherColumns as $column_name => $column_value) {
@@ -611,7 +611,7 @@ class QueryParser implements Criteria\IVisitor
         $this->_entityType = $entityType;
         $this->_tableName = $entityTypeInfo['table_name'];
         $this->_tableColumns = $entityTypeInfo['properties'];
-        $this->_tableIdColumn = $this->_tableName . '.' . $entityTypeInfo['table_id_key'];
+        $this->_tableIdColumn = $this->_tableName . '.' . $entityTypeInfo['properties']['id']['column'];
         $this->_tableJoins = empty($entityTypeInfo['table_joins']) ? [] : $entityTypeInfo['table_joins'];
     }
     

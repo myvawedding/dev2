@@ -249,9 +249,35 @@ class FormDisplayElement extends Display\Element\AbstractElement
             '#horizontal' => true,
         );
 
-        if ((empty($bundle->info['is_taxonomy']) && !empty($field_type_info['disablable']))
-            || ($field && $field->isCustomField())
+        $disablable = false;
+        if (!isset($field_type_info['disablable'])
+            || $field_type_info['disablable']
         ) {
+            if (!$field) {
+                $disablable = true;
+            } else {
+                if (($is_image_field = $field_type instanceof \SabaiApps\Directories\Component\Field\Type\IImage)
+                    || ($is_icon_field = $field->getFieldType() === 'icon')
+                    || $field->getFieldType() === 'color'
+                    || $field->isCustomField()
+                ) {
+                    $disablable = true;
+                    if (!empty($bundle->info['entity_image'])
+                        && $is_image_field
+                        && $bundle->info['entity_image'] === $field->getFieldName()
+                    ) {
+                        $disablable = false;
+                    }
+                    if (!empty($bundle->infvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvo['entity_icon'])
+                        && ($is_image_field || $is_icon_field)
+                        && $bundle->info['entity_icon'] === $field->getFieldName()
+                    ) {
+                        $disablable = false;
+                    }
+                }
+            }
+        }
+        if ($disablable) {
             $form['disabled'] = array(
                 '#type' => 'checkbox',
                 '#title' => __('Disabled', 'directories'),

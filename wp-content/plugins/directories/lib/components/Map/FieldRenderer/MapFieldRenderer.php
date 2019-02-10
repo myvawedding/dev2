@@ -63,6 +63,31 @@ class MapFieldRenderer extends AbstractRenderer
                 ),
             );
         }
+        $form += [
+            'custom_infobox_addr_format' => [
+                '#type' => 'checkbox',
+                '#title' => __('Customize format of address on infobox', 'directories'),
+                '#default_value' => !empty($settings['custom_infobox_addr_format']),
+                '#weight' => 20,
+            ],
+            'infobox_addr_format' => [
+                '#type' => 'textfield',
+                '#description' => sprintf(
+                    __('Available tags: %s', 'directories'),
+                    implode(' ', $this->_application->Location_FormatAddress_tags($field->Bundle))
+                ),
+                '#default_value' => isset($settings['infobox_addr_format']) ? $settings['infobox_addr_format'] : '{full_address}',
+                '#states' => [
+                    'visible' => [
+                        sprintf(
+                            'input[name="%s"]',
+                            $this->_application->Form_FieldName(array_merge($parents, ['custom_infobox_addr_format']))
+                        ) => ['type' => 'checked', 'value' => true],
+                    ],
+                ],
+                '#weight' => 21,
+            ],
+        ];
         
         return $form;
     }
@@ -86,9 +111,8 @@ class MapFieldRenderer extends AbstractRenderer
         $config = $this->_application->getComponent('Map')->getConfig('map');
         $marker_settings = [
             'marker_size' => $config['marker_size'],
-            'view_marker_icon' => $settings['view_marker_icon'],
             'coordinates_field' => $field->getFieldName(),
-        ];
+        ] + $settings;
         if (!$markers = $this->_application->Map_Marker($entity, $marker_settings, $id)) return;
 
         $this->_application->Action('map_render_field_map', [$field, $settings]);

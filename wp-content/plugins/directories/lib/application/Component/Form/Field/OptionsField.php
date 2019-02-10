@@ -268,7 +268,7 @@ class OptionsField extends AbstractField
                         $i,
                         '',
                         '',
-                        $type === 'checkbox' || ($type === 'radio' && $i === 0) ? ' checked="checked"' : '',
+                        ($type === 'checkbox' && empty($data['#default_unchecked'])) || ($type === 'radio' && $i === 0) ? ' checked="checked"' : '',
                         $data['#id'],
                         $label_title,
                         $value_title,

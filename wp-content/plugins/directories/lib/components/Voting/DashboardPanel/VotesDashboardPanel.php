@@ -2,6 +2,7 @@
 namespace SabaiApps\Directories\Component\Voting\DashboardPanel;
 
 use SabaiApps\Directories\Component\Dashboard;
+use SabaiApps\Framework\User\AbstractIdentity;
 
 class VotesDashboardPanel extends Dashboard\Panel\AbstractPanel
 {
@@ -9,6 +10,7 @@ class VotesDashboardPanel extends Dashboard\Panel\AbstractPanel
     {
         return [
             'weight' => 5,
+            'wp_um_icon' => 'um-faicon-thumbs-up',
         ];
     }
 
@@ -17,7 +19,7 @@ class VotesDashboardPanel extends Dashboard\Panel\AbstractPanel
         return __('Votes', 'directories');
     }
 
-    protected function _dashboardPanelLinks()
+    protected function _dashboardPanelLinks(AbstractIdentity $identity = null)
     {
         $ret = [];
         $weight = 0;
@@ -36,11 +38,14 @@ class VotesDashboardPanel extends Dashboard\Panel\AbstractPanel
         return $ret;
     }
 
-    public function dashboardPanelContent($link, array $params)
+    public function dashboardPanelContent($link, array $params, AbstractIdentity $identity = null)
     {
         return $this->_application->getPlatform()->render(
-            $this->_application->getComponent('Dashboard')->getPanelUrl('voting_votes', $link, '/votes', [], true),
-            ['is_dashboard' => false] // prevent rendering duplicate panel sections on reload panel
+            $this->_application->getComponent('Dashboard')->getPanelUrl('voting_votes', $link, '/votes', [], true, $identity),
+            [
+                'is_dashboard' => false, // prevent rendering duplicate panel sections on reload panel
+                'identity' => $identity,
+            ]
         );
     }
 

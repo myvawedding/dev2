@@ -1245,13 +1245,19 @@ class AdminContent
                     echo '<div class="drts"><img class="drts-icon" src="' . $this->_application->H($url) . '" alt="" /></div>';
                 }
             } elseif ($column === 'drts_entity_icon') {
-                if ($icon = $this->_application->Entity_Icon($entity, false)) {
-                    if ($color = $this->_application->Entity_Color($entity)) {
-                        $style = ' style="background-color:' . $this->_application->H($color) .  ';color:#fff;"';
-                    } else {
-                        $style = '';
+                if (!empty($bundle->info['entity_icon_is_image'])) {
+                    if ($url = $this->_application->Entity_Image($entity, 'full', $bundle->info['entity_icon'])) {
+                        echo '<div class="drts"><img src="' . $this->_application->H($url) . '" alt="" /></div>';
                     }
-                    echo '<div class="drts"><i class="drts-icon ' . $this->_application->H($icon) . '"' . $style . ' /></div>';
+                } else {
+                    if ($icon = $this->_application->Entity_Icon($entity, false)) {
+                        if ($color = $this->_application->Entity_Color($entity)) {
+                            $style = ' style="background-color:' . $this->_application->H($color) . ';color:#fff;"';
+                        } else {
+                            $style = '';
+                        }
+                        echo '<div class="drts"><i class="drts-icon ' . $this->_application->H($icon) . '"' . $style . ' /></div>';
+                    }
                 }
             }
         }

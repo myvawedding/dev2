@@ -98,26 +98,34 @@ class Edit extends System\Controller\Admin\AbstractSettings
             $form['general']['image'] = [
                 '#title' => __('Image Settings', 'directories'),
                 '#weight' => 40,
+                '#tree' => true,
             ];
-            if ($image_fields = $this->Entity_Field_options($context->bundle, ['interface' => 'Field\Type\IImage'])) {
-                $form['general']['image']['entity_image'] = [
-                    '#type' => 'select',
-                    '#title' => __('Default image field', 'directories'),
-                    '#options' => $image_fields,
-                    '#default_value' => empty($context->bundle->info['entity_image']) ? null : $context->bundle->info['entity_image'],
-                    '#horizontal' => true,
-                ];
+            if (!empty($info['entity_image'])) {
+                if ($image_fields = $this->Entity_Field_options($context->bundle, ['interface' => 'Field\Type\IImage'])) {
+                    $form['general']['image']['entity_image'] = [
+                        '#type' => 'select',
+                        '#title' => __('Default image field', 'directories'),
+                        '#options' => $image_fields,
+                        '#default_value' => !empty($context->bundle->info['entity_image']) ? $context->bundle->info['entity_image'] : null,
+                        '#horizontal' => true,
+                    ];
+                }
             }
-            if (!empty($info['entity_icon'])
-                && ($icon_fields = $this->Entity_Field_options($context->bundle, ['interface' => 'Field\Type\IconType']))
-            ) {
-                $form['general']['image']['entity_icon'] = [
-                    '#type' => 'select',
-                    '#title' => __('Default icon field', 'directories'),
-                    '#options' => $icon_fields,
-                    '#default_value' => empty($context->bundle->info['entity_icon']) ? null : $context->bundle->info['entity_icon'],
-                    '#horizontal' => true,
-                ];
+            if (!empty($info['entity_icon'])) {
+                $icon_fields = $this->Entity_Field_options($context->bundle, ['interface' => 'Field\Type\IconType']);
+                if (!isset($image_fields)) {
+                    $image_fields = $this->Entity_Field_options($context->bundle, ['interface' => 'Field\Type\IImage']);
+                }
+                if ($image_fields) $icon_fields += $image_fields;
+                if ($icon_fields) {
+                    $form['general']['image']['entity_icon'] = [
+                        '#type' => 'select',
+                        '#title' => __('Default icon field', 'directories'),
+                        '#options' => $icon_fields,
+                        '#default_value' => !empty($context->bundle->info['entity_icon']) ? $context->bundle->info['entity_icon'] : null,
+                        '#horizontal' => true,
+                    ];
+                }
             }
         }
         
@@ -157,9 +165,37 @@ class Edit extends System\Controller\Admin\AbstractSettings
     protected function _saveConfig(Context $context, array $values, Form\Form $form)
     {
         parent::_saveConfig($context, $values, $form);
+
+        $values['entity_image'] = $values['entity_icon'] = '';
+        if (!empty($values['image']['entity_image'])) {
+            $values['entity_image'] = $values['image']['entity_image'];
+        }
+        if (!empty($values['image']['entity_icon'])) {
+            $values['entity_icon'] = $values['image']['entity_icon'];
+            if ($icon_field = $this->_application->Entity_Field($context->bundle, $values['entity_icon'])) {
+                $values['entity_icon_is_image'] = $icon_field->getFieldType() !== 'icon';
+            } else {
+                unset($values['entity_icon']);
+            }
+        }
+        unset($values['image']);
+
+        // Clear taxonomy cache if image or icon field changed
+        if (!empty($context->bundle->info['is_taxonomy'])) {
+            if ($context->bundle->info['entity_image'] !== $values['entity_image']
+                || $context->bundle->info['entity_icon'] !== $values['entity_icon']
+            ) {
+                $clear_taxonomy_cache = true;
+            }
+        }
         
         $context->bundle->setInfo($values)->commit();
         
         $this->Action('entity_admin_bundle_info_edited', array($context->bundle));
+
+        if ($clear_taxonomy_cache) {
+            $this->Entity_TaxonomyTerms_clearCache($context->bundle->name);
+            $this->Entity_FieldCache_clean();
+        }
     }
 }

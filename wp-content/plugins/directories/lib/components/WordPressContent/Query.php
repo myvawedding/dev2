@@ -52,7 +52,7 @@ class Query
                 // Prepend if first orderby param 
                 $qv['drts_orderby_prepend'] = isset($_orderby[0]);
             }
-            $qv['orderby'] = implode(' ', $qv['orderby']); // WP_Term_Query supports sting orderby only
+            if (is_array($qv['orderby'])) $qv['orderby'] = implode(' ', $qv['orderby']); // WP_Term_Query supports sting orderby only
         }
     }
     
@@ -60,13 +60,16 @@ class Query
     {
         $_orderby = [];
         if (is_string($orderby)) { // Ex. '_drts_field_aaa _drts_field_bbb'
-            $orderby = explode(' ', trim($orderby));
-            foreach (array_keys($orderby) as $k) {
-                $orderby[$k] = trim($orderby[$k]);
-                if (strpos($orderby[$k], '_drts_') === 0) {
-                    $_orderby[$k] = substr($orderby[$k], strlen('_drts_'));
-                    unset($orderby[$k]);
+            if (strpos($orderby, '_drts_') !== false) {
+                $orderby = explode(' ', trim($orderby));
+                foreach (array_keys($orderby) as $k) {
+                    $orderby[$k] = trim($orderby[$k]);
+                    if (strpos($orderby[$k], '_drts_') === 0) {
+                        $_orderby[$k] = substr($orderby[$k], strlen('_drts_'));
+                        unset($orderby[$k]);
+                    }
                 }
+                $orderby = implode(' ', $_orderby);
             }
         } else { // Ex. array('_drts_field_aaa' => 'DESC', '_drts_field_bbb' => 'ASC')
             foreach (array_keys($orderby) as $k => $field) {

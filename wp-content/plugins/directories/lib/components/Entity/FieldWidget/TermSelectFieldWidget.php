@@ -15,6 +15,7 @@ class TermSelectFieldWidget extends Field\Widget\AbstractWidget
             'default_settings' => array(
                 'num' => 30,
                 'depth' => 0,
+                'no_fancy' => false,
             ),
             'repeatable' => true,
             'max_num_items' => 0, // unlimited
@@ -53,6 +54,12 @@ class TermSelectFieldWidget extends Field\Widget\AbstractWidget
                 '#integer' => true,
                 '#weight' => 1,
             ),
+            'no_fancy' => [
+                '#type' => 'checkbox',
+                '#title' => __('Disable fancy dropdown', 'directories'),
+                '#default_value' => !empty($settings['no_fancy']),
+                '#weight' => 2,
+            ],
         );
     }
 
@@ -91,7 +98,7 @@ class TermSelectFieldWidget extends Field\Widget\AbstractWidget
         $can_assign = $this->_application->HasPermission('entity_assign_' . $bundle->name);
         return [
             '#type' => 'select',
-            '#select2' => true,
+            '#select2' => empty($settings['no_fancy']),
             '#empty_value' => '',
             '#default_value' => isset($value) ? $value->getId() : null,
             '#multiple' => false,

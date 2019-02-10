@@ -15,6 +15,7 @@ class TermListFieldWidget extends Field\Widget\AbstractWidget
             'max_num_items' => 0, // unlimited
             'default_settings' => array(
                 'num' => 30,
+                'columns' => 1,
                 'depth' => 0,
             ),
         );
@@ -36,6 +37,14 @@ class TermListFieldWidget extends Field\Widget\AbstractWidget
                     '#min_value' => 1,
                     '#max_value' => 100,
                     '#integer' => true,
+                    '#weight' => 1,
+                ),
+                'columns'  => array(
+                    '#type' => 'select',
+                    '#inline' => true,
+                    '#title' => __('Number of columns', 'directories'),
+                    '#options' => array(1 => 1, 2 => 2, 3 => 3, 4 => 4, 6 => 6, 12 => 12),
+                    '#default_value' => $settings['columns'],
                     '#weight' => 1,
                 ),
             ); 
@@ -89,6 +98,7 @@ class TermListFieldWidget extends Field\Widget\AbstractWidget
                     'language' => $language,
                 )
             );
+            $ret['#columns'] = $settings['columns'];
             return $ret;
         }
         

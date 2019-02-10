@@ -21,7 +21,7 @@ class SortsHelper
                     || (false === $sort_options = $field_type->fieldSortableOptions($field))
                 ) continue;
 
-                $field_title = (string)$field;
+                $field_title = $field->getFieldLabel(true);
                 if (is_array($sort_options)) {
                     foreach ($sort_options as $sort_option) {
                         $name = $field->getFieldName();

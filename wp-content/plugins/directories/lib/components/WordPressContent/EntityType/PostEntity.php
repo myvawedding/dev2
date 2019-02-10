@@ -16,8 +16,8 @@ class PostEntity extends Entity\Type\AbstractEntity
             null,
             array(
                 'post_author' => (int)$post->post_author,
-                'post_published' => strtotime($post->post_date_gmt),
-                'post_modified' => strtotime($post->post_modified_gmt),
+                'post_published' => strtotime('0000-00-00 00:00:00' === $post->post_date_gmt ? get_gmt_from_date($post->post_date) : $post->post_date_gmt),
+                'post_modified' => strtotime('0000-00-00 00:00:00' === $post->post_modified_gmt ? get_gmt_from_date($post->post_modified) : $post->post_modified_gmt),
                 'post_id' => $post->ID,
                 'post_title' => $post->post_title,
                 'post_status' => $post->post_status,

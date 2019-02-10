@@ -56,7 +56,7 @@ class AbstractHomePage
         ), array($methodName, $bundle));
         
         $content = $application->getPlatform()->render(
-            $application->Entity_BundlePath($bundle),
+            $bundle->getPath(),
             array('settings' => $args['settings']),
             $args['cache']
         );

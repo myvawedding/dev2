@@ -25,6 +25,7 @@ class PermalinkHelper
                 if (!empty($options['icon_is_image'])) {
                     $image_url = !empty($options['icon_is_value']) ? $options['icon'] : $application->Entity_Image($entity, 'icon', $options['icon']);
                     if ($image_url) {
+                        if (!empty($options['icon_is_full'])) $icon_class .= ' drts-icon-is-full';
                         $icon = '<img src="' . $image_url . '" alt="" class="' . $icon_class . '" />';
                     } else {
                         $show_default_icon = !empty($options['icon_fallback']);

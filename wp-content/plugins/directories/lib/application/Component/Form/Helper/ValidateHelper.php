@@ -84,28 +84,30 @@ class ValidateHelper
         // Check min/max length
         $min_length = empty($element['#min_length']) ? null : (int)$element['#min_length'];
         $max_length = empty($element['#max_length']) ? null : (int)$element['#max_length'];
-        $value_length = $application->System_MB_strlen($isHtml ? strip_tags(html_entity_decode($value)) : $value, 'UTF-8');
-        if ($max_length && $min_length) {
-            if ($max_length === $min_length) {
-                if ($value_length !== $max_length) {
-                    $form->setError(sprintf(__('The input value must be %d characters.', 'directories'), $max_length), $element);
+        if (isset($min_length) || isset($max_length)) {
+            $value_length = $application->System_MB_strlen($isHtml ? strip_tags(html_entity_decode($value)) : $value, 'UTF-8');
+            if ($max_length && $min_length) {
+                if ($max_length === $min_length) {
+                    if ($value_length !== $max_length) {
+                        $form->setError(sprintf(__('The input value must be %d characters.', 'directories'), $max_length), $element);
+                        return false;
+                    }
+                } else {
+                    if ($value_length < $min_length || $value_length > $max_length) {
+                        $form->setError(sprintf(__('The input value must be between %d and %d characters.', 'directories'), $min_length, $max_length), $element);
+                        return false;
+                    }
+                }
+            } elseif ($max_length) {
+                if ($value_length > $max_length) {
+                    $form->setError(sprintf(__('The input value must be shorter than %d characters.', 'directories'), $max_length), $element);
                     return false;
                 }
-            } else {
-                if ($value_length < $min_length || $value_length > $max_length) {
-                    $form->setError(sprintf(__('The input value must be between %d and %d characters.', 'directories'), $min_length, $max_length), $element);
+            } elseif ($min_length) {
+                if ($value_length < $min_length) {
+                    $form->setError(sprintf(__('The input value must be longer than %d characters.', 'directories'), $min_length), $element);
                     return false;
                 }
-            }
-        } elseif ($max_length) {
-            if ($value_length > $max_length) {
-                $form->setError(sprintf(__('The input value must be shorter than %d characters.', 'directories'), $max_length), $element);
-                return false;
-            }
-        } elseif ($min_length) {
-            if ($value_length < $min_length) {
-                $form->setError(sprintf(__('The input value must be longer than %d characters.', 'directories'), $min_length), $element);
-                return false;
             }
         }
 

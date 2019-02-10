@@ -197,7 +197,11 @@ class SaveHelper
             }
             
             // Get current value if this is an update
-            $current_field_value = isset($entity) ? $entity->getFieldValue($field_name) : null;
+            if (!isset($entity)
+                || (false === $current_field_value = $entity->getFieldValue($field_name))
+            ) {
+                $current_field_value = null;
+            }
             // Let the field type component for the field to work on values before saving to the storage
             $field_value = $field_type->fieldTypeOnSave($field, $field_value, $current_field_value, $extraArgs);
             if (!is_array($field_value)) continue;

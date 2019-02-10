@@ -44,11 +44,11 @@ class VoteGateway extends Base\VoteGateway
     
     public function countByLevel($bundleName, $entityId, $fieldName, $name)
     {
-        $sql = sprintf("
-SELECT vote_level, COUNT(*) AS cnt
+        $sql = sprintf(
+            'SELECT vote_level, COUNT(*) AS cnt
 FROM %svoting_vote
 WHERE vote_bundle_name = %s AND vote_entity_id = %d AND vote_field_name = %s AND vote_name = %s
-GROUP BY vote_level",
+GROUP BY vote_level',
             $this->_db->getResourcePrefix(),
             $this->_db->escapeString($bundleName),
             $entityId,
@@ -71,5 +71,54 @@ GROUP BY vote_level",
             }
         }
         return '';
+    }
+
+    public function getMissingEntityIds($tableName, $idKey, $bundleNameKey = null, $bundleName = null, $statusKey = null, $status = null, $isReference = false)
+    {
+        $where = [];
+        if ($bundleNameKey) {
+            $where[] = sprintf('p.%s = %s', $bundleNameKey, $this->_db->escapeString($bundleName));
+        }
+        if ($statusKey) {
+            $where[] = sprintf('p.%s = %s', $statusKey, $this->_db->escapeString($status));
+        }
+        $vote_id_key = $isReference ? 'vote_reference_id' : 'vote_entity_id';
+        $where[] = 'v.' . $vote_id_key . ' IS NULL';
+        $sql = sprintf(
+            'SELECT p.%2$s FROM %1$s p 
+LEFT JOIN %3$svoting_vote v ON p.%2$s = v.%4$s 
+WHERE %5$s',
+            $tableName,
+            $idKey,
+            $this->_db->getResourcePrefix(),
+            $isReference ? 'vote_reference_id' : 'vote_entity_id',
+            implode(' AND ', $where)
+        );
+        $rs = $this->_db->query($sql);
+        $ret = [];
+        foreach ($rs as $row) {
+            $ret[] = $row[$idKey];
+        }
+        return $ret;
+    }
+
+    public function deleteEntityVotes($tableName, $idKey, $bundleNameKey = null, $bundleName = null, $statusKey = null, $status = null, $isReference = false)
+    {
+        $where = [];
+        if ($bundleNameKey) {
+            $where[] = sprintf('p.%s = %s', $bundleNameKey, $this->_db->escapeString($bundleName));
+        }
+        if ($statusKey) {
+            $where[] = sprintf('p.%s = %s', $statusKey, $this->_db->escapeString($status));
+        }
+        $sql = sprintf(
+            'DELETE FROM %3$svoting_vote WHERE %4$s IN (SELECT p.%2$s FROM %1$s p %5$s)',
+            $tableName,
+            $idKey,
+            $this->_db->getResourcePrefix(),
+            $isReference ? 'vote_reference_id' : 'vote_entity_id',
+            empty($where) ? '' : 'WHERE ' . implode(' AND ', $where)
+        );
+        $this->_db->exec($sql);
     }
 }

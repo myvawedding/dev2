@@ -23,11 +23,57 @@
 }
 
 .drts-map-marker-bounce {
+    animation: drts-map-marker-bounce-rotate 0.5s infinite ease-in;
+    -webkit-animation: drts-map-marker-bounce-rotate 0.5s infinite ease-in;
+}
+
+.drts-map-marker-full {
+    animation: none;
+    -webkit-animation: none;
+}
+
+.drts-map-marker-full.drts-map-marker-bounce img {
     animation: drts-map-marker-bounce 0.5s infinite ease-in;
     -webkit-animation: drts-map-marker-bounce 0.5s infinite ease-in;
 }
 
 @keyframes drts-map-marker-bounce {
+    0% {
+        transform: translate(-50%, -130%);
+    }
+
+    25%, 75% {
+        transform: translate(-50%, -160%);
+    }
+
+    50% {
+        transform: translate(-50%, -190%);
+    }
+
+    100% {
+        transform: translate(-50%, -100%);
+    }
+}
+
+@-webkit-keyframes drts-map-marker-bounce {
+    0% {
+        -webkit-transform: translate(-50%, -130%);
+    }
+
+    25%, 75% {
+        -webkit-transform: translate(-50%, -160%);
+    }
+
+    50% {
+        -webkit-transform: translate(-50%, -190%);
+    }
+
+    100% {
+        -webkit-transform: translate(-50%, -100%);
+    }
+}
+
+@keyframes drts-map-marker-bounce-rotate {
     0% {
         transform: translate(-50%, -130%) rotate(-45deg);
     }
@@ -45,7 +91,7 @@
     }
 }
 
-@-webkit-keyframes drts-map-marker-bounce {
+@-webkit-keyframes drts-map-marker-bounce-rotate {
     0% {
         -webkit-transform: translate(-50%, -130%) rotate(-45deg);
     }

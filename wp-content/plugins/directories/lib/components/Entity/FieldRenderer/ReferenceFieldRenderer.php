@@ -60,7 +60,7 @@ class ReferenceFieldRenderer extends Field\Renderer\AbstractRenderer
         if (empty($referenced_item_ids)) return;
 
         return $this->_application->getPlatform()->render(
-            $this->_application->Entity_BundlePath($bundle),
+            $bundle->getPath(),
             [
                 'settings' => [
                     'view' => $settings['view'],

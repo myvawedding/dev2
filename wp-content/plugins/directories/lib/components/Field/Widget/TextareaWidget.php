@@ -49,8 +49,8 @@ class TextareaWidget extends AbstractWidget
             '#type' => 'textarea',
             '#rows' => $settings['rows'],
             '#default_value' => $_value,
-            '#min_length' => isset($field_settings['min']) ? intval($field_settings['min']) : null,
-            '#max_length' => isset($field_settings['max']) ? intval($field_settings['max']) : null,
+            '#min_length' => isset($field_settings['min_length']) ? intval($field_settings['min_length']) : null,
+            '#max_length' => isset($field_settings['max_length']) ? intval($field_settings['max_length']) : null,
         );
     }
 

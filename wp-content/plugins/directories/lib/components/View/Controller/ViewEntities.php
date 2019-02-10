@@ -120,7 +120,18 @@ class ViewEntities extends Controller
         }
         // Show featured first?
         if (!empty($view_settings['sort']['stick_featured'])) {
-            $query->sortByField('entity_featured', 'DESC');
+            if (!empty($this->_settings['is_default_view'])
+                && !empty($view_settings['sort']['stick_featured_term_only'])
+            ) {
+                // Only on single taxonomy term pages
+                if (isset($GLOBALS['drts_entity'])
+                    && $GLOBALS['drts_entity']->isTaxonomyTerm()
+                ) {
+                    $query->sortByField('entity_featured', 'DESC');
+                }
+            } else {
+                $query->sortByField('entity_featured', 'DESC');
+            }
         }
         
         // Notify
@@ -313,30 +324,57 @@ class ViewEntities extends Controller
         $query = $this->Entity_Query($bundle->entitytype_name)->fieldIs('bundle_name', $bundle->name);
         if (empty($bundle->info['is_taxonomy'])) {
             if (!empty($bundle->info['public'])) {
-                $statuses = [];
-                if (!isset($settings['status'])) {
-                    $settings['status'] = array('publish');
-                }
-                foreach ($settings['status'] as $_status) {
-                    $statuses[] = $this->Entity_Status($bundle->entitytype_name, $_status);
-                }
-                if ($this->getUser()->isAnonymous()
-                    || empty($bundle->info['privatable'])
-                    || !empty($settings['exclude_private'])
-                ) {            
-                    $query->fieldIsIn('status', $statuses);
-                } else {
-                    $query->startCriteriaGroup('OR')->fieldIsIn('status', $statuses);
-                    if ($this->HasPermission('entity_read_private_' . $bundle->name)) { // allowed to read any private posts?
-                        $query->fieldIs('status', $this->Entity_Status($bundle->entitytype_name, 'private'));
+                if (empty($settings['status'])
+                    || !empty($settings['user_id']) // do not allow custom status if viewing other user's entities
+                ) {
+                    // No status specified, fetch publish and private stats entities
+                    $publish_status = $this->Entity_Status($bundle->entitytype_name, 'publish');
+                    if ($this->getUser()->isAnonymous()
+                        || empty($bundle->info['privatable'])
+                        || !empty($settings['user_id'])
+                    ) {
+                        $query->fieldIs('status', $publish_status);
+                        if (!empty($settings['user_id'])) {
+                            $query->fieldIs('author', $settings['user_id']);
+                        }
                     } else {
-                        // Fetch only own private posts
-                        $query->startCriteriaGroup('AND')
-                            ->fieldIs('status', $this->Entity_Status($bundle->entitytype_name, 'private'))
-                            ->fieldIs('author', $this->getUser()->id)
+                        if ($this->HasPermission('entity_read_private_' . $bundle->name)) {
+                            // Allowed to read any private posts
+                            $query->fieldIsIn('status', [$publish_status, $this->Entity_Status($bundle->entitytype_name, 'private')]);
+                        } else {
+                            $query->startCriteriaGroup('OR')
+                                ->fieldIs('status', $publish_status)
+                                ->startCriteriaGroup('AND')
+                                    ->fieldIs('author', $this->getUser()->id)
+                                    ->fieldIs('status', $this->Entity_Status($bundle->entitytype_name, 'private'))
+                                    ->finishCriteriaGroup()
+                                ->finishCriteriaGroup();
+                        }
+                    }
+                } else {
+                    $statuses = [];
+                    foreach ($settings['status'] as $status) {
+                        $statuses[$status] = $this->Entity_Status($bundle->entitytype_name, $status);
+                    }
+                    if (empty($settings['status_others'])) {
+                        $query->fieldIs('author', $this->getUser()->id)
+                            ->fieldIsIn('status', $statuses);
+                    } else {
+                        $statuses_other = [];
+                        foreach ($settings['status_others'] as $status) {
+                            $statuses_other[$status] = $this->Entity_Status($bundle->entitytype_name, $status);
+                        }
+                        $query->startCriteriaGroup('OR')
+                            ->startCriteriaGroup('AND')
+                                ->fieldIs('author', $this->getUser()->id)
+                                ->fieldIsIn('status', $statuses)
+                                ->finishCriteriaGroup()
+                            ->startCriteriaGroup('AND')
+                                ->fieldIsNot('author', $this->getUser()->id)
+                                ->fieldIsIn('status', $statuses_other)
+                                ->finishCriteriaGroup()
                             ->finishCriteriaGroup();
                     }
-                    $query->finishCriteriaGroup();
                 }
             } else {
                 $query->fieldIs('status', $this->Entity_Status($bundle->entitytype_name, 'publish'))
@@ -438,7 +476,7 @@ class ViewEntities extends Controller
                         $filter_values[$filter_name],
                         $context->sorts
                     );
-                    $default_label = $field->getFieldLabel();
+                    $default_label = $field->getFieldLabel(true);
                     if (!$_filter_labels = $filter_impl->fieldFilterLabels(
                         $field,
                         $filter->data['settings'],

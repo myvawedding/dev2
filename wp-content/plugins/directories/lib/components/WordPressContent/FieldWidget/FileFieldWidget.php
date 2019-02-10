@@ -55,7 +55,7 @@ class FileFieldWidget extends Field\Widget\AbstractWidget
             '#allow_only_images' => $settings['allowed_files'] === 'image',
             '#allowed_extensions' => $extensions,
             '#wp_allowed_extensions' => $wp_extensions,
-            '#max_file_size' => $settings['max_file_size'],
+            '#max_file_size' => $settings['max_file_size'] * 1024,
             '#multiple' => $field->getFieldMaxNumItems() !== 1,
             '#default_value' => $value,
             '#max_num_files' => $field->getFieldMaxNumItems(),

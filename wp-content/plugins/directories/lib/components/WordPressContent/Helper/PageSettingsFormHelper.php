@@ -12,19 +12,6 @@ class PageSettingsFormHelper
         if (empty($bundle->info['public'])) return;
 
         $page_slugs = $application->getPlatform()->getPageSlugs();
-        $slug_name = $bundle->group . '-' . $bundle->info['slug'];
-        if (empty($bundle->info['parent'])) {
-            $current_id = (null !== $current_slug = @$page_slugs[1][$bundle->component][$slug_name]) && isset($page_slugs[2][$current_slug]) ? $page_slugs[2][$current_slug] : null;
-        } else {
-            if (!$parent_bundle = $application->Entity_Bundle($bundle->info['parent'])) return;
-
-            // Need to fetch parent slug and then prepend it to get the current slug
-            $parent_slug_name = $bundle->group . '-' . $parent_bundle->info['slug'];
-            if (isset($page_slugs[1][$bundle->component][$parent_slug_name])) {
-                $current_slug = $page_slugs[1][$bundle->component][$parent_slug_name] . '/' . $bundle->info['slug'];
-                $current_id = isset($page_slugs[2][$current_slug]) ? $page_slugs[2][$current_slug] : null;
-            }
-        }
 
         $form = [
             '#js_ready' => array('$("#__FORM_ID__ select").toggleClass("' . DRTS_BS_PREFIX . 'form-control", true);'),
@@ -41,7 +28,7 @@ class PageSettingsFormHelper
                     'echo' => 0,
                     'show_option_none' => __('— Select page —', 'directories'),
                     'name' => $application->Form_FieldName(array_merge($parents, ['page'])),
-                    'selected' => $current_id,
+                    'selected' => $application->getComponent('WordPressContent')->getBundleSingleItemPageId($bundle),
                 ]),
                 '#horizontal' => true,
                 '#description' => sprintf(

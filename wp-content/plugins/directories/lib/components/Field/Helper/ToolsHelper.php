@@ -77,7 +77,8 @@ class ToolsHelper
                     $offset + $paginator->getElementLimit()
                 ));
                 foreach ($paginator->getElements() as $entity) {
-                    $time_values = $entity->getFieldValue($field->getFieldName());
+                    if (!$time_values = $entity->getFieldValue($field->getFieldName())) continue;
+
                     foreach (array_keys($time_values) as $i) {
                         $time_values[$i]['start'] += $adjust;
                         $time_values[$i]['end'] += $adjust;

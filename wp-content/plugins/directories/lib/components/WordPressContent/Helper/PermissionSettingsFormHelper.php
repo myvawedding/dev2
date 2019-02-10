@@ -119,6 +119,32 @@ class PermissionSettingsFormHelper
                 || (!$role = get_role($role_name))
             ) continue;
 
+            // Ultimate Member role capabilities are saved differently
+            if (class_exists('UM', false)
+                && strpos($role_name, 'um_') === 0
+                && ($um_role_key = substr($role_name, 3))
+                && ($um_roles = get_option('um_roles'))
+                && in_array($um_role_key, $um_roles)
+                && ($um_role_meta = get_option($um_role_meta_name = 'um_role_' . $um_role_key . '_meta'))
+            ) {
+                if (!isset($um_role_meta['wp_capabilities'])) {
+                    $um_role_meta['wp_capabilities'] = [];
+                } else {
+                    // Remove all perms first
+                    foreach ($allPerms as $perm) {
+                        unset($um_role_meta['wp_capabilities']['drts_' . $perm]);
+                    }
+                }
+                // Add roles
+                foreach (array_keys($perms) as $perm) {
+                    $um_role_meta['wp_capabilities']['drts_' . $perm] = 1;
+                }
+
+                update_option($um_role_meta_name, $um_role_meta);
+
+                continue;
+            }
+
             // Remove all perms first and then add back perms selected
             foreach ($allPerms as $perm) {
                 $role->remove_cap('drts_' . $perm);

@@ -20,7 +20,7 @@ class WordPressContentComponent extends AbstractComponent implements
     Display\IElements,
     Display\IStatistics
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories';
+    const VERSION = '1.2.23', PACKAGE = 'directories';
 
     protected $_system = true;
 
@@ -297,22 +297,21 @@ class WordPressContentComponent extends AbstractComponent implements
 
     public function onDirectoryAdminSettingsFormFilter(&$form)
     {
-        $slugs = $this->_application->System_Slugs(null, 'Directory');
-        if (empty($slugs)) return;
-
-        $_slugs = [];
-        foreach (array_keys($slugs) as $component_name) {
-            $_slugs += $slugs[$component_name];
+        if ($slugs = $this->_application->System_Slugs(null, 'Directory')) {
+            $_slugs = [];
+            foreach (array_keys($slugs) as $component_name) {
+                $_slugs += $slugs[$component_name];
+            }
+            $form['#tabs'][$this->_name] = [
+                '#title' => __('Pages', 'directories'),
+                '#weight' => 95,
+            ];
+            $form[$this->_name] = [
+                '#tree' => true,
+                '#tab' => $this->_name,
+                '#title' => __('Page Settings', 'directories'),
+            ] + $this->_application->WordPress_PageSettingsForm($_slugs, ['wordpress_pages']);
         }
-        $form['#tabs'][$this->_name] = [
-            '#title' => __('Pages', 'directories'),
-            '#weight' => 95,
-        ];
-        $form[$this->_name] = [
-            '#tree' => true,
-            '#tab' => $this->_name,
-            '#title' => __('Page Settings', 'directories'),
-        ] + $this->_application->WordPress_PageSettingsForm($_slugs, ['wordpress_pages']);
     }
 
     protected function _registerContentTypes($force = false)
@@ -416,9 +415,22 @@ class WordPressContentComponent extends AbstractComponent implements
     protected function _getMetadata($entityType, $entityId, $metaKey, $single, $value)
     {
         if (!empty($metaKey)) {
-            if (strpos($metaKey, '_drts_') !== 0
-                || (!$field_name = substr($metaKey, strlen('_drts_')))
-            ) return $value; // meta key must start with _drts_ when requesting for a specific field
+            if (strpos($metaKey, '_drts_') === 0) {
+                if (!$field_name = substr($metaKey, strlen('_drts_'))) {
+                    return $value; // meta key must start with _drts_ when requesting for a specific field
+                }
+            } elseif (in_array($metaKey, ['_et_pb_page_layout', '_et_pb_use_builder', '_et_pb_post_hide_nav', '_extra_sidebar', '_extra_sidebar_location'])) {
+                // Fetch page layout setting configured for the custom single item page.
+                if (isset($GLOBALS['drts_entity'])
+                    && $entityId === $GLOBALS['drts_entity']->getId()
+                    && ($page_id = $this->getBundleSingleItemPageId($GLOBALS['drts_entity']->getBundleName()))
+                ) {
+                    return get_post_meta($page_id, $metaKey, true);
+                }
+                return $value;
+            } else {
+                return $value;
+            }
         } else {
             if ($entityType === 'post') {
                 if ((!$post_type = get_post_type($entityId))
@@ -433,9 +445,16 @@ class WordPressContentComponent extends AbstractComponent implements
                     $value = $entity->getSingleFieldValue($field_name);
                     if (is_array($value)) {
                         $value = [$value]; // WordPress looks for index 0 if single value is array
+                    } elseif ($value === null) {
+                        $value = '';
                     }
                 } else {
                     $value = $entity->getFieldValue($field_name);
+                    if ($value === null
+                        || $value === false
+                    ) {
+                        $value = [];
+                    }
                 }
             } else {
                 // Need to call get_post_meta() again since returning a non null value
@@ -926,6 +945,7 @@ class WordPressContentComponent extends AbstractComponent implements
         // Check role to view the display?
         if (empty($display['wp_check_roles'])
             || empty($display['elements'])
+            || is_admin()
         ) return;
 
         $current_user_roles = $this->_application->getUser()->isAnonymous() ? ['_guest_'] : (array)wp_get_current_user()->roles;
@@ -975,7 +995,7 @@ class WordPressContentComponent extends AbstractComponent implements
     public function onDisplayVisibilitySettingsFormFilter(&$form, $display, $element, $values, $options)
     {
         $element_name = is_object($element) ? $element->name : $element;
-        if (strpos($element_name, 'entity_form_entity_') === 0
+        if ((strpos($element_name, 'entity_form_entity_') === 0 && $element_name !== 'entity_form_entity_reference')
             || in_array($element_name, ['entity_form_wp_post_parent'])
         ) return;
 
@@ -1322,16 +1342,20 @@ class WordPressContentComponent extends AbstractComponent implements
             && !taxonomy_exists($name . '_dir_tag');
     }
 
-    public function onEntityFieldConditionRuleFilter(&$rule, $field, $compare, $value, $name)
+    public function onEntityFieldConditionRuleFilter(&$rule, $field, $compare, $value, $name, $type)
     {
         if ($field->getFieldType() === 'entity_terms'
             && ($taxonomy_bundle = $this->_application->Entity_Bundle($field->getFieldName(), $field->Bundle->component, $field->Bundle->group))
         ) {
             $rule['value'] = (array)$rule['value'];
-            if ($this->_application->getPlatform()->isAdmin()) {
-                $rule['target'] = '[name="tax_input[' . $taxonomy_bundle->name . '][]"],[id^="in-popular-' . $taxonomy_bundle->name . '-"]';
+            if (is_admin()
+                || $type !== 'js'
+            ) {
+                if ($type === 'js') {
+                    $rule['target'] = '[name="tax_input[' . $taxonomy_bundle->name . '][]"],[id^="in-popular-' . $taxonomy_bundle->name . '-"]';
+                }
 
-                // Convert slugs to IDs since terms can be referenced by an ID only in admin
+                // Convert slugs to IDs since terms can be referenced by an ID only
                 $slug_keys = [];
                 foreach (array_keys($rule['value']) as $i) {
                     if (!is_numeric($rule['value'][$i])) {
@@ -1399,8 +1423,37 @@ class WordPressContentComponent extends AbstractComponent implements
 
     public function onEntityFormFilter(&$form, $bundle, $entity, $options)
     {
-        if (class_exists('ACF', false)) {
+        if (class_exists('\ACF', false)) {
             $form['#submit'][9][] = [__NAMESPACE__ . '\DisplayElement\AcfDisplayElement', 'entityFormSubmitCallback'];
         }
+    }
+
+    public function getBundleSingleItemPageId($bundle)
+    {
+        if ((!$bundle = $this->_application->Entity_Bundle($bundle))
+            || empty($bundle->info['public'])
+            || (!empty($bundle->info['parent']) && (!$parent_bundle = $this->_application->Entity_Bundle($bundle->info['parent'])))
+        ) return;
+
+        $page_slugs = $this->_application->getPlatform()->getPageSlugs();
+        $page_id = null;
+        if (empty($bundle->info['parent'])) {
+            $slug_name = $bundle->group . '-' . $bundle->info['slug'];
+            if (null !== ($current_slug = @$page_slugs[1][$bundle->component][$slug_name])
+                && isset($page_slugs[2][$current_slug])
+            ) {
+                $page_id = $page_slugs[2][$current_slug];
+            }
+        } else {
+            // Need to fetch parent slug and then prepend it to get the current slug
+            $parent_slug_name = $bundle->group . '-' . $parent_bundle->info['slug'];
+            if (isset($page_slugs[1][$bundle->component][$parent_slug_name])) {
+                $current_slug = $page_slugs[1][$bundle->component][$parent_slug_name] . '/' . $bundle->info['slug'];
+                if (isset($page_slugs[2][$current_slug])) {
+                    $page_id = $page_slugs[2][$current_slug];
+                }
+            }
+        }
+        return $page_id;
     }
 }

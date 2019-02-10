@@ -90,10 +90,14 @@ class TermsFieldType extends Field\Type\AbstractType implements
             $fields_to_load['image'] = $taxonomy_bundle->info['entity_image'];
         } elseif (!empty($taxonomy_bundle->info['entity_icon'])) {
             $fields_to_load['icon'] = $taxonomy_bundle->info['entity_icon'];
+            $icon_is_image = !empty($taxonomy_bundle->info['entity_icon_is_image']);
+            if (!$icon_is_image
+                && !empty($taxonomy_bundle->info['entity_color'])
+            ) {
+                $fields_to_load['color'] = $taxonomy_bundle->info['entity_color'];
+            }
         }
-        if (!empty($taxonomy_bundle->info['entity_color'])) {
-            $fields_to_load['color'] = $taxonomy_bundle->info['entity_color'];
-        }
+
         $entity_type = $taxonomy_bundle->entitytype_name;
         foreach ($this->_application->Entity_Entities($entity_type, $entity_ids, $fields_to_load, true) as $entity_id => $entity) {
             $parent_ids = null;
@@ -105,36 +109,58 @@ class TermsFieldType extends Field\Type\AbstractType implements
             $fields_to_load_from_parent = [];
             if (isset($fields_to_load['image'])) {
                 if ($image = $this->_application->Entity_Image($entity, 'icon', $fields_to_load['image'])) {
-                    $entity->setCustomProperty('icon_src', $image); // set as custom property so it can be cached
+                    $entity->setCustomProperty('image_src', $image); // set as custom property so it can be cached
+                } else {
+                    $fields_to_load_from_parent['image'] = $fields_to_load['image']; // not found, so will try loading from parent
                 }
             } elseif (isset($fields_to_load['icon'])) {
-                if ($icon = $this->_application->Entity_Icon($entity, false)) {
-                    $entity->setCustomProperty('icon', $icon); // set as custom property so it can be cached
+                if ($icon_is_image) {
+                    if ($icon = $this->_application->Entity_Image($entity, 'full', $fields_to_load['icon'])) {
+                        $entity->setCustomProperty('icon_src', $icon); // set as custom property so it can be cached
+                    }
                 } else {
-                    if ($parent_ids) $fields_to_load_from_parent['icon'] = $fields_to_load['icon']; // not found, so will try loading from parent
+                    if ($icon = $this->_application->Entity_Icon($entity, false)) {
+                        $entity->setCustomProperty('icon', $icon); // set as custom property so it can be cached
+                    }
+                    if (isset($fields_to_load['color'])) {
+                        if ($color = $this->_application->Entity_Color($entity)) {
+                            $entity->setCustomProperty('color', $color); // set as custom property so it can be cached
+                        } else {
+                            $fields_to_load_from_parent['color'] = $fields_to_load['color']; // not found, so will try loading from parent
+                        }
+                    }
+                }
+                if (!$icon) {
+                    $fields_to_load_from_parent['icon'] = $fields_to_load['icon']; // not found, so will try loading from parent
                 }
             }
-            if (isset($fields_to_load['color'])) {
-                if ($color = $this->_application->Entity_Color($entity)) {
-                    $entity->setCustomProperty('color', $color); // set as custom property so it can be cached
-                } else {
-                    if ($parent_ids) $fields_to_load_from_parent['color'] = $fields_to_load['color']; // not found, so will try loading from parent
-                }
-            }
+
             if ($parent_ids) {
                 $parent_slugs = $parent_titles = [];
                 $parent_ids = array_reverse($parent_ids); // reverse to get data from clsoest parent
                 foreach ($this->_application->Entity_Entities($entity_type, $parent_ids, $fields_to_load_from_parent, true) as $parent_id => $parent_entity) {
-                    if (isset($fields_to_load_from_parent['icon'])) {
-                        if ($icon = $this->_application->Entity_Icon($parent_entity, false)) {
-                            $entity->setCustomProperty('parent_icon', $icon); // set as custom property so it can be cached
-                            unset($fields_to_load_from_parent['icon']);
+                    if (isset($fields_to_load_from_parent['image'])) {
+                        if ($image = $this->_application->Entity_Image($parent_entity, 'icon', $fields_to_load_from_parent['image'])) {
+                            $entity->setCustomProperty('image_src', $image); // set as custom property so it can be cached
+                            unset($fields_to_load_from_parent['image']);
                         }
-                    }
-                    if (isset($fields_to_load_from_parent['color'])) {
-                        if ($color = $this->_application->Entity_Color($parent_entity)) {
-                            $entity->setCustomProperty('color', $color); // set as custom property so it can be cached
-                            unset($fields_to_load_from_parent['color']);
+                    } elseif (isset($fields_to_load_from_parent['icon'])) {
+                        if ($icon_is_image) {
+                            if ($icon = $this->_application->Entity_Image($parent_entity, 'full', $fields_to_load_from_parent['icon'])) {
+                                $entity->setCustomProperty('icon_src', $icon); // set as custom property so it can be cached
+                                unset($fields_to_load_from_parent['icon']);
+                            }
+                        } else {
+                            if ($icon = $this->_application->Entity_Icon($parent_entity, false)) {
+                                $entity->setCustomProperty('icon', $icon); // set as custom property so it can be cached
+                                unset($fields_to_load_from_parent['icon']);
+                            }
+                            if (isset($fields_to_load_from_parent['color'])) {
+                                if ($color = $this->_application->Entity_Color($parent_entity)) {
+                                    $entity->setCustomProperty('color', $color); // set as custom property so it can be cached
+                                    unset($fields_to_load_from_parent['color']);
+                                }
+                            }
                         }
                     }
                     $parent_slugs[$parent_id] = $parent_entity->getSlug();
@@ -259,6 +285,45 @@ class TermsFieldType extends Field\Type\AbstractType implements
                 return ['type' => 'empty', 'value' => false];
             default:
                 return;
+        }
+    }
+
+    public function fieldConditionableMatch(Field\IField $field, array $rule, array $values = null)
+    {
+        switch ($rule['type']) {
+            case 'value':
+            case '!value':
+            case 'one':
+                if (empty($values)) return $rule['type'] === '!value';
+
+                foreach ($values as $input) {
+                    foreach ((array)$rule['value'] as $rule_value) {
+                        if (is_object($input)) {
+                            if ($input instanceof \SabaiApps\Directories\Component\Entity\Type\IEntity) {
+                                $term_id = $input->getId();
+                            } else {
+                                continue;
+                            }
+                        } else {
+                            $term_id = (int)$input;
+                        }
+                        if ($term_id === (int)$rule_value) {
+                            if ($rule['type'] === '!value') return false;
+                            if ($rule['type'] === 'one') return true;
+                            continue 2;
+                        }
+                    }
+                    // One of rule values did not match
+                    if ($rule['type'] === 'value') return false;
+                }
+                // All matched or did not match.
+                return $rule['type'] !== 'one' ? true : false;
+            case 'empty':
+                return empty($values) === $rule['value'];
+            case 'filled':
+                return !empty($values) === $rule['value'];
+            default:
+                return false;
         }
     }
 

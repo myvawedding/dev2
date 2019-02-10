@@ -79,8 +79,11 @@ class Widget extends \WP_Widget
                 : $widget->systemWidgetInfo('title'),
             '#weight' => -1,
         );
-        $form = Platform::getInstance()->getApplication()->Form_Build($elements)->render();
+        $form = Platform::getInstance()->loadDefaultAssets()
+            ->getApplication()->Form_Build($elements)->render();
+        echo '<div class="drts">';
         echo $form->getHtml();
         echo $form->getHiddenHtml();
+        echo '</div>';
     }
 }

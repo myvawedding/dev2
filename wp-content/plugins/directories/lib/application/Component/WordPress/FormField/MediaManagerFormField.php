@@ -9,8 +9,7 @@ class MediaManagerFormField extends Form\Field\FieldsetField
 
     public function formFieldInit($name, array &$data, Form\Form $form)
     {
-        $max_file_size = !empty($data['#max_file_size']) ? $data['#max_file_size'] : 2048;
-        $max_file_size_str = $max_file_size >= 1024 ? round($max_file_size / 1024, 1) . 'MB' : $max_file_size . 'KB';
+        $max_file_size_str = $this->_application->System_Util_bytesToStr(wp_max_upload_size());
 
         // Define element settings
         $data = array(
@@ -156,6 +155,7 @@ class MediaManagerFormField extends Form\Field\FieldsetField
             'max_num_files' => $data['#max_num_files'],
             'sortable' => !empty($data['#sortable']),
         );
+        $data['#sortable'] = false;
 
         parent::formFieldInit($name, $data, $form);
     }
@@ -223,6 +223,9 @@ class MediaManagerFormField extends Form\Field\FieldsetField
         if (empty($js)) return;
 
         $form->settings['#js_ready'][] = implode(PHP_EOL, $js);
+
+        // Fix for Enfold theme not loading media manager JS files
+        add_filter('avf_enqueue_wp_mediaelement', '__return_true');
     }
 
 }

@@ -2,11 +2,14 @@
 namespace SabaiApps\Directories\Component\Field\Type;
 
 use SabaiApps\Directories\Component\Entity;
-use SabaiApps\Directories\Component\Field\IField;
+use SabaiApps\Directories\Component\Field;
 use SabaiApps\Directories\Application;
 use SabaiApps\Directories\Exception;
 
-class VideoType extends AbstractType implements IHumanReadable, IVideo
+class VideoType extends AbstractType implements
+    IHumanReadable,
+    IVideo,
+    Field\Type\IQueryable
 {
     protected static $_videoData = [];
     
@@ -59,7 +62,7 @@ class VideoType extends AbstractType implements IHumanReadable, IVideo
         );
     }
     
-    public function fieldTypeOnSave(IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
+    public function fieldTypeOnSave(Field\IField $field, array $values, array $currentValues = null, array &$extraArgs = [])
     {
         foreach (array_keys($values) as $i) {
             if (!is_array($values[$i])
@@ -87,7 +90,7 @@ class VideoType extends AbstractType implements IHumanReadable, IVideo
         return array_values($values);
     }
     
-    public function fieldHumanReadableText(IField $field, Entity\Type\IEntity $entity, $separator = null, $key = null)
+    public function fieldHumanReadableText(Field\IField $field, Entity\Type\IEntity $entity, $separator = null, $key = null)
     {
         if (!$values = $entity->getFieldValue($field->getFieldName())) return '';
         
@@ -127,5 +130,22 @@ class VideoType extends AbstractType implements IHumanReadable, IVideo
         self::$_videoData[$provider][$id] = $result;
         
         return self::$_videoData[$provider][$id];
+    }
+
+    public function fieldQueryableInfo(Field\IField $field)
+    {
+        return array(
+            'example' => __('1 or 0', 'directories'),
+            'tip' => __('Enter 1 for items with a video, 0 for items without any video.', 'directories'),
+        );
+    }
+
+    public function fieldQueryableQuery(Field\Query $query, $fieldName, $paramStr, Entity\Model\Bundle $bundle = null)
+    {
+        if ((bool)$paramStr) {
+            $query->fieldIsNotNull($fieldName, 'id');
+        } else {
+            $query->fieldIsNull($fieldName, 'id');
+        }
     }
 }

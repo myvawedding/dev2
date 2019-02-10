@@ -147,14 +147,17 @@ class AdminElementHelper
             return;
         }
         
-        // Delete element
-        $element->markRemoved()->commit();
-        
         if ($notify) {
-            // Notify
+            // Fetch settings to be passed when notifying
             $element_impl = $application->Display_Elements_impl($bundle, $element->name);
             $settings = (array)@$element->data['settings'] + (array)$element_impl->displayElementInfo($bundle, 'default_settings');
+            // Delete element
+            $element->markRemoved()->commit();
+            // Notify
             $element_impl->displayElementOnRemoved($bundle, $settings);
+        } else {
+            // Delete element
+            $element->markRemoved()->commit();
         }
     }
     

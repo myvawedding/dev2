@@ -159,19 +159,25 @@ class LabelsElement extends AbstractElement
             if (!$text = $label->displayLabelText($bundle, $var, $label_settings)) continue;
 
             $color = ['type' => 'secondary'];
+            $attr = null;
             if (is_array($text)) {
-                $color = $text['color'];
+                if (isset($text['color'])) {
+                    $color = $text['color'];
+                }
+                if (isset($text['attr'])) {
+                    $attr = $text['attr'];
+                }
                 $text = $text['label'];
             } elseif (is_bool($text)) {
                 $text = $label_settings['_label'];
             }
-            $labels[$label_name] = $this->_renderLabel($label_name, $text, $color);
+            $labels[$label_name] = $this->_renderLabel($label_name, $text, $color, $attr);
         }
 
         return empty($labels) ? '' : implode(PHP_EOL, $labels);
     }
 
-    protected function _renderLabel($name, $text, $color)
+    protected function _renderLabel($name, $text, $color, array $attr = null)
     {
         $color_class = $color_style = '';
         if ($color['type'] === 'custom') {
@@ -179,7 +185,8 @@ class LabelsElement extends AbstractElement
         } else {
             $color_class = DRTS_BS_PREFIX . 'badge-' . $color['type'];
         }
-        return '<span style="' . $color_style . '" class="' . DRTS_BS_PREFIX . 'badge ' . $color_class . '" data-label-name="' . $name . '">' . $this->_application->H($text) . '</span>';
+        $attr = isset($attr) ? $this->_application->Attr($attr) : '';
+        return '<span style="' . $color_style . '" class="' . DRTS_BS_PREFIX . 'badge ' . $color_class . '" data-label-name="' . $name . '"' . $attr . '>' . $this->_application->H($text) . '</span>';
     }
 
     protected function _displayElementReadableInfo(Entity\Model\Bundle $bundle, Display\Model\Element $element)

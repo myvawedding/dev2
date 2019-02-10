@@ -202,4 +202,40 @@ class UtilHelper
             ],
         ];
     }
+
+    public function strToBytes(Application $application, $str)
+    {
+        if (is_int($str)) return $str;
+
+        $suffix = strtoupper(substr($str, -1));
+        if (!in_array($suffix, ['P','T','G','M','K'])) return (int)$str;
+
+        $value = (int)substr($str, 0, -1);
+        switch ($suffix) {
+            case 'P':
+                $value *= 1024;
+            case 'T':
+                $value *= 1024;
+            case 'G':
+                $value *= 1024;
+            case 'M':
+                $value *= 1024;
+            case 'K':
+                $value *= 1024;
+                break;
+        }
+        return $value;
+    }
+
+    public function bytesToStr(Application $application, $bytes, $decimals = 1)
+    {
+        $suffix = 'B';
+        $suffix_list = ['P','T','G','M','K'];
+        while ($bytes > 1024
+            && ($suffix = array_pop($suffix_list))
+        ) {
+            $bytes /= 1024;
+        }
+        return round($bytes, $decimals) . $suffix;
+    }
 }

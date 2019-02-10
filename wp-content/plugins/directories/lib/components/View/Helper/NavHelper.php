@@ -124,7 +124,8 @@ class NavHelper
                 return !empty($context->filter['filters_applied_labels'])
                     && $application->getComponent('View')->isFilterable($context->bundle);
             case 'add':
-                return !empty($context->settings['other']['add']['show']);
+                return !empty($context->settings['other']['add']['show'])
+                    && empty($context->settings['query']['user_id']);
             case 'pagination':
                 return !empty($context->num_found)
                     && (isset($context->paginator)
@@ -141,9 +142,12 @@ class NavHelper
             case 'layout_switch':
                 return !empty($context->num_found) && !empty($context->settings['list_grid']) && empty($context->settings['list_no_row']);
             case 'status':
-                return true;
+                return !empty($context->bundle->info['public'])
+                    && !$application->getUser()->isAnonymous()
+                    && empty($context->settings['query']['user_id']);
             case 'dashboard_logout':
-                return $application->isComponentLoaded('Dashboard')
+                return empty($context->settings['query']['user_id'])
+                    && $application->isComponentLoaded('Dashboard')
                     && !$application->getUser()->isAnonymous()
                     && $application->getComponent('Dashboard')->getConfig('logout_btn');
             default:
@@ -460,7 +464,7 @@ class NavHelper
             || $parentEntity->getBundleName() !== $bundle->info['parent']
         ) return '';
 
-        $url = str_replace(':slug', $parentEntity->getSlug(), $application->Entity_BundlePath($bundle)) . '/add';
+        $url = str_replace(':slug', $parentEntity->getSlug(), $bundle->getPath()) . '/add';
         return $this->_getAddEntityButton($application, $name, $color, $bundle, $btnSettings, $url, $options);
     }
 
@@ -624,8 +628,6 @@ class NavHelper
     protected function _statusLinks(Application $application, Entity\Model\Bundle $bundle, $container, $route, array $urlParams, $pushState = false)
     {
         $links = [];
-
-        if (empty($bundle->info['public'])) return $links;
 
         $options = array(
             'container' => $container,

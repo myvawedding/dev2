@@ -62,17 +62,16 @@ class TermsFieldRenderer extends Field\Renderer\AbstractRenderer
                 if (!is_object($values[$i])) continue;
 
                 $options['icon'] = true;
-                if ($icon_src = $values[$i]->getCustomProperty('icon_src')) {
-                    $options['icon'] = $icon_src;
+                if ($image_src = $values[$i]->getCustomProperty('image_src')) {
+                    $options['icon'] = $image_src;
                     $options['icon_is_value'] = $options['icon_is_image'] = true;
-                } else {
-                    if (($icon = $values[$i]->getCustomProperty('icon'))
-                        || ($icon = $values[$i]->getCustomProperty('parent_icon'))
-                    ) {
-                        $options['icon'] = $icon;
-                        $options['icon_is_value'] = true;
-                        $options['icon_color'] = $values[$i]->getCustomProperty('color');
-                    }
+                } elseif ($icon_src = $values[$i]->getCustomProperty('icon_src')) {
+                    $options['icon'] = $icon_src;
+                    $options['icon_is_value'] = $options['icon_is_image'] = $options['icon_is_full'] = true;
+                } elseif ($icon = $values[$i]->getCustomProperty('icon')) {
+                    $options['icon'] = $icon;
+                    $options['icon_is_value'] = true;
+                    $options['icon_color'] = $values[$i]->getCustomProperty('color');
                 }
                 $ret[] = $this->_application->Entity_Permalink($values[$i], $options);
             }

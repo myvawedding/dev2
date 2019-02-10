@@ -67,6 +67,9 @@ class ShortcodesHelper
             } else {
                 throw new Exception\RuntimeException('Shortcode [' . $tag . ']: Invalid route or slug.');
             }
+            if (isset($filtered['title'])) {
+                $title = $filtered['title'];
+            }
         } catch (Exception\IException $e) {
             $application->logError($e);
             return;

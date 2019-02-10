@@ -27,10 +27,8 @@ class PageSettingsFormHelper
             $current_id = (null !== $current_slug = @$page_slugs[1][$slug['component']][$slug_name]) && isset($page_slugs[2][$current_slug]) ? $page_slugs[2][$current_slug] : null;
             $form[$slug_name]['#title'] = $slug['admin_title'];
             $form[$slug_name]['#horizontal'] = true;
-            $form[$slug_name]['#display_required'] = true;
             $form[$slug_name]['#weight'] = isset($slug['weight']) ? $slug['weight'] : $weight + 10;
             $form[$slug_name]['id'] = array(
-                '#element_validate' => array(array(array($this, '_validatePageSettings'), array($slug_name, empty($slug['parent']), $parents))),
                 '#type' => 'item',
                 '#markup' => wp_dropdown_pages(array(
                     'depth' => 1,
@@ -40,6 +38,12 @@ class PageSettingsFormHelper
                     'selected' => $current_id,
                 )),
             );
+            if (!isset($slug['required']) || $slug['required']) {
+                $form[$slug_name]['#display_required'] = true;
+                $form[$slug_name]['id']['#element_validate'] = [
+                    [[$this, '_validatePageSettings'], [$slug_name, empty($slug['parent']), $parents]],
+                ];
+            }
             if (!empty($slug['wp_shortcode'])) {
                 if (is_array($slug['wp_shortcode'])) {
                     $shortcode = '[' . $slug['wp_shortcode'][0] . ' ' . $application->Attr($slug['wp_shortcode'][1]) . ']';

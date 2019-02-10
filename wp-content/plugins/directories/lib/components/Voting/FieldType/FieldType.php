@@ -204,7 +204,7 @@ class FieldType extends Field\Type\AbstractType implements
     public function fieldSortableOptions(Field\IField $field)
     {        
         return [
-            ['label' => $label = $field->getFieldLabel()],
+            ['label' => $label = $field->getFieldLabel(true)],
             ['args' => ['asc'], 'label' => sprintf(__('%s (asc)', 'directories'), $label)],
         ];
     }

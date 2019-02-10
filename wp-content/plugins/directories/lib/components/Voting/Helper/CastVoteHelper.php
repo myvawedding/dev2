@@ -39,11 +39,12 @@ class CastVoteHelper
             $votes = $application->getModel('Vote', 'Voting')
                 ->bundleName_is($entity->getBundleName())
                 ->entityId_is($entity->getId())
-                ->userId_is($user_id)
                 ->fieldName_is($fieldName)
                 ->name_in(array_keys($values));
             if (!empty($options['reference_id'])) {
                 $votes->referenceId_is($options['reference_id']);
+            } else {
+                $votes->userId_is($user_id);
             }
             if (!empty($hash)) {
                 $votes->hash_is($hash);

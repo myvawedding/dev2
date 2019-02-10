@@ -39,41 +39,28 @@ class UserIdentityHtmlHelper
     
     public function _link(Application $application, AbstractIdentity $identity)
     {
-        $name = $identity->name;
-        if ($identity->isAnonymous()) {
-            if ($name === null) $name = __('Guest', 'drts');
-            return $this->_doLink($application, $identity, $application->H($name), 'drts-user drts-user-anonymous', $identity->url, 'nofollow external');
-        }
-
-        $class = 'drts-user drts-user-registered drts-user-' . $identity->id;
-        return $this->_doLink($application, $identity, $application->H($name), $class, $this->_url($application, $identity), 'nofollow');
+        return $this->_doLink($application, $identity, $application->H($this->_getUserIdentityName($identity)));
     }
 
     public function _linkWithThubmnail(Application $application, AbstractIdentity $identity, $size, $thumbnailOnly = false)
     {
         $content = $this->_thumbnail($application, $identity, $size);
-        if (!$thumbnailOnly) $content .= '<span>' . $application->H($identity->name) . '</span>';
-        
-        if ($identity->isAnonymous()) {
-            return $this->_doLink($application, $identity, $content, 'drts-user drts-user-anonymous', $identity->url, 'nofollow external');
-        }
+        if (!$thumbnailOnly) $content .= '<span>' . $application->H($this->_getUserIdentityName($identity)) . '</span>';
 
-        $class = 'drts-user drts-user-registered drts-user-' . $identity->id;
-        return $this->_doLink($application, $identity, $content, $class, $this->_url($application, $identity), 'nofollow');
-    }
-    
-    protected function _url(Application $application, AbstractIdentity $identity)
-    {
-        return $identity->url ? $identity->url : null;
+        return $this->_doLink($application, $identity, $content);
     }
         
-    protected function _doLink(Application $application, AbstractIdentity $identity, $content, $class, $url, $rel = '')
+    protected function _doLink(Application $application, AbstractIdentity $identity, $content)
     {
-        $class = $application->H($class);
+        if ($identity->isAnonymous()) {
+            $class = 'drts-user drts-user-anonymous';
+        } else {
+            $class = 'drts-user drts-user-registered drts-user-' . $identity->id;
+        }
         $attr = [
-            'href' => $url,
+            'href' => $identity->url,
             'target' => '_blank',
-            'rel' => $rel . ' noopener',
+            'rel' => 'nofollow external noopener',
             'class' => $class,
         ];
         $attr = $application->Filter('core_user_link_attr', $attr, [$identity]);
@@ -99,7 +86,7 @@ class UserIdentityHtmlHelper
         return sprintf(
             '<img src="%1$s" alt="%2$s" class="drts-user-thumbnail drts-icon %3$s" />',
             $application->H($url),
-            $application->H($identity->name),
+            $application->H($this->_getUserIdentityName($identity)),
             $size === 'sm' ? 'drts-icon-sm' : ''
         );
     }
@@ -109,5 +96,16 @@ class UserIdentityHtmlHelper
         if (!$identity->email) return;
    
         return $application->GravatarUrl($identity->email, $size, $identity->gravatar_default, $identity->gravatar_rating);
+    }
+
+    protected function _getUserIdentityName(AbstractIdentity $identity)
+    {
+        $name = $identity->name;
+        if ($name === null
+            && $identity->isAnonymous()
+        ) {
+            $name = __('Guest', 'drts');
+        }
+        return $name;
     }
 }

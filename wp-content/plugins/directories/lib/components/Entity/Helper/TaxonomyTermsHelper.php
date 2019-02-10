@@ -54,6 +54,19 @@ class TaxonomyTermsHelper
             $parent_id = 0;
         }
         $list = [];
+        if (!empty($bundle->info['entity_image'])) {
+            $icon_type = 'image';
+            $image_field = $bundle->info['entity_image'];
+        } elseif (!empty($bundle->info['entity_icon'])) {
+            if (!empty($bundle->info['entity_icon_is_image'])) {
+                $icon_type = 'image';
+                $image_field = $bundle->info['entity_icon'];
+            } else {
+                $icon_type = 'icon';
+            }
+        } else {
+            $icon_type = 'none';
+        }
         foreach ($terms->fetch($num) as $term) {
             $term_id = $term->getId();
             $list[$parent_id][$term_id] = array(
@@ -63,14 +76,24 @@ class TaxonomyTermsHelper
                 'url' => (string)$application->Entity_PermalinkUrl($term),
                 'count' => $term->getSingleFieldValue('entity_term_content_count'),
             );
-            if ($icon = $application->Entity_Image($term, 'icon')) {
-                $list[$parent_id][$term_id]['icon_src'] = $icon;
-            } elseif ($icon = $application->Entity_Icon($term, false)) {
-                $list[$parent_id][$term_id]['icon'] = $icon;
+            switch ($icon_type) {
+                case 'image':
+                    if ($icon_src = $application->Entity_Image($term, 'icon', $image_field)) {
+                        $list[$parent_id][$term_id]['icon_src'] = $icon_src;
+                    }
+                    break;
+                case 'icon':
+                    if ($icon = $application->Entity_Icon($term, false)) {
+                        $list[$parent_id][$term_id]['icon'] = $icon;
+                    }
+                    if ($color = $application->Entity_Color($term)) {
+                        $list[$parent_id][$term_id]['color'] = $color;
+                    }
+                    break;
+                default:
             }
-            if ($color = $application->Entity_Color($term)) {
-                $list[$parent_id][$term_id]['color'] = $color;
-            }
+
+
         }
 
         return $list;
@@ -85,6 +108,19 @@ class TaxonomyTermsHelper
         $this->_sortTerms($terms, $sort);
         $filter_func = function ($value) { return $value !== null; }; // filter null value
         $list = [];
+        if (!empty($bundle->info['entity_image'])) {
+            $icon_type = 'image';
+            $image_field = $bundle->info['entity_image'];
+        } elseif (!empty($bundle->info['entity_icon'])) {
+            if (!empty($bundle->info['entity_icon_is_image'])) {
+                $icon_type = 'image';
+                $image_field = $bundle->info['entity_icon'];
+            } else {
+                $icon_type = 'icon';
+            }
+        } else {
+            $icon_type = 'none';
+        }
         foreach ($terms->fetch(isset($num) ? $num : 0) as $term) {
             $parent_id = (int)$term->getParentId();
             $term_id = $term->getId();
@@ -97,18 +133,31 @@ class TaxonomyTermsHelper
                 'depth' => 0,
                 'count' => $term->getSingleFieldValue('entity_term_content_count'),
             );
-            if (!empty($bundle->info['entity_image'])) {
-                $list[$parent_id][$term_id]['icon_src'] = $application->Entity_Image($term, 'icon', $bundle->info['entity_image']);
-            } elseif ($icon = $application->Entity_Icon($term, false)) {
-                $list[$parent_id][$term_id]['icon'] = $icon;
+            switch ($icon_type) {
+                case 'image':
+                    if ($icon_src = $application->Entity_Image($term, 'icon', $image_field)) {
+                        $list[$parent_id][$term_id]['icon_src'] = $icon_src;
+                    }
+                    break;
+                case 'icon':
+                    if ($icon = $application->Entity_Icon($term, false)) {
+                        $list[$parent_id][$term_id]['icon'] = $icon;
+                    }
+                    if ($color = $application->Entity_Color($term)) {
+                        $list[$parent_id][$term_id]['color'] = $color;
+                    }
+                    break;
+                default:
             }
-            $list[$parent_id][$term_id]['color'] = $application->Entity_Color($term);
             $term_parent_ids[$term_id] = $parent_id;
 
             if ($parent_id && isset($term_parent_ids[$parent_id])) {
                 $parent_titles = [];
-                $get_parent_icon = !isset($list[$parent_id][$term_id]['icon_src']) && !isset($list[$parent_id][$term_id]['icon']);
-                $get_parent_color = !isset($list[$parent_id][$term_id]['color']);
+                $get_parent_icon = $get_parent_color = false;
+                if ($icon_type === 'icon') {
+                    $get_parent_icon = !isset($list[$parent_id][$term_id]['icon']);
+                    $get_parent_color = !isset($list[$parent_id][$term_id]['color']);
+                }
                 $parent_icon = $parent_color = null;
                 $_parent_id = $parent_id;
                 do {

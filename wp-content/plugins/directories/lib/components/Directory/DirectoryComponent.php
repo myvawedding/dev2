@@ -15,7 +15,7 @@ class DirectoryComponent extends AbstractComponent implements
     System\IAdminRouter,
     System\IWidgets
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories';
+    const VERSION = '1.2.23', PACKAGE = 'directories';
     
     public static function description()
     {
@@ -467,7 +467,7 @@ class DirectoryComponent extends AbstractComponent implements
             }
         }
 
-        $ret['path'] = $this->_application->Entity_BundlePath($bundle) . $ret['path'];
+        $ret['path'] = $bundle->getPath() . $ret['path'];
 
         // Since $ret is passes as reference, we can't return it here
         $ret = $this->_application->Filter(

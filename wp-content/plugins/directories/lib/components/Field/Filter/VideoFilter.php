@@ -1,8 +1,6 @@
 <?php
 namespace SabaiApps\Directories\Component\Field\Filter;
 
-use SabaiApps\Directories\Component\Field;
-
 class VideoFilter extends BooleanFilter
 {
     protected $_filterColumn = null, $_nullOnly = true;

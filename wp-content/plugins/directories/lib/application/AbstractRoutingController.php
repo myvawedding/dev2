@@ -151,9 +151,9 @@ abstract class AbstractRoutingController extends FrameworkAbstractRoutingControl
                     $route_data = $all_routes[$route_path];
                     
                     if (!empty($route_data['format'][$route_key])) {
-                        $regex = '#^(' . str_replace('#', '\#', $route_data['format'][$route_key]) . ')#i';
+                        $regex = '#^(' . str_replace('#', '\#', $route_data['format'][$route_key]) . ')$#i';
                     } else {
-                        $regex = '#^([a-z0-9~\s\.:_\-]+)#i';
+                        $regex = '#^([a-z0-9~\s\.:_\-@%]+)$#i';
                     }
                     if (!preg_match($regex, $path_requested, $matches)) continue;
 

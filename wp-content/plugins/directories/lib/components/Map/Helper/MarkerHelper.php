@@ -27,6 +27,7 @@ class MarkerHelper
                         $image = false;
                     }
                 }
+                $icon_is_url = $icon_is_full = false;
                 if (!isset($icon)) {
                     $icon = false;
                     if (!empty($icon_type)) {
@@ -40,12 +41,15 @@ class MarkerHelper
                             // icon is taxonomy term icon
                             if ($terms = $entity->getFieldValue($icon_type)) {
                                 foreach ($terms as $term) {
-                                    if (($_icon = $term->getCustomProperty('icon'))
-                                        || ($_icon = $term->getCustomProperty('parent_icon'))
-                                    ) {
+                                    if ($_icon = $term->getCustomProperty('image_src')) {
+                                        $icon = $_icon;
+                                        $icon_is_url = true;
+                                    } elseif ($_icon = $term->getCustomProperty('icon_src')) {
+                                        $icon = $_icon;
+                                        $icon_is_url = $icon_is_full = true;
+                                    } elseif ($_icon = $term->getCustomProperty('icon')) {
                                         $icon = $_icon;
                                         $icon_color = $term->getCustomProperty('color');
-                                        break;
                                     }
                                 }
                             }
@@ -64,6 +68,9 @@ class MarkerHelper
                     'lng' => $value['lng'],
                     'icon' => $icon ? [empty($icon_is_url) ? 'icon' : 'url' => $icon, 'icon_color' => $icon_color] : null,
                 );
+                if (!empty($icon_is_full)) {
+                    $markers[$key]['icon']['is_full'] = true;
+                }
             }
         }
         return $markers;
@@ -122,11 +129,14 @@ class MarkerHelper
                 $ret['image'] = __('Show image', 'directories');
             }
             foreach ($bundle->info['taxonomies'] as $taxonomy_bundle_type => $taxonomy) {
-                if (($taxonomy_bundle = $application->Entity_Bundle($taxonomy))
-                    && !empty($taxonomy_bundle->info['entity_icon'])
-                ) {
-                    $ret[$taxonomy_bundle_type] = __('Show taxonomy icon', 'directories')
-                        . ' - ' . $taxonomy_bundle->getLabel('singular');
+                if ($taxonomy_bundle = $application->Entity_Bundle($taxonomy)) {
+                    if (!empty($taxonomy_bundle->info['entity_image'])) {
+                        $ret[$taxonomy_bundle_type] = __('Show taxonomy image', 'directories')
+                            . ' - ' . $taxonomy_bundle->getLabel('singular');
+                    } elseif (!empty($taxonomy_bundle->info['entity_icon'])) {
+                        $ret[$taxonomy_bundle_type] = __('Show taxonomy icon', 'directories')
+                            . ' - ' . $taxonomy_bundle->getLabel('singular');
+                    }
                 }
             }
         }

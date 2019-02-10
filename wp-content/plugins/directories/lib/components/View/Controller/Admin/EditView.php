@@ -90,7 +90,7 @@ class EditView extends System\Controller\Admin\AbstractSettings
             );
         }
         
-        $form += $this->View_FeatureSettingsForm($context->bundle, $context->view->data['settings']);
+        $form += $this->View_FeatureSettingsForm($context->bundle, $context->view->data['settings'], (bool)$context->view->default);
         
         return $form;
     }

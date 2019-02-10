@@ -23,7 +23,6 @@ class TermEntityType extends Entity\Type\AbstractType
                     'on' => 'bundle_name = tt.taxonomy'
                 ),
             ),
-            'table_id_key' => 'term_id',
             'properties' => array(
                 'id' => array(
                     'type' => 'entity_id',

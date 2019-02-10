@@ -15,7 +15,7 @@ use Monolog\Handler\ErrorLogHandler;
 
 class Platform extends AbstractPlatform
 {
-    const VERSION = '1.2.19';
+    const VERSION = '1.2.23';
     private $_mainContent, $_singlePageId, $_singlePageContent, $_userToBeDeleted,
         $_jqueryUiCoreLoaded, $_jqueryUiCssLoaded,
         $_moLoaded, $_i18n, $_flash = [], $_bsHandle, $_flushRewriteRules, $_pluginsUrl;
@@ -35,6 +35,9 @@ class Platform extends AbstractPlatform
         }
         if (!defined('DRTS_WORDPRESS_SKIP_IN_THE_LOOP_CHECK')) {
             define('DRTS_WORDPRESS_SKIP_IN_THE_LOOP_CHECK', false);
+        }
+        if (!defined('DRTS_WORDPRESS_WP_ACTION_PRIORITY')) {
+            define('DRTS_WORDPRESS_WP_ACTION_PRIORITY', 11);
         }
         if (defined('WPML_PLUGIN_BASENAME')) {
             $this->_i18n = 'wpml';
@@ -844,7 +847,7 @@ class Platform extends AbstractPlatform
             add_filter('query_vars', array($this, 'onQueryVarsFilter'));
 
             // Add action method to run Sabai
-            add_action('wp', array($this, 'onWpAction'), 1);
+            add_action('wp', array($this, 'onWpAction'), DRTS_WORDPRESS_WP_ACTION_PRIORITY);
         }
     }
 
@@ -893,7 +896,14 @@ class Platform extends AbstractPlatform
 
     public function hasSlug($component, $slug, $lang = null)
     {
-        return ($page_slugs = $this->getPageSlugs($lang)) && isset($page_slugs[1][$component][$slug]) ? $page_slugs[1][$component][$slug] : false;
+        // Check if a valid page is assigned
+        if (($page_slugs = $this->getPageSlugs($lang))
+            && isset($page_slugs[1][$component][$slug])
+            && !empty($page_slugs[2][$page_slugs[1][$component][$slug]])
+        ) {
+            return $page_slugs[1][$component][$slug];
+        }
+        return false;
     }
 
     public function getSlug($component, $slug, $lang = null)
@@ -927,13 +937,14 @@ class Platform extends AbstractPlatform
     protected function _isSabaiPage()
     {
         if (is_page()) {
-            if ((!Request::isAjax()
-                    && (!Request::isPostMethod() || !empty($_POST['_drts_form_build_id']))
-                    && strpos($GLOBALS['post']->post_content, '[drts') !== false // using shortcode on page
-                    && !get_query_var('drts_action') // make sure not on single post page
-                )
-                || (!$pagename = $this->_isSabaiPageId($GLOBALS['post']->ID))
+            if (!Request::isAjax()
+                && (!Request::isPostMethod() || empty($_POST['_drts_wordpress_skip_page_check'])) // special param to force skip page check
+                && (!Request::isPostMethod() || !empty($_POST['_drts_form_build_id']))
+                && strpos($GLOBALS['post']->post_content, '[drts') !== false // using shortcode on page
+                && !get_query_var('drts_action') // make sure not on single post page
             ) return false;
+
+            if (!$pagename = $this->_isSabaiPageId($GLOBALS['post']->ID)) return false;
 
             if (!$route = get_query_var('drts_route')) return $pagename;
 
@@ -965,7 +976,7 @@ class Platform extends AbstractPlatform
 
                 if ((!$entity = $this->getApplication()->Entity_Entity($entity_type, get_queried_object_id()))
                     || (!$bundle = $this->getApplication()->Entity_Bundle($entity))
-                    || (!$bundle_permalink_path = $this->getApplication()->Entity_BundlePath($bundle, true))
+                    || (!$bundle_permalink_path = $bundle->getPath(true))
                 ) return false;
 
                 if (!empty($bundle->info['parent'])) { // child entity bundles do not have custom permalinks
@@ -1103,6 +1114,10 @@ class Platform extends AbstractPlatform
             $archive_force_is_page = in_array($current_theme, ['thegem']);
             if (apply_filters('drts_wordpress_archive_force_is_page', $archive_force_is_page)) {
                 $GLOBALS['wp_query']->is_page = true;
+            }
+            $archive_force_is_not_arvhive = in_array($current_theme, ['life']);
+            if (apply_filters('drts_wordpress_archive_force_is_not_archive', $archive_force_is_not_arvhive)) {
+                $GLOBALS['wp_query']->is_archive = false;
             }
 
             // For page title
@@ -1257,6 +1272,7 @@ class Platform extends AbstractPlatform
         }
         $this->_runAdmin($page_slug, $route);
 
+        // De-queue scripts to prevent conflicts
         add_action('admin_enqueue_scripts', function() {
             wp_dequeue_script('cs-plugins');
             wp_dequeue_script('cs-framework');
@@ -1618,7 +1634,7 @@ class Platform extends AbstractPlatform
             && $app->getUser()->isAnonymous()
             && $app->isComponentLoaded('FrontendSubmit')
             && $app->getComponent('FrontendSubmit')->getConfig('login', isset($_REQUEST['action']) && $_REQUEST['action'] === 'register' ? 'register_form' : 'login_form')
-            && ($login_slug = $app->getComponent('FrontendSubmit')->getSlug('login'))
+            && ($login_slug = $app->getComponent('FrontendSubmit')->hasSlug('login'))
             && ($page = get_page_by_path($login_slug))
             && $this->_isSabaiPageId($page->ID)
         ) {

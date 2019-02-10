@@ -9,7 +9,13 @@ class DashboardVotes extends AbstractVotes
     protected function _doGetFormSettings(Context $context, array &$formStorage)
     {
         $form = parent::_doGetFormSettings($context, $formStorage);
-        $form['#action'] = $this->_application->getComponent('Dashboard')->getPanelUrl('voting_votes', $this->_getVotingType($context), '/votes', [], true);
+        if (isset($context->dashboard_user)) {
+            // Public profile page
+            $this->_submitable = false;
+        } else {
+            $form['#action'] = $this->_application->getComponent('Dashboard')
+                ->getPanelUrl('voting_votes', $this->_getVotingType($context), '/votes', [], true);
+        }
         return $form;
     }
     
@@ -57,7 +63,7 @@ class DashboardVotes extends AbstractVotes
     
     protected function _getQuery(Context $context)
     {
-        return parent::_getQuery($context)->userId_is($this->getUser()->id);
+        return parent::_getQuery($context)->userId_is(isset($context->dashboard_user) ? $context->dashboard_user->id : $this->getUser()->id);
     }
 
     protected function _getVotes(Context $context, $limit, $offset, $sort, $order)

@@ -55,7 +55,7 @@ class GoogleMapsApiHelper
             throw new Exception\RuntimeException('Failed parsing result returned from URL: ' . $url);
         }
         if ($result->status !== 'OK') {
-            $error = isset($result->error_message) ? $result->error_message : 'An error occurred while querying Google Maps API.';
+            $error = isset($result->errorMessage) ? $result->errorMessage : 'An error occurred while querying Google Maps API.';
             throw new Exception\RuntimeException($error . ' Requested URL: ' . $url . '; Returned status: ' . $result->status);
         }
         return $result;

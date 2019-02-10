@@ -13,7 +13,7 @@ class SearchComponent extends AbstractComponent implements
     System\IMainRouter,
     IFields
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories',
+    const VERSION = '1.2.23', PACKAGE = 'directories',
         FORM_PARAM_PREFIX = 'search_', FORM_SEARCH_PARAM_NAME = 'drts-search';
     
     public static function description()
@@ -29,7 +29,7 @@ class SearchComponent extends AbstractComponent implements
                 || empty($bundle->info['search_enable'])
             ) continue;
             
-            $routes[$this->_application->Entity_BundlePath($bundle, false, $lang) . '/search'] = array(
+            $routes[$bundle->getPath(false, $lang) . '/search'] = array(
                 'controller' => 'Search',
                 'title_callback' => true,
                 'callback_path' => 'search',

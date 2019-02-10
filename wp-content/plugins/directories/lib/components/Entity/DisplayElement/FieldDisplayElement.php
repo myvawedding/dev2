@@ -210,8 +210,10 @@ class FieldDisplayElement extends Display\Element\AbstractElement
         $renderer_settings = isset($settings['renderer_settings'][$settings['renderer']]) ? $settings['renderer_settings'][$settings['renderer']] : [];
         $values = $var->getFieldValue($field->getFieldName());
         if (empty($values)) {
-            if (empty($renderer_settings['_render_empty'])) return '';
-            
+            if (empty($renderer_settings['_render_empty'])
+                || $values === false // forced to not display, for example through conditional rules
+            ) return '';
+
             $values = [];
         }
         $html = $this->_application->callHelper(

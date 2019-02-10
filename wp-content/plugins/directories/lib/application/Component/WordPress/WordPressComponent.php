@@ -11,7 +11,7 @@ class WordPressComponent extends AbstractComponent implements
     Form\IFields,
     System\IMainRouter
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories';
+    const VERSION = '1.2.23', PACKAGE = 'directories';
 
     protected $_system = true;
 
@@ -62,13 +62,17 @@ class WordPressComponent extends AbstractComponent implements
                 ) continue;
 
                 $error = false;
-                $real_slug = $page_slugs[1][$component][$slug_name];
-                if (empty($page_slugs[2][$real_slug])) {
-                    $error = '';
-                } else {
-                    $page_id = $page_slugs[2][$real_slug];
-                    if (!$permalink = get_permalink($page_id)) {
-                        $error = 'Permalink failure for page #' . $page_id;
+                if (!isset($slugs[$component][$slug_name]['required'])
+                    || $slugs[$component][$slug_name]['required']
+                ) {
+                    $real_slug = $page_slugs[1][$component][$slug_name];
+                    if (empty($page_slugs[2][$real_slug])) {
+                        $error = '';
+                    } else {
+                        $page_id = $page_slugs[2][$real_slug];
+                        if (!$permalink = get_permalink($page_id)) {
+                            $error = 'Permalink failure for page #' . $page_id;
+                        }
                     }
                 }
                 $info['wordpress']['info']['page_' . $slug_name] = [

@@ -12,10 +12,10 @@ class UrlHelper
         
         if (!empty($bundle->info['parent'])) { // child entity bundles do not have custom permalinks
             $permalink_path = ($parent = $application->Entity_ParentEntity($entity, false))
-                ? str_replace(':slug', $parent->getSlug(), $application->Entity_BundlePath($bundle, true)) . '/' . $entity->getId()
+                ? str_replace(':slug', $parent->getSlug(), $bundle->getPath(true)) . '/' . $entity->getId()
                 : '';
         } else {
-            $permalink_path = $application->Entity_BundlePath($bundle, true) . '/' . $entity->getSlug();
+            $permalink_path = $bundle->getPath(true) . '/' . $entity->getSlug();
         }
         
         return $application->Url(array(

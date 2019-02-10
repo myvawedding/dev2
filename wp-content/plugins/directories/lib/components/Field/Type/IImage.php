@@ -1,8 +1,6 @@
 <?php
 namespace SabaiApps\Directories\Component\Field\Type;
 
-use SabaiApps\Directories\Component\Field\IField;
-
 interface IImage
 {
     public function fieldImageGetUrl($value, $size);

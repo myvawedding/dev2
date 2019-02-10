@@ -14,6 +14,7 @@ class GalleryFieldRenderer extends Field\Renderer\AbstractRenderer
             'default_settings' => array(
                 'cols' => 4,
                 'size' => 'thumbnail',
+                'no_link' => false,
             ),
             'separatable' => false,
         );
@@ -36,6 +37,11 @@ class GalleryFieldRenderer extends Field\Renderer\AbstractRenderer
                 '#inline' => true,
                 '#default_value' => $settings['size'],
             ),
+            'no_link' => [
+                '#title' => __('Do not link', 'directories'),
+                '#type' => 'checkbox',
+                '#default_value' => !empty($settings['no_link']),
+            ],
         );
     }
 
@@ -45,7 +51,13 @@ class GalleryFieldRenderer extends Field\Renderer\AbstractRenderer
         foreach ($values as $value) {
             $attachment_ids[] = $value['attachment_id'];
         }
-        return do_shortcode(sprintf('[gallery columns="%d" size="%s" ids="%s"]', $settings['cols'], $settings['size'], implode(',', $attachment_ids)));
+        return do_shortcode(sprintf(
+            '[gallery columns="%d" size="%s" ids="%s" link="%s"]',
+            $settings['cols'],
+            $settings['size'],
+            implode(',', $attachment_ids),
+            empty($settings['no_link']) ? '' : 'none'
+        ));
     }
     
     protected function _fieldRendererReadableSettings(Field\IField $field, array $settings)
@@ -58,6 +70,11 @@ class GalleryFieldRenderer extends Field\Renderer\AbstractRenderer
             'size' => [
                 'label' => __('Image size', 'directories'),
                 'value' => $this->_getImageSizeOptions()[$settings['size']],
+            ],
+            'no_link' => [
+                'label' => __('Do not link', 'directories'),
+                'value' => !empty($settings['no_link']),
+                'is_bool' => true,
             ],
         ];
     }

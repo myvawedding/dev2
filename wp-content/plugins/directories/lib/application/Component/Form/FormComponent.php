@@ -8,7 +8,7 @@ use SabaiApps\Directories\Application;
 
 class FormComponent extends AbstractComponent implements IFields, System\IMainRouter
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories';
+    const VERSION = '1.2.23', PACKAGE = 'directories';
     const FORM_BUILD_ID_NAME = '_drts_form_build_id', FORM_SUBMIT_BUTTON_NAME = '_drts_form_submit';
 
     protected $_system = true;

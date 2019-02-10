@@ -55,6 +55,6 @@ class ChildEntitiesDisplayElement extends AbstractEntitiesDisplayElement
 
     protected function _getListEntitiesPath(Entity\Model\Bundle $bundle, array $element, Entity\Type\IEntity $entity)
     {
-        return str_replace(':slug', $entity->getSlug(), $this->_application->Entity_BundlePath($bundle, true));
+        return str_replace(':slug', $entity->getSlug(), $bundle->getPath(true));
     }
 }

@@ -19,7 +19,7 @@ class VotingComponent extends AbstractComponent implements
     Display\IStatistics,
     ITypes
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories';
+    const VERSION = '1.2.23', PACKAGE = 'directories';
 
     protected static $_types = [];
     
@@ -78,7 +78,7 @@ class VotingComponent extends AbstractComponent implements
                     || !$this->_application->isComponentLoaded($field->Bundle->component)
                 ) continue;
 
-                $permalink_path = $this->_application->Entity_BundlePath($field->Bundle, true, $lang);
+                $permalink_path = $field->Bundle->getPath(true, $lang);
                 $base_path = empty($field->Bundle->info['parent']) ? $permalink_path . '/:slug' : $permalink_path . '/:entity_id';
                 if (!isset($routes[$base_path . '/vote'])) {
                     $routes[$base_path . '/vote'] = [];
@@ -97,7 +97,8 @@ class VotingComponent extends AbstractComponent implements
         }
         if ($this->_application->isComponentLoaded('Dashboard')) {
             // For dashboard
-            $routes['/' . $this->_application->getComponent('Dashboard')->getSlug('dashboard') . '/:panel_name/votes'] = [
+            $dashboard_slug = $this->_application->getComponent('Dashboard')->getSlug('dashboard');
+            $routes['/' . $dashboard_slug . '/:user_name/:panel_name/votes'] = [
                 'controller' => 'DashboardVotes',
                 'callback_path' => 'dashboard_votes',
                 'access_callback' => true,

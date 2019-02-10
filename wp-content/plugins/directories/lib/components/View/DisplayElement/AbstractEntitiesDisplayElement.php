@@ -80,7 +80,7 @@ abstract class AbstractEntitiesDisplayElement extends Display\Element\AbstractEl
     
     protected function _getListEntitiesPath(Entity\Model\Bundle $bundle, array $element, Entity\Type\IEntity $entity)
     {
-        return $this->_application->Entity_BundlePath($bundle);
+        return $bundle->getPath();
     }
     
     public function displayElementRender(Entity\Model\Bundle $bundle, array $element, $var)

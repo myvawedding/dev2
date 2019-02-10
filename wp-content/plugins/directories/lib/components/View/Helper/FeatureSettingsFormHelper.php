@@ -7,7 +7,7 @@ use SabaiApps\Directories\Component\Form;
 
 class FeatureSettingsFormHelper
 {
-    public function help(Application $application, Entity\Model\Bundle $bundle, array $settings = [], array $submitValues = null)
+    public function help(Application $application, Entity\Model\Bundle $bundle, array $settings = [], $isDefaultView = false, array $submitValues = null)
     {
         $form = [];
         foreach (['sort', 'pagination', 'query', 'filter', 'other'] as $feature_name) {
@@ -16,6 +16,7 @@ class FeatureSettingsFormHelper
                 $bundle,
                 $feature_name,
                 isset($settings[$feature_name]) ? $settings[$feature_name] : [],
+                $isDefaultView,
                 [$feature_name],
                 isset($submitValues[$feature_name]) ? $submitValues[$feature_name] : null
             )) continue;
@@ -26,7 +27,7 @@ class FeatureSettingsFormHelper
         return $application->Filter('view_feature_settings_form', $form, [$bundle, $settings, $submitValues]);
     }
 
-    protected function _getViewFeatureSettingsForm(Application $application, Entity\Model\Bundle $bundle, $feature, array $settings, array $parents, array $submitValues = null)
+    protected function _getViewFeatureSettingsForm(Application $application, Entity\Model\Bundle $bundle, $feature, array $settings, $isDefaultView, array $parents, array $submitValues = null)
     {
         switch ($feature) {
             case 'sort':
@@ -67,6 +68,21 @@ class FeatureSettingsFormHelper
                         '#horizontal' => true,
                         '#weight' => 10,
                     ];
+                    if ($isDefaultView) {
+                        $form['stick_featured_term_only'] = [
+                            '#type' => 'checkbox',
+                            //'#switch' => false,
+                            '#title' => __('Show featured items first on single term pages only', 'directories'),
+                            '#default_value' => !empty($settings['stick_featured_term_only']),
+                            '#horizontal' => true,
+                            '#weight' => 11,
+                            '#states' => array(
+                                'visible' => array(
+                                    sprintf('input[name="%s"]', $application->Form_FieldName(array_merge($parents, ['stick_featured']))) => ['type' => 'checked', 'value' => true]
+                                ),
+                            ),
+                        ];
+                    }
                 }
                 return $form;
 
@@ -246,15 +262,6 @@ class FeatureSettingsFormHelper
                     '#type' => 'addmore',
                     '#next_index' => ++$i,
                 );
-                if (!empty($bundle->info['privatable'])) {
-                    $form['exclude_private'] = array(
-                        '#type' => 'checkbox',
-                        '#title' => __('Exclude private items', 'directories'),
-                        '#default_value' => !empty($settings['exclude_private']),
-                        '#horizontal' => true,
-                        '#weight' => 20,
-                    );
-                }
 
                 return $form;
 

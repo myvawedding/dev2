@@ -115,7 +115,9 @@ class FormHelper
                     $field_value = $options['values'][$field_name];
                 }
             } elseif (isset($entity)) {
-                $field_value = $entity->getFieldValue($field_name);
+                if (false === $field_value = $entity->getFieldValue($field_name)) {
+                    $field_value = null;
+                }
             }
 
             if ($form_field = $this->_getField($application, $field, $entity, $field_value, $options['wrap'], empty($do_not_populate_fields), $options['language'])) {
@@ -327,19 +329,16 @@ class FormHelper
                 || (!$field_type = $application->Field_Type($_field->getFieldType(), true))
                 || !$field_type instanceof \SabaiApps\Directories\Component\Field\Type\IConditionable
                 || !$field_type->fieldConditionableInfo($_field)
+                || (!$_rule = $field_type->fieldConditionableRule($_field, $rule['compare'], $rule['value'], $_name))
+                || (!$_rule = $application->Filter('entity_field_condition_rule', $_rule, [$_field, $rule['compare'], $rule['value'], $_name, 'js']))
             ) continue;
 
-            $_rule = $field_type->fieldConditionableRule($_field, $rule['compare'], $rule['value'], $_name);
-            if ($_rule = $application->Filter('entity_field_condition_rule', $_rule, [$_field, $rule['compare'], $rule['value'], $_name])) {
-                if (!is_array($_rule)) continue;
-
-                if (!isset($_rule['target'])) {
-                    $selector = $rule['field'];
-                    if ($field_prefix) $selector = $field_prefix . '[' . $selector . ']';
-                    $_rule['target'] = '[name^="' . $selector . '"]';
-                }
-                $rules[] = $_rule;
+            if (!isset($_rule['target'])) {
+                $selector = $field_name;
+                if ($field_prefix) $selector = $field_prefix . '[' . $selector . ']';
+                $_rule['target'] = '[name^="' . $selector . '"]';
             }
+            $rules[] = $_rule;
         }
         if (empty($rules)) return;
 

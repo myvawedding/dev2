@@ -49,7 +49,7 @@ class ContentTypesHelper
                 $slug = $permalinks[$bundle->name]['base'] . '/' . $permalinks[$bundle->name]['path'];
                 $slug = str_replace('/%slug%', '', $slug);
             } else {
-                $slug = trim(($path = $application->Entity_BundlePath($bundle, true)) ? $path : $application->Entity_BundlePath($bundle), '/');
+                $slug = trim(($path = $bundle->getPath(true)) ? $path : $bundle->getPath(), '/');
             }
             $label = $bundle->getLabel();
             $label_singular = $bundle->getLabel('singular');
@@ -179,7 +179,7 @@ class ContentTypesHelper
                     $slug = $permalinks[$taxonomy_bundle_name]['base'] . '/' . $permalinks[$taxonomy_bundle_name]['path'];
                     $slug = str_replace('/%slug%', '', $slug);
                 } else {
-                    $slug = trim($application->Entity_BundlePath($taxonomy_bundle, true), '/');
+                    $slug = trim($taxonomy_bundle->getPath(true), '/');
                 }
                 $tax_label = $taxonomy_bundle->getLabel();
                 $tax_label_singular = $taxonomy_bundle->getLabel('singular');

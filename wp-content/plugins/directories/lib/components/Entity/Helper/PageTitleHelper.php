@@ -6,7 +6,7 @@ use SabaiApps\Directories\Component\Entity;
 
 class PageTitleHelper
 {
-    public function help(Application $application, Entity\Type\IEntity $entity, $withIcon = true)
+    public function help(Application $application, Entity\Type\IEntity $entity, $withIcon = false)
     {
         $title = $application->Entity_Title($entity);
         $bundle = $application->Entity_Bundle($entity, null, '', true);
@@ -23,16 +23,21 @@ class PageTitleHelper
 
         // Add icon?
         if ($withIcon
-            && ($icon = $application->Entity_Icon($entity, false))
+            && !empty($bundle->info['entity_icon'])
         ) {
-            $icon .= ' fa-border';
-            $icon .= $application->getPlatform()->isRtl() ? ' fa-pull-left' : ' fa-pull-right';
-            if ($color = $application->Entity_Color($entity)) {
-                $style = 'background-color:' . $color . ';color:#fff;';
+            $style = $application->getPlatform()->isRtl() ? 'float:left;' : 'float:right;';
+            if (!empty($bundle->info['entity_icon_is_image'])) {
+                if ($icon_src = $application->Entity_Image($entity, 'full', $bundle->info['entity_icon'])) {
+                    $title = '<img src="' . $icon_src . '" style="' . $style . '" />' . $title;
+                }
             } else {
-                $style = '';
+                if ($icon_class = $application->Entity_Icon($entity, false)) {
+                    if ($color = $application->Entity_Color($entity)) {
+                        $style .= 'background-color:' . $color . ';color:#fff;';
+                    }
+                    $title = '<i class="drts-' . $icon_class . ' fa-border" style="' . $style . '"></i>' . $title;
+                }
             }
-            $title = '<i class="drts-' . $icon . '" style="' . $style . '"></i>' . $title;
         }
         
         return $application->Filter('entity_page_title', $title, [$withIcon]);

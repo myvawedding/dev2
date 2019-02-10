@@ -116,9 +116,9 @@ ul.drts-tab-menu li:first-child {
 }
 
 .drts-clear {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
     font-size: 14px;
     right: 5px;
     color: #b3b3b3;
@@ -760,7 +760,7 @@ i.drts-icon {
 }
 
 .drts img.drts-icon-sm,
-i.drts-icon-sm {
+.drts i.drts-icon-sm {
     width: 24px;
     height: 24px;
 }
@@ -774,6 +774,10 @@ i.drts-icon:before {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+}
+
+.drts img.drts-icon-is-full {
+    width: auto;
 }
 
 .drts .drts-ajax-loading {

@@ -11,6 +11,7 @@ class Response extends AbstractHttpResponse
         ERROR_NOT_FOUND = 404, ERROR_METHOD_NOT_ALLOWED = 405, ERROR_NOT_ACCEPTABLE = 406, ERROR_VALIDATE_FORM = 422,
         ERROR_INTERNAL_SERVER_ERROR = 500, ERROR_NOT_IMPLEMENTED = 501, ERROR_SERVICE_UNAVAILABLE = 503,
         REDIRECT_PERMANENT = 301, REDIRECT_TEMPORARY = 302, REDIRECT_HTML = 200;
+    const PARAM_TIMESTAMP = '_ts_';
 
     private $_layoutHtmlTemplate, $_inlineLayoutHtmlTemplate;
 
@@ -54,6 +55,9 @@ class Response extends AbstractHttpResponse
         } else {
             $url = $this->_application->Url($url); // converts to an SabaiApps\Framework\Application\URL object
             $url['separator'] = $separator;
+            if (Request::isXhr()) {
+                $url['params'] += [self::PARAM_TIMESTAMP => time()]; // prevent cache
+            }
         }
 
         return $url;
@@ -66,6 +70,9 @@ class Response extends AbstractHttpResponse
         } else {
             $url = $this->_application->Url($url); // converts to an SabaiApps\Framework\Application\URL object
             $url['separator'] = $separator;
+            if (Request::isXhr()) {
+                $url['params'] += [self::PARAM_TIMESTAMP => time()]; // prevent cache
+            }
         }
 
         return $url;
@@ -311,7 +318,7 @@ class Response extends AbstractHttpResponse
     {
         $url = (string)$this->_getRedirectUrl($context);
         if (headers_sent()) {
-            echo $this->_application->RedirectHtml($url, '<p>' . $this->_application->H($msg) . '</p>');
+            echo $this->_application->RedirectHtml($url);
         } else {
             self::sendStatusHeader($context->getRedirectType());
             self::sendHeader('Location', $url);

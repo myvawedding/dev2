@@ -109,7 +109,7 @@ class ListMode extends AbstractMode
     protected function _getGridColumnSettingsForm(array $settings, array $parents = [], $label = null, $name = null)
     {
         if (!isset($name)) $name = $this->_name . '_cols';
-        return $this->_application->GridColumnSettingsForm($name, $settings, $parents, $label);
+        return $this->_application->GridColumnSettingsForm($name, $settings, $parents, $label, [2, 3, 4, 6]);
     }
 
     public function getGridClass($cols, $dw = false)

@@ -156,7 +156,7 @@ class StringType extends AbstractValueType implements
     
     public function fieldPersonalDataExport(IField $field, Entity\Type\IEntity $entity)
     {
-        return implode(', ', $entity->getFieldValue($field->getFieldName()));
+        return ($value = $entity->getFieldValue($field->getFieldName())) ? implode(', ', $value) : null;
     }
 
     public function fieldPersonalDataErase(IField $field, Entity\Type\IEntity $entity)

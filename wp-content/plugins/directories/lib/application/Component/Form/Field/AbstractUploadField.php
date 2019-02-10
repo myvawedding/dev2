@@ -14,8 +14,8 @@ abstract class AbstractUploadField extends FieldsetField
     {
         // Add file upload field
         $allowed_extensions = isset($data['#allowed_extensions']) ? $data['#allowed_extensions'] : array('jpeg', 'jpg', 'gif', 'png', 'txt', 'pdf', 'zip');
-        $max_file_size = !empty($data['#max_file_size']) ? $data['#max_file_size'] : (($size = @ini_get('upload_max_filesize')) ? $size * 1024 : 2048);
-        $max_file_size_str = $max_file_size >= 1024 ? round($max_file_size / 1024, 1) . 'MB' : $max_file_size . 'KB';
+        $max_file_size = $this->_application->System_Util_strToBytes(!empty($data['#max_file_size']) ? $data['#max_file_size'] : (($size = @ini_get('upload_max_filesize')) ? $size : '2M'));
+        $max_file_size_str = $this->_application->System_Util_bytesToStr($max_file_size);
         $allow_only_images = !empty($data['#allow_only_images']);
 
         $file_settings = $data;

@@ -16,7 +16,7 @@ class UrlWidget extends TextfieldWidget
 
     public function fieldWidgetSettingsForm($fieldType, Entity\Model\Bundle $bundle, array $settings, array $parents = [], array $rootParents = [])
     {
-        $form = parent::fieldWidgetSettingsForm($fieldType, $bundle, $settings, $parents);
+        $form = parent::fieldWidgetSettingsForm($fieldType, $bundle, $settings, $parents, $rootParents);
         $form['autopopulate'] = array(
             '#type' => 'checkbox',
             '#title' => __("Auto-populate field with the current user's website URL", 'directories'),

@@ -112,7 +112,7 @@
               return function(item) {
                 var title = item.title,
                   div,
-                  i = getIcon(item, icon, true);
+                  i;
                 if (show_count) {
                   title = title + ' (' + (item.count || '0') + ')';
                 }
@@ -120,7 +120,10 @@
                   title = item.pt.join(' -> ') + ' -> ' + title;
                 }
                 div = $('<div/>').html($('<span>').text(title));
-                if (i) div.prepend(i);
+                if (icon) {
+                  i = getIcon(item, icon, true);
+                  if (i) div.prepend(i);
+                }
 
                 return div[0].outerHTML;
               };

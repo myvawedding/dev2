@@ -24,7 +24,8 @@ class TextfieldWidget extends AbstractWidget
     public function fieldWidgetSettingsForm($fieldType, Entity\Model\Bundle $bundle, array $settings, array $parents = [], array $rootParents = [])
     {
         $form = [];
-        if ($fieldType === 'string') {
+        $field_type = $fieldType instanceof \SabaiApps\Directories\Component\Field\IField ? $fieldType->getFieldType() : $fieldType;
+        if ($field_type === 'string') {
             $form += array(
                 'autopopulate' => array(
                     '#type' => 'select',
@@ -56,7 +57,7 @@ class TextfieldWidget extends AbstractWidget
                 ),
             );
         }
-        if ($fieldType !== 'number') {
+        if ($field_type !== 'number') {
             $form['mask'] = array(
                 '#type' => 'textfield',
                 '#title' => __('Input mask', 'directories'),
@@ -121,9 +122,8 @@ class TextfieldWidget extends AbstractWidget
         $ret = array(
             '#type' => 'textfield',
         );
-        if (($fieldType instanceof \SabaiApps\Directories\Component\Entity\Model\Field && $fieldType->getFieldType() === 'number')
-            || $fieldType === 'number'
-        ) {
+        $field_type = $fieldType instanceof \SabaiApps\Directories\Component\Field\IField ? $fieldType->getFieldType() : $fieldType;
+        if ($field_type === 'number') {
             $ret['#numeric'] = true;
         }
         return $ret;

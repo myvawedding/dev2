@@ -35,13 +35,21 @@
 
 .drts-map-marker > div > img {
     border-radius: 50%;
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .drts-map-marker > div > .fas {
     font-size: 14px;
     line-height: 1em;
+}
+
+.drts-map-marker.drts-map-marker-full {
+    transform: none;
+}
+
+.drts-map-marker.drts-map-marker-full > img {
+    transform: translate(-50%, -100%);
 }
 
 .drts-map-popover img {

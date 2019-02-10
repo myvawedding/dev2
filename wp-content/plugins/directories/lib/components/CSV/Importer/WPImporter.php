@@ -109,7 +109,8 @@ class WPImporter extends AbstractImporter implements IWpAllImportImporter
                         $settings,
                         $values,
                         null,
-                        $formStorage['wp_attachments']
+                        $formStorage['wp_attachments'],
+                        $this->_name === 'wp_image'
                     );
                 }
         
@@ -127,7 +128,8 @@ class WPImporter extends AbstractImporter implements IWpAllImportImporter
                     $settings,
                     $values,
                     $formStorage[$field_name]['file_dir'],
-                    $formStorage['wp_attachments']
+                    $formStorage['wp_attachments'],
+                    $this->_name === 'wp_image'
                 );
         }
     }
@@ -163,7 +165,7 @@ class WPImporter extends AbstractImporter implements IWpAllImportImporter
         return rtrim($ret, '/');
     }
 
-    protected function _saveFiles(array $settings, array $values, $tmpDir, &$attachments)
+    protected function _saveFiles(array $settings, array $values, $tmpDir, &$attachments, $isImage)
     {
         if (!function_exists('media_handle_sideload')) {
             require_once ABSPATH . 'wp-admin/includes/image.php';
@@ -199,6 +201,32 @@ class WPImporter extends AbstractImporter implements IWpAllImportImporter
                     } catch (\Exception $e) {
                         $this->_application->logError($e);
                         continue;
+                    }
+                }
+            }
+
+            // Append extension if image and no extension
+            if ($isImage) {
+                if ((!$pos = strrpos($value, '.'))
+                    || !in_array(substr($value, $pos), ['.gif', '.png', '.jpeg', '.jpg'])
+                ) {
+                    if (!$image_size = @getimagesize($file_path)
+                        || empty($image_size[2])
+                        || !in_array($image_size[2], [IMG_GIF, IMG_PNG, IMG_JPEG])
+                    ) {
+                        $this->_application->logError($value . ': Invalid image');
+                        continue;
+                    }
+
+                    switch ($image_size[2]) {
+                        case IMG_GIF:
+                            $name .= '.gif';
+                            break;
+                        case IMG_PNG:
+                            $name .= '.png';
+                            break;
+                        default:
+                            $name .= '.jpeg';
                     }
                 }
             }

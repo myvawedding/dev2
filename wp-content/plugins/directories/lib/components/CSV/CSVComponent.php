@@ -11,7 +11,7 @@ class CSVComponent extends AbstractComponent implements
     IExporters,
     IImporters
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories';
+    const VERSION = '1.2.23', PACKAGE = 'directories';
     
     public static function description()
     {

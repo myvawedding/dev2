@@ -14,7 +14,7 @@ class Search extends Form\Controller
             $context->bundle,
             $this->Search_Form_params($context),
             $context->settings ?: [],
-            $this->Entity_BundlePath($context->bundle) . '/search',
+            $context->bundle->getPath() . '/search',
             $this->_getDefaultSubmitCallback($context)
         );
     }
@@ -36,6 +36,6 @@ class Search extends Form\Controller
             $params[SearchComponent::FORM_SEARCH_PARAM_NAME] = 1;
         }
 
-        $context->setRedirect($this->Url($this->Entity_BundlePath($context->bundle), $params));
+        $context->setRedirect($this->Url($context->bundle->getPath(), $params));
     }
 }

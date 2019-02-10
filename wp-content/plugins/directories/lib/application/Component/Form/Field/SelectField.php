@@ -68,7 +68,7 @@ class SelectField extends AbstractField
         }
 
         if (!$data['#multiple']) {
-            $value = isset($new_value[0]) ? $new_value[0] : null;
+            $value = isset($new_value[0]) ? $new_value[0] : (isset($data['#empty_value']) ? $data['#empty_value'] : null);
             return;
         }
 

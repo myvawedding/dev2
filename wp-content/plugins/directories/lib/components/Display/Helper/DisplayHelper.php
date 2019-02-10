@@ -153,6 +153,11 @@ class DisplayHelper
         $element_id = $element->name . '-' . $element->element_id;
 
         $data = $element->data;
+        if (!isset($data['settings'])
+            || !is_array($data['settings'])
+        ) {
+            $data['settings'] = [];
+        }
         $data['settings'] += $info['default_settings'];
         $classes = [
             'drts-display-element',

@@ -20,7 +20,7 @@ class ImageFieldWidget extends Field\Widget\AbstractWidget
         $field_settings = $field->getFieldSettings();
         return array(
             '#type' => current_user_can('upload_files') ? 'wp_media_manager' : 'wp_upload',
-            '#max_file_size' => !empty($field_settings['max_file_size']) ? $field_settings['max_file_size'] : null,
+            '#max_file_size' => !empty($field_settings['max_file_size']) ? $field_settings['max_file_size'] * 1024 : null,
             '#multiple' => $field->getFieldMaxNumItems() !== 1,
             '#allow_only_images' => true,
             '#default_value' => $value,

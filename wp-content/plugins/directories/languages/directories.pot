@@ -38,11 +38,11 @@ msgstr ""
 msgid "Token has expired. Please reload the page and try again."
 msgstr ""
 
-#: lib/application/Response.php:122
+#: lib/application/Response.php:129
 msgid "The requested page was not found."
 msgstr ""
 
-#: lib/application/Response.php:125, lib/application/Response.php:139
+#: lib/application/Response.php:132, lib/application/Response.php:146
 msgid "The server encountered an error processing your request."
 msgstr ""
 
@@ -80,7 +80,7 @@ msgid_plural "%d columns"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/application/Helper/GridColumnSettingsFormHelper.php:18, lib/components/Display/Element/ColumnsElement.php:41, lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:49, lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:223, lib/components/Field/Renderer/ImageRenderer.php:86, lib/components/Field/Renderer/ImageRenderer.php:251, lib/components/Field/Renderer/VideoRenderer.php:24, lib/components/Field/Renderer/VideoRenderer.php:89, lib/components/Field/Widget/CheckboxesWidget.php:27, lib/components/Field/Widget/RadioButtonsWidget.php:30, lib/components/Social/FieldWidget/AccountsFieldWidget.php:27, lib/components/WordPressContent/FieldRenderer/GalleryFieldRenderer.php:26, lib/components/WordPressContent/FieldRenderer/GalleryFieldRenderer.php:55
+#: lib/application/Helper/GridColumnSettingsFormHelper.php:18, lib/components/Display/Element/ColumnsElement.php:41, lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:49, lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:223, lib/components/Entity/FieldWidget/TermListFieldWidget.php:45, lib/components/Field/Renderer/ImageRenderer.php:86, lib/components/Field/Renderer/ImageRenderer.php:251, lib/components/Field/Renderer/VideoRenderer.php:24, lib/components/Field/Renderer/VideoRenderer.php:89, lib/components/Field/Widget/CheckboxesWidget.php:27, lib/components/Field/Widget/RadioButtonsWidget.php:30, lib/components/Social/FieldWidget/AccountsFieldWidget.php:27, lib/components/WordPressContent/FieldRenderer/GalleryFieldRenderer.php:27, lib/components/WordPressContent/FieldRenderer/GalleryFieldRenderer.php:67
 msgid "Number of columns"
 msgstr ""
 
@@ -164,7 +164,7 @@ msgstr ""
 msgid "Thumbnail with link"
 msgstr ""
 
-#: lib/application/Helper/UserIdentityHtmlHelper.php:44, lib/components/WordPressContent/WordPressContentComponent.php:986, lib/components/WordPressContent/Helper/PermissionSettingsFormHelper.php:24
+#: lib/application/Helper/UserIdentityHtmlHelper.php:107, lib/components/WordPressContent/WordPressContentComponent.php:1006, lib/components/WordPressContent/Helper/PermissionSettingsFormHelper.php:24
 msgid "Guest"
 msgstr ""
 
@@ -196,7 +196,7 @@ msgstr ""
 msgid "Directories"
 msgstr ""
 
-#: lib/components/Directory/DirectoryComponent.php:153, lib/components/Directory/DirectoryComponent.php:161, lib/components/Display/Helper/AdminElementHelper.php:178, lib/components/Directory/Controller/Admin/Directories.php:102
+#: lib/components/Directory/DirectoryComponent.php:153, lib/components/Directory/DirectoryComponent.php:161, lib/components/Display/Helper/AdminElementHelper.php:181, lib/components/Directory/Controller/Admin/Directories.php:102
 msgid "Settings"
 msgstr ""
 
@@ -451,7 +451,7 @@ msgstr ""
 msgid "Filters"
 msgstr ""
 
-#: lib/components/View/ViewComponent.php:581, lib/components/View/Helper/FeatureSettingsFormHelper.php:143
+#: lib/components/View/ViewComponent.php:581, lib/components/View/Helper/FeatureSettingsFormHelper.php:159
 msgid "Filter Settings"
 msgstr ""
 
@@ -467,7 +467,7 @@ msgstr ""
 msgid "Filter button label"
 msgstr ""
 
-#: lib/components/Voting/VotingComponent.php:120, lib/components/Voting/Controller/VoteEntity.php:53, lib/components/Voting/Controller/VoteEntity.php:90, lib/components/Voting/Helper/CastVoteHelper.php:31
+#: lib/components/Voting/VotingComponent.php:121, lib/components/Voting/Controller/VoteEntity.php:53, lib/components/Voting/Controller/VoteEntity.php:90, lib/components/Voting/Helper/CastVoteHelper.php:31
 msgid "You do not have the permission to perform this action."
 msgstr ""
 
@@ -497,43 +497,43 @@ msgctxt "admin tab"
 msgid "Permissions"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:308
+#: lib/components/WordPressContent/WordPressContentComponent.php:306
 msgid "Pages"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:314
+#: lib/components/WordPressContent/WordPressContentComponent.php:312
 msgid "Page Settings"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:989
+#: lib/components/WordPressContent/WordPressContentComponent.php:1009
 msgid "Visible to selected roles only"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1100
+#: lib/components/WordPressContent/WordPressContentComponent.php:1120
 msgid "Content"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1127
+#: lib/components/WordPressContent/WordPressContentComponent.php:1147
 msgid "Permissions"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1143
+#: lib/components/WordPressContent/WordPressContentComponent.php:1163
 msgid "Single Item Page Settings"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1154
+#: lib/components/WordPressContent/WordPressContentComponent.php:1174
 msgid "Enable featured image (post thumbnail)"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1160
+#: lib/components/WordPressContent/WordPressContentComponent.php:1180
 msgid "Automatically generate featured image"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1168
+#: lib/components/WordPressContent/WordPressContentComponent.php:1188
 msgid "Check this option to automatically generate a featured image using the first image when submitted from the frontend."
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1236, lib/components/Search/Field/KeywordField.php:82
+#: lib/components/WordPressContent/WordPressContentComponent.php:1256, lib/components/Search/Field/KeywordField.php:82
 msgid "Search taxonomy term names"
 msgstr ""
 
@@ -638,59 +638,59 @@ msgstr ""
 msgid "WordPress environment"
 msgstr ""
 
-#: lib/application/Component/WordPress/WordPressComponent.php:216
+#: lib/application/Component/WordPress/WordPressComponent.php:220
 msgid "Licenses"
 msgstr ""
 
-#: lib/application/Component/WordPress/WordPressComponent.php:280
+#: lib/application/Component/WordPress/WordPressComponent.php:284
 msgid "Code"
 msgstr ""
 
-#: lib/application/Component/WordPress/WordPressComponent.php:283, lib/components/View/Controller/Admin/Views.php:26, lib/components/View/Controller/Admin/Views.php:160
+#: lib/application/Component/WordPress/WordPressComponent.php:287, lib/components/View/Controller/Admin/Views.php:26, lib/components/View/Controller/Admin/Views.php:160
 msgid "Shortcode"
 msgstr ""
 
-#: lib/application/Platform/WordPress/Platform.php:283, lib/application/Platform/WordPress/Platform.php:318, lib/components/CSV/Exporter/AbstractExporter.php:181, lib/components/CSV/Importer/AbstractImporter.php:122
+#: lib/application/Platform/WordPress/Platform.php:286, lib/application/Platform/WordPress/Platform.php:321, lib/components/CSV/Exporter/AbstractExporter.php:181, lib/components/CSV/Importer/AbstractImporter.php:122
 msgid "Username"
 msgstr ""
 
-#: lib/application/Platform/WordPress/Platform.php:289
+#: lib/application/Platform/WordPress/Platform.php:292
 msgid "Password"
 msgstr ""
 
-#: lib/application/Platform/WordPress/Platform.php:305
+#: lib/application/Platform/WordPress/Platform.php:308
 msgid "Remember Me"
 msgstr ""
 
-#: lib/application/Platform/WordPress/Platform.php:324
+#: lib/application/Platform/WordPress/Platform.php:327
 msgid "E-mail Address"
 msgstr ""
 
-#: lib/application/Platform/WordPress/Platform.php:350, lib/application/Platform/WordPress/Platform.php:374
+#: lib/application/Platform/WordPress/Platform.php:353, lib/application/Platform/WordPress/Platform.php:377
 msgid "Username is required."
 msgstr ""
 
-#: lib/application/Platform/WordPress/Platform.php:354
+#: lib/application/Platform/WordPress/Platform.php:357
 msgid "E-mail address is required."
 msgstr ""
 
-#: lib/application/Platform/WordPress/Platform.php:357
+#: lib/application/Platform/WordPress/Platform.php:360
 msgid "The username is already taken."
 msgstr ""
 
-#: lib/application/Platform/WordPress/Platform.php:360
+#: lib/application/Platform/WordPress/Platform.php:363
 msgid "The e-mail address is already taken."
 msgstr ""
 
-#: lib/application/Platform/WordPress/Platform.php:378
+#: lib/application/Platform/WordPress/Platform.php:381
 msgid "Password is required."
 msgstr ""
 
-#: lib/application/Platform/WordPress/Platform.php:1802
+#: lib/application/Platform/WordPress/Platform.php:1818
 msgid "Please enter a license key for %s in Settings -> Licenses."
 msgstr ""
 
-#: lib/application/Platform/WordPress/Widget.php:75, lib/components/CSV/Exporter/EntityExporter.php:99, lib/components/CSV/Exporter/EntityExporter.php:114, lib/components/CSV/Importer/EntityImporter.php:100, lib/components/CSV/Importer/EntityImporter.php:115, lib/components/Entity/FieldType/TitleFieldType.php:20, lib/components/Voting/Controller/DashboardVotes.php:19
+#: lib/application/Platform/WordPress/Widget.php:75, lib/components/CSV/Exporter/EntityExporter.php:99, lib/components/CSV/Exporter/EntityExporter.php:114, lib/components/CSV/Importer/EntityImporter.php:100, lib/components/CSV/Importer/EntityImporter.php:115, lib/components/Entity/FieldType/TitleFieldType.php:20, lib/components/Voting/Controller/DashboardVotes.php:25
 msgid "Title"
 msgstr ""
 
@@ -942,7 +942,7 @@ msgstr ""
 msgid "File location"
 msgstr ""
 
-#: lib/components/CSV/Importer/WPImporter.php:32, lib/components/Display/Element/TemplateElement.php:70, lib/components/Entity/FieldWidget/TermParentFieldWidget.php:43, lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:63, lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:115, lib/components/Entity/Helper/FieldHelper.php:104, lib/components/Field/Filter/TimeFilter.php:33, lib/components/Field/Filter/TimeFilter.php:55, lib/components/Field/Widget/SelectWidget.php:41, lib/components/View/FieldFilter/TermSelectFieldFilter.php:32, lib/components/View/FieldFilter/TermSelectFieldFilter.php:43, lib/application/Component/Form/Field/SelectField.php:233, lib/application/Component/Form/Field/TimePickerField.php:162, lib/components/CSV/Controller/Admin/Import.php:201
+#: lib/components/CSV/Importer/WPImporter.php:32, lib/components/Display/Element/TemplateElement.php:70, lib/components/Entity/FieldWidget/TermParentFieldWidget.php:43, lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:70, lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:122, lib/components/Entity/Helper/FieldHelper.php:104, lib/components/Field/Filter/TimeFilter.php:33, lib/components/Field/Filter/TimeFilter.php:55, lib/components/Field/Widget/SelectWidget.php:41, lib/components/View/FieldFilter/TermSelectFieldFilter.php:32, lib/components/View/FieldFilter/TermSelectFieldFilter.php:43, lib/application/Component/Form/Field/SelectField.php:233, lib/application/Component/Form/Field/TimePickerField.php:162, lib/components/CSV/Controller/Admin/Import.php:201
 msgid "— Select —"
 msgstr ""
 
@@ -966,7 +966,7 @@ msgstr ""
 msgid "Download from URL(s) specified in each CSV column."
 msgstr ""
 
-#: lib/components/CSV/WPAllImport/rapid-addon.php:550, lib/components/CSV/WPAllImport/rapid-addon.php:1063, lib/components/Entity/FieldRenderer/TermContentCountFieldRenderer.php:45, lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:228, lib/components/Entity/FieldType/TermContentCountFieldType.php:120, lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:132
+#: lib/components/CSV/WPAllImport/rapid-addon.php:550, lib/components/CSV/WPAllImport/rapid-addon.php:1063, lib/components/Entity/FieldRenderer/TermContentCountFieldRenderer.php:45, lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:228, lib/components/Entity/FieldType/TermContentCountFieldType.php:120, lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:119
 msgstr ""
 
 #: lib/components/CSV/WPAllImport/rapid-addon.php:836
@@ -1017,7 +1017,7 @@ msgstr ""
 msgid "Category Icon"
 msgstr ""
 
-#: lib/components/Directory/EntityBundleType/category_views.php:6, lib/components/Directory/EntityBundleType/tag_views.php:6, lib/components/Display/Element/ColumnsElement.php:55, lib/components/Field/Helper/TypesHelper.php:30, lib/components/Field/Helper/TypesHelper.php:31, lib/components/Field/Helper/TypesHelper.php:32, lib/components/Field/Renderer/ChecklistRenderer.php:33, lib/components/Field/Renderer/ChecklistRenderer.php:56, lib/components/Field/Renderer/ChecklistRenderer.php:160, lib/components/Field/Renderer/ChecklistRenderer.php:173, lib/components/Map/Api/GoogleMapsApi.php:86, lib/components/Map/Helper/MarkerHelper.php:134, lib/components/View/Mode/ListMode.php:82, lib/application/Component/System/Helper/UtilHelper.php:100, lib/application/Component/System/Helper/UtilHelper.php:190, lib/components/Display/Controller/Admin/AbstractDisplays.php:72, lib/components/Display/Controller/Admin/AddDisplay.php:39, lib/components/Display/Controller/Admin/AddDisplay.php:163, lib/components/View/Controller/Admin/Views.php:25
+#: lib/components/Directory/EntityBundleType/category_views.php:6, lib/components/Directory/EntityBundleType/tag_views.php:6, lib/components/Display/Element/ColumnsElement.php:55, lib/components/Field/Helper/TypesHelper.php:30, lib/components/Field/Helper/TypesHelper.php:31, lib/components/Field/Helper/TypesHelper.php:32, lib/components/Field/Renderer/ChecklistRenderer.php:33, lib/components/Field/Renderer/ChecklistRenderer.php:56, lib/components/Field/Renderer/ChecklistRenderer.php:160, lib/components/Field/Renderer/ChecklistRenderer.php:173, lib/components/Map/Api/GoogleMapsApi.php:86, lib/components/Map/Helper/MarkerHelper.php:144, lib/components/View/Mode/ListMode.php:82, lib/application/Component/System/Helper/UtilHelper.php:100, lib/application/Component/System/Helper/UtilHelper.php:190, lib/components/Display/Controller/Admin/AbstractDisplays.php:72, lib/components/Display/Controller/Admin/AddDisplay.php:39, lib/components/Display/Controller/Admin/AddDisplay.php:163, lib/components/View/Controller/Admin/Views.php:25
 msgid "Default"
 msgstr ""
 
@@ -1110,7 +1110,7 @@ msgstr ""
 msgid "Depth (0 for unlimited)"
 msgstr ""
 
-#: lib/components/Directory/SystemWidget/TermsSystemWidget.php:59, lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:227, lib/components/Entity/FieldRenderer/ReferenceLinkFieldRenderer.php:28, lib/components/Entity/FieldRenderer/TermsFieldRenderer.php:30, lib/components/Entity/FieldRenderer/TermsFieldRenderer.php:99, lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:300, lib/components/View/FieldFilter/TermListFieldFilter.php:33, lib/application/Component/System/Helper/UtilHelper.php:30
+#: lib/components/Directory/SystemWidget/TermsSystemWidget.php:59, lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:227, lib/components/Entity/FieldRenderer/ReferenceLinkFieldRenderer.php:28, lib/components/Entity/FieldRenderer/TermsFieldRenderer.php:30, lib/components/Entity/FieldRenderer/TermsFieldRenderer.php:98, lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:300, lib/components/View/FieldFilter/TermListFieldFilter.php:33, lib/application/Component/System/Helper/UtilHelper.php:30
 msgid "Show icon"
 msgstr ""
 
@@ -1425,7 +1425,7 @@ msgstr ""
 msgid "Custom"
 msgstr ""
 
-#: lib/components/Display/Element/LabelsElement.php:199
+#: lib/components/Display/Element/LabelsElement.php:206
 msgid "Labels"
 msgstr ""
 
@@ -1479,7 +1479,7 @@ msgstr ""
 msgid "Text only"
 msgstr ""
 
-#: lib/components/Display/Element/StatisticsElement.php:76, lib/components/Entity/FieldRenderer/PublishedFieldRenderer.php:21, lib/components/Entity/FieldRenderer/PublishedFieldRenderer.php:45, lib/components/Field/Renderer/ImageRenderer.php:100
+#: lib/components/Display/Element/StatisticsElement.php:76, lib/components/Entity/FieldRenderer/PublishedFieldRenderer.php:21, lib/components/Entity/FieldRenderer/PublishedFieldRenderer.php:46, lib/components/Field/Renderer/ImageRenderer.php:100
 msgid "Link to page"
 msgstr ""
 
@@ -1560,7 +1560,7 @@ msgstr ""
 msgid "Available tokens: %s"
 msgstr ""
 
-#: lib/components/Display/FormField/element.php:23, lib/components/Display/FormField/ElementsFormField.php:54, lib/components/Display/FormField/ElementsFormField.php:172, lib/components/Display/Helper/AdminElementHelper.php:79, lib/components/Display/Helper/DisplayHelper.php:187, lib/components/Display/Controller/Admin/AddElement.php:37
+#: lib/components/Display/FormField/element.php:23, lib/components/Display/FormField/ElementsFormField.php:54, lib/components/Display/FormField/ElementsFormField.php:172, lib/components/Display/Helper/AdminElementHelper.php:79, lib/components/Display/Helper/DisplayHelper.php:192, lib/components/Display/Controller/Admin/AddElement.php:37
 msgid "Add Element"
 msgstr ""
 
@@ -1580,53 +1580,53 @@ msgstr ""
 msgid "Please save changes first!"
 msgstr ""
 
-#: lib/components/Display/Helper/AdminElementHelper.php:165, lib/components/Entity/Controller/Admin/Edit.php:26
+#: lib/components/Display/Helper/AdminElementHelper.php:168, lib/components/Entity/Controller/Admin/Edit.php:26
 msgid "General"
 msgstr ""
 
-#: lib/components/Display/Helper/AdminElementHelper.php:168
+#: lib/components/Display/Helper/AdminElementHelper.php:171
 msgid "Element ID"
 msgstr ""
 
-#: lib/components/Display/Helper/AdminElementHelper.php:172
+#: lib/components/Display/Helper/AdminElementHelper.php:175
 msgid "Element type"
 msgstr ""
 
-#: lib/components/Display/Helper/AdminElementHelper.php:182
+#: lib/components/Display/Helper/AdminElementHelper.php:185
 msgid "CSS"
 msgstr ""
 
-#: lib/components/Display/Helper/AdminElementHelper.php:185, lib/components/Display/Helper/AdminElementHelper.php:201, lib/components/Display/Helper/AdvancedSettingsFormHelper.php:21
+#: lib/components/Display/Helper/AdminElementHelper.php:188, lib/components/Display/Helper/AdminElementHelper.php:204, lib/components/Display/Helper/AdvancedSettingsFormHelper.php:21
 msgid "CSS class"
 msgstr ""
 
-#: lib/components/Display/Helper/AdminElementHelper.php:194, lib/components/Display/Helper/ElementLabelSettingsFormHelper.php:33, lib/components/Entity/DisplayElement/FormDisplayElement.php:178, lib/application/Component/Form/Field/OptionsField.php:170, lib/components/Entity/Controller/Admin/Edit.php:39
+#: lib/components/Display/Helper/AdminElementHelper.php:197, lib/components/Display/Helper/ElementLabelSettingsFormHelper.php:33, lib/components/Entity/DisplayElement/FormDisplayElement.php:178, lib/application/Component/Form/Field/OptionsField.php:170, lib/components/Entity/Controller/Admin/Edit.php:39
 msgid "Label"
 msgstr ""
 
-#: lib/components/Display/Helper/AdminElementHelper.php:208, lib/components/Display/Helper/AdvancedSettingsFormHelper.php:26
+#: lib/components/Display/Helper/AdminElementHelper.php:211, lib/components/Display/Helper/AdvancedSettingsFormHelper.php:26
 msgid "CSS ID"
 msgstr ""
 
-#: lib/components/Display/Helper/AdminElementHelper.php:215, lib/application/Component/System/Helper/UtilHelper.php:145
+#: lib/components/Display/Helper/AdminElementHelper.php:218, lib/application/Component/System/Helper/UtilHelper.php:145
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/components/Display/Helper/AdminElementHelper.php:217, lib/application/Component/System/Helper/UtilHelper.php:142
+#: lib/components/Display/Helper/AdminElementHelper.php:220, lib/application/Component/System/Helper/UtilHelper.php:142
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/components/Display/Helper/AdminElementHelper.php:219, lib/application/Component/System/Helper/UtilHelper.php:139
+#: lib/components/Display/Helper/AdminElementHelper.php:222, lib/application/Component/System/Helper/UtilHelper.php:139
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/components/Display/Helper/AdminElementHelper.php:223, lib/application/Component/System/Helper/UtilHelper.php:152
+#: lib/components/Display/Helper/AdminElementHelper.php:226, lib/application/Component/System/Helper/UtilHelper.php:152
 msgid "Cache output"
 msgstr ""
 
@@ -1714,7 +1714,7 @@ msgstr ""
 msgid "Number of child terms to display"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:41, lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:220, lib/components/Entity/DisplayElement/FormDisplayElement.php:383, lib/components/Entity/DisplayElement/FormDisplayElement.php:443, lib/components/Entity/DisplayElement/FormDisplayElement.php:666, lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:115, lib/components/Entity/FieldWidget/TermListFieldWidget.php:51, lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:52, lib/components/Field/Renderer/AbstractRenderer.php:38, lib/components/Field/Renderer/AbstractRenderer.php:116, lib/components/Field/Renderer/DefaultRenderer.php:149, lib/components/Field/Renderer/DefaultRenderer.php:501, lib/components/Search/Field/KeywordField.php:223, lib/components/Search/Field/TermField.php:51, lib/components/View/FieldFilter/AbstractTermFieldFilter.php:65
+#: lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:41, lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:220, lib/components/Entity/DisplayElement/FormDisplayElement.php:409, lib/components/Entity/DisplayElement/FormDisplayElement.php:469, lib/components/Entity/DisplayElement/FormDisplayElement.php:692, lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:115, lib/components/Entity/FieldWidget/TermListFieldWidget.php:60, lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:53, lib/components/Field/Renderer/AbstractRenderer.php:38, lib/components/Field/Renderer/AbstractRenderer.php:116, lib/components/Field/Renderer/DefaultRenderer.php:149, lib/components/Field/Renderer/DefaultRenderer.php:501, lib/components/Search/Field/KeywordField.php:223, lib/components/Search/Field/TermField.php:51, lib/components/View/FieldFilter/AbstractTermFieldFilter.php:65
 msgid "Unlimited"
 msgstr ""
 
@@ -1730,7 +1730,7 @@ msgstr ""
 msgid "%1$s <span class=\"drts-display-list-badge %2$sbadge %2$sbadge-pill %2$sbadge-light\">%3$d</span>"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/ExistingFormDisplayElement.php:38, lib/components/Entity/DisplayElement/FieldDisplayElement.php:338, lib/components/Entity/DisplayElement/FormDisplayElement.php:191, lib/components/Entity/DisplayElement/FormDisplayElement.php:205, lib/components/Entity/DisplayElement/FormDisplayElement.php:631, lib/components/CSV/Controller/Admin/Export.php:94
+#: lib/components/Entity/DisplayElement/ExistingFormDisplayElement.php:38, lib/components/Entity/DisplayElement/FieldDisplayElement.php:340, lib/components/Entity/DisplayElement/FormDisplayElement.php:191, lib/components/Entity/DisplayElement/FormDisplayElement.php:205, lib/components/Entity/DisplayElement/FormDisplayElement.php:657, lib/components/CSV/Controller/Admin/Export.php:94
 msgid "Field name"
 msgstr ""
 
@@ -1742,7 +1742,7 @@ msgstr ""
 msgid "Show label as heading"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FieldDisplayElement.php:124, lib/components/Entity/DisplayElement/FieldDisplayElement.php:346
+#: lib/components/Entity/DisplayElement/FieldDisplayElement.php:124, lib/components/Entity/DisplayElement/FieldDisplayElement.php:348
 msgid "Field renderer"
 msgstr ""
 
@@ -1779,7 +1779,7 @@ msgstr ""
 msgid "Add Field"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FieldListDisplayElement.php:45, lib/components/Entity/DisplayElement/FieldListDisplayElement.php:127, lib/application/Component/WordPress/FormField/MediaManagerFormField.php:118
+#: lib/components/Entity/DisplayElement/FieldListDisplayElement.php:45, lib/components/Entity/DisplayElement/FieldListDisplayElement.php:127, lib/application/Component/WordPress/FormField/MediaManagerFormField.php:117
 msgid "Size"
 msgstr ""
 
@@ -1840,7 +1840,7 @@ msgstr ""
 msgid "Create new field"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:244, lib/components/Entity/DisplayElement/FormDisplayElement.php:637, lib/components/WordPressContent/FieldType/TermDescriptionFieldType.php:17
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:244, lib/components/Entity/DisplayElement/FormDisplayElement.php:663, lib/components/WordPressContent/FieldType/TermDescriptionFieldType.php:17
 msgid "Description"
 msgstr ""
 
@@ -1848,51 +1848,51 @@ msgstr ""
 msgid "Enter a short description of the field displayed to the user."
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:257, lib/components/Entity/DisplayElement/FormDisplayElement.php:643
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:283, lib/components/Entity/DisplayElement/FormDisplayElement.php:669
 msgid "Disabled"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:268, lib/components/Entity/DisplayElement/FormDisplayElement.php:650
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:294, lib/components/Entity/DisplayElement/FormDisplayElement.php:676
 msgid "Required"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:296
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:322
 msgid "The following settings are applied automatically to all instances of the %s field."
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:341, lib/components/Entity/DisplayElement/FormDisplayElement.php:660, lib/components/Field/Filter/ColorFilter.php:30, lib/components/Field/Filter/OptionFilter.php:32, lib/components/View/DisplayElement/FilterDisplayElement.php:117, lib/components/View/DisplayElement/FilterDisplayElement.php:329, lib/components/View/FieldFilter/GlossaryFieldFilter.php:28
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:367, lib/components/Entity/DisplayElement/FormDisplayElement.php:686, lib/components/Field/Filter/ColorFilter.php:30, lib/components/Field/Filter/OptionFilter.php:32, lib/components/View/DisplayElement/FilterDisplayElement.php:117, lib/components/View/DisplayElement/FilterDisplayElement.php:329, lib/components/View/FieldFilter/GlossaryFieldFilter.php:28
 msgid "Form field type"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:385, lib/components/Entity/DisplayElement/FormDisplayElement.php:665
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:411, lib/components/Entity/DisplayElement/FormDisplayElement.php:691
 msgid "Max number of values"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:386
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:412
 msgid "Max number of values users can enter for this field."
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:411
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:437
 msgid "Personal data"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:415
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:441
 msgid "This field contains personal data"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:422
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:448
 msgid "Personal data belongs to the person identified by:"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:521, lib/components/View/DisplayElement/FilterDisplayElement.php:250
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:547, lib/components/View/DisplayElement/FilterDisplayElement.php:250
 msgid "The name is already in use by another field."
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:525
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:551
 msgid "The field is already added to %s."
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/FormDisplayElement.php:627
+#: lib/components/Entity/DisplayElement/FormDisplayElement.php:653
 msgid "Field type"
 msgstr ""
 
@@ -1918,11 +1918,11 @@ msgstr ""
 msgid "Select view"
 msgstr ""
 
-#: lib/components/Entity/FieldRenderer/ReferenceLinkFieldRenderer.php:46, lib/components/Entity/FieldRenderer/TermsFieldRenderer.php:48, lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:242, lib/components/Field/Renderer/ImageRenderer.php:99
+#: lib/components/Entity/FieldRenderer/ReferenceLinkFieldRenderer.php:46, lib/components/Entity/FieldRenderer/TermsFieldRenderer.php:48, lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:242, lib/components/Field/Renderer/ImageRenderer.php:99, lib/components/WordPressContent/FieldRenderer/GalleryFieldRenderer.php:41, lib/components/WordPressContent/FieldRenderer/GalleryFieldRenderer.php:75
 msgid "Do not link"
 msgstr ""
 
-#: lib/components/Entity/FieldRenderer/TermContentCountFieldRenderer.php:29, lib/components/Entity/FieldType/ReferenceFieldType.php:64, lib/components/Voting/Controller/DashboardVotes.php:20, lib/components/Directory/Controller/Admin/ContentTypes.php:19
+#: lib/components/Entity/FieldRenderer/TermContentCountFieldRenderer.php:29, lib/components/Entity/FieldType/ReferenceFieldType.php:64, lib/components/Voting/Controller/DashboardVotes.php:26, lib/components/Directory/Controller/Admin/ContentTypes.php:19
 msgid "Content Type"
 msgstr ""
 
@@ -2012,7 +2012,7 @@ msgctxt "priority"
 msgid "Low"
 msgstr ""
 
-#: lib/components/Entity/FieldType/IdFieldType.php:24, lib/components/Entity/FieldType/TitleFieldType.php:34, lib/components/Field/Type/ChoiceType.php:62, lib/components/Field/Type/DateType.php:110, lib/components/Field/Type/StringType.php:119, lib/components/Field/Type/TimeType.php:123
+#: lib/components/Entity/FieldType/IdFieldType.php:24, lib/components/Entity/FieldType/TitleFieldType.php:34, lib/components/Field/Type/ChoiceType.php:63, lib/components/Field/Type/DateType.php:110, lib/components/Field/Type/StringType.php:119, lib/components/Field/Type/TimeType.php:123
 msgid "%s (desc)"
 msgstr ""
 
@@ -2069,11 +2069,11 @@ msgstr ""
 msgid "Taxonomy Terms"
 msgstr ""
 
-#: lib/components/Entity/FieldType/TermsFieldType.php:168
+#: lib/components/Entity/FieldType/TermsFieldType.php:194
 msgid "Enter taxonomy term IDs or slugs (may be mixed) separated with commas. Enter \"_current_\" for taxonomy terms of the curernt post if any."
 msgstr ""
 
-#: lib/components/Entity/FieldType/TermsFieldType.php:237
+#: lib/components/Entity/FieldType/TermsFieldType.php:263
 msgid "Enter taxonomy term IDs and/or slugs separated with commas."
 msgstr ""
 
@@ -2093,11 +2093,11 @@ msgstr ""
 msgid "Checkboxes"
 msgstr ""
 
-#: lib/components/Entity/FieldWidget/TermListFieldWidget.php:34, lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:35, lib/components/View/FieldFilter/AbstractTermFieldFilter.php:49
+#: lib/components/Entity/FieldWidget/TermListFieldWidget.php:35, lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:36, lib/components/View/FieldFilter/AbstractTermFieldFilter.php:49
 msgid "Number of term options"
 msgstr ""
 
-#: lib/components/Entity/FieldWidget/TermListFieldWidget.php:47, lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:48, lib/components/Search/Field/KeywordField.php:219, lib/components/Search/Field/TermField.php:47, lib/components/View/FieldFilter/AbstractTermFieldFilter.php:61
+#: lib/components/Entity/FieldWidget/TermListFieldWidget.php:56, lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:49, lib/components/Search/Field/KeywordField.php:219, lib/components/Search/Field/TermField.php:47, lib/components/View/FieldFilter/AbstractTermFieldFilter.php:61
 msgid "Depth of term hierarchy tree"
 msgstr ""
 
@@ -2111,6 +2111,10 @@ msgstr ""
 
 #: lib/components/Entity/FieldWidget/TermParentFieldWidget.php:53
 msgid "May not select self as parent."
+msgstr ""
+
+#: lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:59
+msgid "Disable fancy dropdown"
 msgstr ""
 
 #: lib/components/Entity/FieldWidget/TermTaggingFieldWidget.php:13, lib/components/Entity/FieldWidget/TitleFieldWidget.php:12, lib/components/Field/Filter/NumberFilter.php:13, lib/components/Field/Widget/TextfieldWidget.php:12
@@ -2343,7 +2347,7 @@ msgstr ""
 msgid "Placeholder text"
 msgstr ""
 
-#: lib/components/Field/Filter/OptionFilter.php:20, lib/components/Field/Filter/OptionFilter.php:77, lib/components/Field/Filter/VideoFilter.php:20, lib/components/Voting/Helper/RenderRatingHelper.php:168, lib/components/Voting/Helper/RenderRatingHelper.php:170, lib/components/WordPressContent/FieldFilter/FileFieldFilter.php:20, lib/components/WordPressContent/FieldFilter/ImageFieldFilter.php:21, lib/components/WordPressContent/FieldType/FileFieldType.php:143
+#: lib/components/Field/Filter/OptionFilter.php:20, lib/components/Field/Filter/OptionFilter.php:77, lib/components/Field/Filter/VideoFilter.php:18, lib/components/Voting/Helper/RenderRatingHelper.php:168, lib/components/Voting/Helper/RenderRatingHelper.php:170, lib/components/WordPressContent/FieldFilter/FileFieldFilter.php:20, lib/components/WordPressContent/FieldFilter/ImageFieldFilter.php:21
 msgctxt "option"
 msgid "Any"
 msgstr ""
@@ -2389,15 +2393,15 @@ msgctxt "day of week"
 msgid "Day"
 msgstr ""
 
-#: lib/components/Field/Filter/VideoFilter.php:18
+#: lib/components/Field/Filter/VideoFilter.php:16
 msgid "Has video"
 msgstr ""
 
-#: lib/components/Field/Filter/VideoFilter.php:19
+#: lib/components/Field/Filter/VideoFilter.php:17
 msgid "No video"
 msgstr ""
 
-#: lib/components/Field/Filter/VideoFilter.php:22
+#: lib/components/Field/Filter/VideoFilter.php:20
 msgid "Show with video only"
 msgstr ""
 
@@ -2567,7 +2571,7 @@ msgstr ""
 msgid "URL (without link)"
 msgstr ""
 
-#: lib/components/Field/Renderer/ImageRenderer.php:30, lib/components/Field/Renderer/ImageRenderer.php:227, lib/components/View/Mode/AbstractMode.php:62, lib/components/WordPressContent/FieldRenderer/GalleryFieldRenderer.php:33, lib/components/WordPressContent/FieldRenderer/GalleryFieldRenderer.php:59
+#: lib/components/Field/Renderer/ImageRenderer.php:30, lib/components/Field/Renderer/ImageRenderer.php:227, lib/components/View/Mode/AbstractMode.php:62, lib/components/WordPressContent/FieldRenderer/GalleryFieldRenderer.php:34, lib/components/WordPressContent/FieldRenderer/GalleryFieldRenderer.php:71
 msgid "Image size"
 msgstr ""
 
@@ -2639,7 +2643,7 @@ msgstr ""
 msgid "ON/OFF"
 msgstr ""
 
-#: lib/components/Field/Type/BooleanType.php:70, lib/components/WordPressContent/FieldType/ImageFieldType.php:80
+#: lib/components/Field/Type/BooleanType.php:70, lib/components/Field/Type/VideoType.php:138, lib/components/WordPressContent/FieldType/ImageFieldType.php:80
 msgid "1 or 0"
 msgstr ""
 
@@ -2655,7 +2659,7 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: lib/components/Field/Type/ChoiceType.php:75, lib/components/Field/Type/ChoiceType.php:114
+#: lib/components/Field/Type/ChoiceType.php:76, lib/components/Field/Type/ChoiceType.php:115
 msgid "Enter values separated with commas."
 msgstr ""
 
@@ -2767,19 +2771,19 @@ msgstr ""
 msgid "0 (no decimals)"
 msgstr ""
 
-#: lib/components/Field/Type/NumberType.php:64, lib/components/Field/Type/RangeType.php:59, lib/components/Field/Widget/TextfieldWidget.php:43
+#: lib/components/Field/Type/NumberType.php:64, lib/components/Field/Type/RangeType.php:59, lib/components/Field/Widget/TextfieldWidget.php:44
 msgid "Field prefix"
 msgstr ""
 
-#: lib/components/Field/Type/NumberType.php:65, lib/components/Field/Type/RangeType.php:60, lib/components/Field/Widget/TextfieldWidget.php:44
+#: lib/components/Field/Type/NumberType.php:65, lib/components/Field/Type/RangeType.php:60, lib/components/Field/Widget/TextfieldWidget.php:45
 msgid "Example: $, #, -"
 msgstr ""
 
-#: lib/components/Field/Type/NumberType.php:72, lib/components/Field/Type/RangeType.php:67, lib/components/Field/Widget/TextfieldWidget.php:51
+#: lib/components/Field/Type/NumberType.php:72, lib/components/Field/Type/RangeType.php:67, lib/components/Field/Widget/TextfieldWidget.php:52
 msgid "Field suffix"
 msgstr ""
 
-#: lib/components/Field/Type/NumberType.php:73, lib/components/Field/Type/RangeType.php:68, lib/components/Field/Widget/TextfieldWidget.php:52
+#: lib/components/Field/Type/NumberType.php:73, lib/components/Field/Type/RangeType.php:68, lib/components/Field/Widget/TextfieldWidget.php:53
 msgid "Example: km, %, g"
 msgstr ""
 
@@ -2900,8 +2904,12 @@ msgctxt "field type"
 msgid "User"
 msgstr ""
 
-#: lib/components/Field/Type/VideoType.php:16
+#: lib/components/Field/Type/VideoType.php:19
 msgid "Video"
+msgstr ""
+
+#: lib/components/Field/Type/VideoType.php:139
+msgid "Enter 1 for items with a video, 0 for items without any video."
 msgstr ""
 
 #: lib/components/Field/Widget/CheckboxWidget.php:32
@@ -2948,35 +2956,35 @@ msgstr ""
 msgid "Preserve line breaks"
 msgstr ""
 
-#: lib/components/Field/Widget/TextfieldWidget.php:31
+#: lib/components/Field/Widget/TextfieldWidget.php:32
 msgid "Auto-populate field"
 msgstr ""
 
-#: lib/components/Field/Widget/TextfieldWidget.php:33
+#: lib/components/Field/Widget/TextfieldWidget.php:34
 msgid "Do not auto-populate"
 msgstr ""
 
-#: lib/components/Field/Widget/TextfieldWidget.php:34
+#: lib/components/Field/Widget/TextfieldWidget.php:35
 msgid "E-mail address of current user"
 msgstr ""
 
-#: lib/components/Field/Widget/TextfieldWidget.php:35
+#: lib/components/Field/Widget/TextfieldWidget.php:36
 msgid "Website URL of current user"
 msgstr ""
 
-#: lib/components/Field/Widget/TextfieldWidget.php:36
+#: lib/components/Field/Widget/TextfieldWidget.php:37
 msgid "User name of current user"
 msgstr ""
 
-#: lib/components/Field/Widget/TextfieldWidget.php:37
+#: lib/components/Field/Widget/TextfieldWidget.php:38
 msgid "Display name of current user"
 msgstr ""
 
-#: lib/components/Field/Widget/TextfieldWidget.php:62
+#: lib/components/Field/Widget/TextfieldWidget.php:63
 msgid "Input mask"
 msgstr ""
 
-#: lib/components/Field/Widget/TextfieldWidget.php:63
+#: lib/components/Field/Widget/TextfieldWidget.php:64
 msgid "Use \"a\" to mask letter inputs (A-Z,a-z), \"9\" for numbers (0-9) and \"*\" for both."
 msgstr ""
 
@@ -3076,31 +3084,39 @@ msgstr ""
 msgid "Enable directions search"
 msgstr ""
 
+#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:69
+msgid "Customize format of address on infobox"
+msgstr ""
+
 #: lib/components/Map/FieldRenderer/MapFieldRenderer.php:76
+msgid "Available tags: %s"
+msgstr ""
+
+#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:101
 msgid "Street view is available with Google Maps only."
 msgstr ""
 
-#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:175
+#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:199
 msgid "Enter a location"
 msgstr ""
 
-#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:178
+#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:202
 msgid "Get Directions"
 msgstr ""
 
-#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:179
+#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:203
 msgid "By car"
 msgstr ""
 
-#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:180
+#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:204
 msgid "By public transit"
 msgstr ""
 
-#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:181
+#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:205
 msgid "Walking"
 msgstr ""
 
-#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:182
+#: lib/components/Map/FieldRenderer/MapFieldRenderer.php:206
 msgid "Bicycling"
 msgstr ""
 
@@ -3148,11 +3164,15 @@ msgstr ""
 msgid "Please select a valid location on map."
 msgstr ""
 
-#: lib/components/Map/Helper/MarkerHelper.php:122
+#: lib/components/Map/Helper/MarkerHelper.php:129
 msgid "Show image"
 msgstr ""
 
-#: lib/components/Map/Helper/MarkerHelper.php:128
+#: lib/components/Map/Helper/MarkerHelper.php:134
+msgid "Show taxonomy image"
+msgstr ""
+
+#: lib/components/Map/Helper/MarkerHelper.php:137
 msgid "Show taxonomy icon"
 msgstr ""
 
@@ -3286,96 +3306,96 @@ msgstr ""
 msgid "A to Z"
 msgstr ""
 
-#: lib/components/View/FieldFilter/GlossaryFieldFilter.php:70, lib/components/View/Helper/NavHelper.php:637
+#: lib/components/View/FieldFilter/GlossaryFieldFilter.php:70, lib/components/View/Helper/NavHelper.php:639
 msgid "All"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:37
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:38
 msgid "Sort Settings"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:46
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:47
 msgid "Default sort order"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:57
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:58
 msgid "Sort options"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:65
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:66
 msgid "Show featured items first"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:77
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:75
+msgid "Show featured items first on single term pages only"
+msgstr ""
+
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:93
 msgctxt "tab"
 msgid "Pagination"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:84
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:100
 msgid "Disable pagination"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:91
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:107
 msgid "Items per page"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:108
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:124
 msgid "Allow selection of number of items per page"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:121
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:137
 msgid "Allowed number of items per page"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:151
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:167
 msgid "Show filter form"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:158
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:174
 msgid "Disable collapsing filter form"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:170
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:186
 msgid "Auto submit filter form"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:186
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:202
 msgid "Show filter form in modal window"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:205
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:221
 msgid "Query Settings"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:212
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:228
 msgid "Query by field"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:218
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:234
 msgid "Max number of items to query (0 = unlimited)"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:252
-msgid "Exclude private items"
-msgstr ""
-
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:265
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:272
 msgid "Other"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:272
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:279
 msgid "Show number of items found"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:281
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:288
 msgid "Customize \"Not found\" text"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:308
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:315
 msgid "Show \"%s\" button"
 msgstr ""
 
-#: lib/components/View/Helper/FeatureSettingsFormHelper.php:314
+#: lib/components/View/Helper/FeatureSettingsFormHelper.php:321
 msgid "Show \"%s\" button with label"
 msgstr ""
 
@@ -3387,65 +3407,65 @@ msgstr ""
 msgid "Select display"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:343
+#: lib/components/View/Helper/NavHelper.php:347
 msgid "Sort by: %s"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:370, lib/components/View/Helper/NavHelper.php:701
+#: lib/components/View/Helper/NavHelper.php:374, lib/components/View/Helper/NavHelper.php:703
 msgid "Clear all"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:394, lib/components/View/Helper/NavHelper.php:411
+#: lib/components/View/Helper/NavHelper.php:398, lib/components/View/Helper/NavHelper.php:415
 msgctxt "filter items"
 msgid "Filter %s"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:489
+#: lib/components/View/Helper/NavHelper.php:493
 msgid "Logout"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:529
+#: lib/components/View/Helper/NavHelper.php:533
 msgctxt "items per page"
 msgid "Show: %s"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:620
+#: lib/components/View/Helper/NavHelper.php:624
 msgid "Status: %s"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:642
+#: lib/components/View/Helper/NavHelper.php:644
 msgid "Published"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:643
+#: lib/components/View/Helper/NavHelper.php:645
 msgid "Pending"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:644
+#: lib/components/View/Helper/NavHelper.php:646
 msgid "Draft"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:647
+#: lib/components/View/Helper/NavHelper.php:649
 msgid "Private"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:652
+#: lib/components/View/Helper/NavHelper.php:654
 msgid "Expired"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:653
+#: lib/components/View/Helper/NavHelper.php:655
 msgid "Deactivated"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:654
+#: lib/components/View/Helper/NavHelper.php:656
 msgid "Expiring"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:672
+#: lib/components/View/Helper/NavHelper.php:674
 msgid "Showing %s - %s of %s"
 msgstr ""
 
-#: lib/components/View/Helper/NavHelper.php:706
+#: lib/components/View/Helper/NavHelper.php:708
 msgid "Applied filters:"
 msgstr ""
 
@@ -3512,7 +3532,7 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
-#: lib/components/Voting/DashboardPanel/VotesDashboardPanel.php:17, lib/components/Voting/FieldType/FieldType.php:15, lib/components/Voting/Type/UpdownType.php:9
+#: lib/components/Voting/DashboardPanel/VotesDashboardPanel.php:19, lib/components/Voting/FieldType/FieldType.php:15, lib/components/Voting/Type/UpdownType.php:9
 msgid "Votes"
 msgstr ""
 
@@ -3791,11 +3811,16 @@ msgid "Maximum file size"
 msgstr ""
 
 #: lib/components/WordPressContent/FieldType/FileFieldType.php:129
-msgid "The maximum file size of uploaded files in kilobytes. Leave this field blank for no limit."
+msgid "The maximum file size of uploaded files in kilobytes. Leave blank for server default."
 msgstr ""
 
 #: lib/components/WordPressContent/FieldType/FileFieldType.php:138
 msgid "Allowed files"
+msgstr ""
+
+#: lib/components/WordPressContent/FieldType/FileFieldType.php:143
+msgctxt "option"
+msgid "Custom"
 msgstr ""
 
 #: lib/components/WordPressContent/FieldType/FileFieldType.php:144
@@ -3931,27 +3956,27 @@ msgstr ""
 msgid "Choose from the most used %s"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:38
+#: lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:25
 msgid "Assign page"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:42, lib/application/Component/WordPress/Helper/PageSettingsFormHelper.php:38
+#: lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:29, lib/application/Component/WordPress/Helper/PageSettingsFormHelper.php:36
 msgid "— Select page —"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:48, lib/application/Component/WordPress/Helper/PageSettingsFormHelper.php:50
+#: lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:35, lib/application/Component/WordPress/Helper/PageSettingsFormHelper.php:54
 msgid "Shortcode %s can be used to customize the content of the page."
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:98
+#: lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:85
 msgid "Enable custom permalink"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:128
+#: lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:115
 msgid "Permalink URL base may not be empty"
 msgstr ""
 
-#: lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:166
+#: lib/components/WordPressContent/Helper/PageSettingsFormHelper.php:153
 msgid "Permalink URL base %s is already in use by %s."
 msgstr ""
 
@@ -3967,11 +3992,11 @@ msgstr ""
 msgid "You have already uploaded enough files!"
 msgstr ""
 
-#: lib/application/Component/Form/Field/AbstractUploadField.php:26, lib/application/Component/WordPress/FormField/MediaManagerFormField.php:148
+#: lib/application/Component/Form/Field/AbstractUploadField.php:26, lib/application/Component/WordPress/FormField/MediaManagerFormField.php:147
 msgid "Max number of files %d, maximum file size %s."
 msgstr ""
 
-#: lib/application/Component/Form/Field/AbstractUploadField.php:27, lib/application/Component/WordPress/FormField/MediaManagerFormField.php:149
+#: lib/application/Component/Form/Field/AbstractUploadField.php:27, lib/application/Component/WordPress/FormField/MediaManagerFormField.php:148
 msgid "Max file size %s."
 msgstr ""
 
@@ -3979,11 +4004,11 @@ msgstr ""
 msgid "Supported file formats: %s"
 msgstr ""
 
-#: lib/application/Component/Form/Field/AbstractUploadField.php:106, lib/application/Component/WordPress/FormField/MediaManagerFormField.php:97
+#: lib/application/Component/Form/Field/AbstractUploadField.php:106, lib/application/Component/WordPress/FormField/MediaManagerFormField.php:96
 msgid "There are currently no files uploaded."
 msgstr ""
 
-#: lib/application/Component/Form/Field/AbstractUploadField.php:128, lib/application/Component/WordPress/FormField/MediaManagerFormField.php:114
+#: lib/application/Component/Form/Field/AbstractUploadField.php:128, lib/application/Component/WordPress/FormField/MediaManagerFormField.php:113
 msgid "File Name"
 msgstr ""
 
@@ -4079,7 +4104,7 @@ msgstr ""
 msgid "Invalid value: %s"
 msgstr ""
 
-#: lib/application/Component/Form/Field/OptionsField.php:101, lib/application/Component/Form/Helper/ValidateHelper.php:130
+#: lib/application/Component/Form/Field/OptionsField.php:101, lib/application/Component/Form/Helper/ValidateHelper.php:132
 msgid "The input value did not match the regular expression: %s"
 msgstr ""
 
@@ -4127,7 +4152,7 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: lib/application/Component/Form/Field/TextField.php:96, lib/application/Component/Form/Helper/ValidateHelper.php:150
+#: lib/application/Component/Form/Field/TextField.php:96, lib/application/Component/Form/Helper/ValidateHelper.php:152
 msgid "Invalid domain name."
 msgstr ""
 
@@ -4183,59 +4208,59 @@ msgstr ""
 msgid "The input value must consist of uppercase characters only."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:91
+#: lib/application/Component/Form/Helper/ValidateHelper.php:92
 msgid "The input value must be %d characters."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:96
+#: lib/application/Component/Form/Helper/ValidateHelper.php:97
 msgid "The input value must be between %d and %d characters."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:102
+#: lib/application/Component/Form/Helper/ValidateHelper.php:103
 msgid "The input value must be shorter than %d characters."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:107
+#: lib/application/Component/Form/Helper/ValidateHelper.php:108
 msgid "The input value must be longer than %d characters."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:115
+#: lib/application/Component/Form/Helper/ValidateHelper.php:117
 msgid "The value must be equal or greater than %s."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:121
+#: lib/application/Component/Form/Helper/ValidateHelper.php:123
 msgid "The value must not be greater than %s."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:141
+#: lib/application/Component/Form/Helper/ValidateHelper.php:143
 msgid "The input value is not a valid E-mail address."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:157
+#: lib/application/Component/Form/Helper/ValidateHelper.php:159
 msgid "The email address is already registered and may not be used."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:176
+#: lib/application/Component/Form/Helper/ValidateHelper.php:178
 msgid "The input value is not a valid URL."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:189
+#: lib/application/Component/Form/Helper/ValidateHelper.php:191
 msgid "Please select a date."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:198
+#: lib/application/Component/Form/Helper/ValidateHelper.php:200
 msgid "Invalid date."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:212
+#: lib/application/Component/Form/Helper/ValidateHelper.php:214
 msgid "Date must be between %s and %s."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:218
+#: lib/application/Component/Form/Helper/ValidateHelper.php:220
 msgid "Date must be later than %s."
 msgstr ""
 
-#: lib/application/Component/Form/Helper/ValidateHelper.php:224
+#: lib/application/Component/Form/Helper/ValidateHelper.php:226
 msgid "Date must be earlier than %s."
 msgstr ""
 
@@ -5268,11 +5293,11 @@ msgstr ""
 msgid "Do not cache output"
 msgstr ""
 
-#: lib/application/Component/WordPress/FormField/MediaManagerFormField.php:130
+#: lib/application/Component/WordPress/FormField/MediaManagerFormField.php:129
 msgid "Add File"
 msgstr ""
 
-#: lib/application/Component/WordPress/FormField/MediaManagerFormField.php:133
+#: lib/application/Component/WordPress/FormField/MediaManagerFormField.php:132
 msgid "Add Image"
 msgstr ""
 
@@ -5284,7 +5309,7 @@ msgstr ""
 msgid "License Keys"
 msgstr ""
 
-#: lib/application/Component/WordPress/Helper/PageSettingsFormHelper.php:65
+#: lib/application/Component/WordPress/Helper/PageSettingsFormHelper.php:69
 msgid "Please select a page"
 msgstr ""
 
@@ -5586,15 +5611,15 @@ msgstr ""
 msgid "Image Settings"
 msgstr ""
 
-#: lib/components/Entity/Controller/Admin/Edit.php:105
+#: lib/components/Entity/Controller/Admin/Edit.php:107
 msgid "Default image field"
 msgstr ""
 
-#: lib/components/Entity/Controller/Admin/Edit.php:116
+#: lib/components/Entity/Controller/Admin/Edit.php:123
 msgid "Default icon field"
 msgstr ""
 
-#: lib/components/Entity/Controller/Admin/Edit.php:129
+#: lib/components/Entity/Controller/Admin/Edit.php:137
 msgid "SEO Settings"
 msgstr ""
 

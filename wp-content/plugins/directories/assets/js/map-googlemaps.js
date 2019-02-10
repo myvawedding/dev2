@@ -188,6 +188,7 @@ function _inherits(subClass, superClass) {
               html: marker.icon.url ? $('<img/>').attr('src', marker.icon.url)[0].outerHTML : null,
               icon: marker.icon.icon || this.options.marker_icon,
               icon_color: marker.icon.icon_color || this.options.marker_icon_color,
+              full: marker.icon.is_full ? true : false,
               size: marker.icon.size || this.options.marker_size,
               color: marker.icon.color || this.options.marker_color || '#fff',
               event: this.options.infobox_event
@@ -474,44 +475,47 @@ function _inherits(subClass, superClass) {
   DRTS.Map.googlemaps.map.marker = function(options) {
     this.options = options || {};
     this.visible = true;
-    this.classes = ['drts-map-marker'];
+    this.classes = this.options.full ? ['drts-map-marker drts-map-marker-full'] : ['drts-map-marker'];
     this.div = null;
   };
   DRTS.Map.googlemaps.map.marker.prototype = new google.maps.OverlayView();
   DRTS.Map.googlemaps.map.marker.prototype.onAdd = function() {
     var _this3 = this;
 
-    var size = this.options.size || 38,
-      marker = void 0;
     this.div = document.createElement('div');
     this.div.className = this.classes.join(' ');
-    this.div.style.width = size + 'px';
-    this.div.style.height = size + 'px';
-    this.div.style.marginTop = '-' + (size * Math.sqrt(2) - DRTS.Map.markerHeight(size)) + 'px';
-    marker = document.createElement('div');
-    if (this.options.color) {
-      this.div.style.backgroundColor = this.div.style.color = marker.style.borderColor = this.options.color;
+    if (this.options.full) {
+      this.div.innerHTML = this.options.html;
+    } else {
+      var size = this.options.size || 38;
+      var marker = document.createElement('div');
+      this.div.style.width = size + 'px';
+      this.div.style.height = size + 'px';
+      this.div.style.marginTop = '-' + (size * Math.sqrt(2) - DRTS.Map.markerHeight(size)) + 'px';
+      if (this.options.color) {
+        this.div.style.backgroundColor = this.div.style.color = marker.style.borderColor = this.options.color;
+      }
+      if (this.options.html) {
+        marker.innerHTML = this.options.html;
+        //this.div.innerHTML = '<div style="border-color:' + this.options.color + ';">' + this.options.html + '</div>';
+      } else if (this.options.icon) {
+        marker.innerHTML = '<i class="' + this.options.icon + '"></i>';
+        if (this.options.icon_color) marker.style.backgroundColor = this.options.icon_color;
+        //this.div.innerHTML = '<div style="border-color:' + this.options.color + ';">'+ '<i class="' + this.options.icon + '" style="'
+        //    + (this.options.icon_color ? 'color:' + this.options.icon_color : '') + ';"></i></div>';
+      }
+      this.div.appendChild(marker);
+      this.set('marker_height', DRTS.Map.markerHeight(size));
     }
     if (this.options.data) {
       this.div.dataset = this.options.data;
     }
-    if (this.options.html) {
-      marker.innerHTML = this.options.html;
-      //this.div.innerHTML = '<div style="border-color:' + this.options.color + ';">' + this.options.html + '</div>';
-    } else if (this.options.icon) {
-      marker.innerHTML = '<i class="' + this.options.icon + '"></i>';
-      if (this.options.icon_color) marker.style.backgroundColor = this.options.icon_color;
-      //this.div.innerHTML = '<div style="border-color:' + this.options.color + ';">'+ '<i class="' + this.options.icon + '" style="'
-      //    + (this.options.icon_color ? 'color:' + this.options.icon_color : '') + ';"></i></div>';
-    }
-    this.div.appendChild(marker);
     this.getPanes().overlayImage.appendChild(this.div);
     var ev = this.options.event;
     google.maps.event.addDomListener(this.div, ev, function(event) {
       google.maps.event.trigger(_this3, ev);
     });
     this.setPosition(this.position);
-    this.set('marker_height', DRTS.Map.markerHeight(size));
   };
   DRTS.Map.googlemaps.map.marker.prototype.draw = function() {
     this.setPosition(this.position);

@@ -9,7 +9,7 @@ class UploadFile extends Form\Controller\AbstractUploadFile
     protected function _saveFile(array $file, array $token)
     {
         if (!defined('ALLOW_UNFILTERED_UPLOADS')) {
-            define('ALLOW_UNFILTERED_UPLOADS', true);
+            define('ALLOW_UNFILTERED_UPLOADS', true); // lets admins upload files without an extension
         }
         if (!function_exists('media_handle_sideload')) {
             require_once ABSPATH . 'wp-admin/includes/image.php';

@@ -15,6 +15,8 @@ class MBHelper
 
     public function strlen(Application $application, $str, $encoding = 'UTF-8')
     {
+        // Fix for mb_strlen returning 2 for \r\n
+        $str = str_replace("\r\n", "\n", $str);
         return function_exists('mb_strlen') ? mb_strlen($str, $encoding) : strlen($str);
     }
     

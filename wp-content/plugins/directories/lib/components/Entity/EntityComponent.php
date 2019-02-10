@@ -19,7 +19,7 @@ class EntityComponent extends AbstractComponent implements
     System\IMainRouter,
     System\IAdminRouter
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories';
+    const VERSION = '1.2.23', PACKAGE = 'directories';
     const FIELD_REALM_ALL = 0, FIELD_REALM_ENTITY_TYPE_DEFAULT = 1, FIELD_REALM_BUNDLE_DEFAULT = 2;
 
     protected $_system = true;
@@ -143,10 +143,10 @@ class EntityComponent extends AbstractComponent implements
         $bundle = $application->Entity_Bundle($entity);
         if (!empty($bundle->info['parent'])) { // child entity bundles do not have custom permalinks
             return ($parent = $application->Entity_ParentEntity($entity, false))
-                ? str_replace(':slug', $parent->getSlug(), $application->Entity_BundlePath($bundle, true, $lang)) . '/' . $entity->getId()
+                ? str_replace(':slug', $parent->getSlug(), $bundle->getPath(true, $lang)) . '/' . $entity->getId()
                 : '';
         }
-        return $application->Entity_BundlePath($bundle, true, $lang) . '/' . $entity->getSlug();
+        return $bundle->getPath(true, $lang) . '/' . $entity->getSlug();
     }
 
     public static function authorHelper(Application $application, Type\IEntity $entity)
@@ -2114,6 +2114,7 @@ class EntityComponent extends AbstractComponent implements
     {
         $keys[] = 'entity_image';
         $keys[] = 'entity_icon';
+        $keys[] = 'entity_icon_is_image';
         $keys[] = 'entity_color';
     }
 }

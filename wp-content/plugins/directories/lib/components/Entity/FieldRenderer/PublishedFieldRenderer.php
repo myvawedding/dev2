@@ -26,7 +26,8 @@ class PublishedFieldRenderer extends Field\Renderer\DateRenderer
 
     protected function _renderField(Field\IField $field, array &$settings, Entity\Type\IEntity $entity, $value)
     {
-        $value = $this->_getTimestamp($field, $settings, $entity);
+        if (!$value = $this->_getTimestamp($field, $settings, $entity)) return '';
+
         $html = parent::_renderField($field, $settings, $entity, $value);
         return $settings['permalink'] && ($url = $this->_application->Entity_PermalinkUrl($entity))
             ? '<a href="' . $url . '">' . $html . '</a>'

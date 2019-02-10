@@ -102,4 +102,16 @@ class BooleanType extends AbstractValueType
                 return;
         }
     }
+
+    public function fieldConditionableMatch(IField $field, array $rule, array $values = null)
+    {
+        switch ($rule['type']) {
+            case 'unchecked':
+                return empty($values[0]) === $rule['value'];
+            case 'checked':
+                return !empty($values[0]) === $rule['value'];
+            default:
+                return false;
+        }
+    }
 }

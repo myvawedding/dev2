@@ -4,7 +4,12 @@ namespace SabaiApps\Directories\Component\Entity\Model;
 class Bundle extends Base\Bundle
 {
     private static $_infoKeys, $_infoUserKeys;
-    
+
+    public function getPath($permalink = false, $lang = null)
+    {
+        return $this->_model->Entity_Bundle_path($this, $permalink, $lang);
+    }
+
     public function getAdminPath()
     {
         $path = '/' . strtolower($this->component);

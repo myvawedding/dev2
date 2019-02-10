@@ -19,7 +19,6 @@ class PostEntityType extends Entity\Type\AbstractType
                     'on' => 'bundle_name = %2$s.post_type'
                 ),
             ),
-            'table_id_key' => 'ID',
             'properties' => array(
                 'id' => array(
                     'type' => 'entity_id',

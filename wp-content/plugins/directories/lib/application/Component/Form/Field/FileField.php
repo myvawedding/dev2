@@ -162,7 +162,7 @@ class FileField extends AbstractField
     {
         return array(
             'allowed_extensions' => !empty($data['#allowed_extensions']) ? $data['#allowed_extensions'] : null,
-            'max_file_size' => !empty($data['#max_file_size']) ? $data['#max_file_size'] * 1024 : null,
+            'max_file_size' => !empty($data['#max_file_size']) ? $data['#max_file_size'] : null,
             'image_only' => isset($data['#allow_only_images']) ? $data['#allow_only_images'] : null,
             'max_image_width' => !empty($data['#max_image_width']) ? $data['#max_image_width'] : null,
             'max_image_height' => !empty($data['#max_image_height']) ? $data['#max_image_height'] : null,

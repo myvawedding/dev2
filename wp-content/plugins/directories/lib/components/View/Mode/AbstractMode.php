@@ -67,7 +67,7 @@ abstract class AbstractMode implements IMode
                     'medium' => __('Medium size', 'directories'),
                     'large' => __('Large size', 'directories'),
                 ],
-                '#default_value' => !empty($settings[$prefix . 'image_size']),
+                '#default_value' => isset($settings[$prefix . 'image_size']) ? $settings[$prefix . 'image_size'] : 'thumbnail',
                 '#weight' => isset($weight) ? $weight + 1 : null,
                 '#horizontal' => true,
                 '#states' => [
