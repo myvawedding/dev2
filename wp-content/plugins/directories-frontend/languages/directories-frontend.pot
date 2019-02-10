@@ -29,51 +29,59 @@ msgstr ""
 msgid "Continue as guest"
 msgstr ""
 
-#: lib/components/Dashboard/DashboardComponent.php:32
+#: lib/components/Dashboard/DashboardComponent.php:33
 msgid "Frontend Dashboard"
 msgstr ""
 
-#: lib/components/Dashboard/DashboardComponent.php:33, lib/components/Dashboard/DashboardComponent.php:307
+#: lib/components/Dashboard/DashboardComponent.php:34, lib/components/Dashboard/DashboardComponent.php:326
 msgid "Dashboard"
 msgstr ""
 
-#: lib/components/Dashboard/DashboardComponent.php:203, lib/components/Dashboard/Controller/DeletePost.php:15, lib/components/Dashboard/DisplayButton/PostDisplayButton.php:71
+#: lib/components/Dashboard/DashboardComponent.php:246, lib/components/Dashboard/Controller/DeletePost.php:15, lib/components/Dashboard/DisplayButton/PostDisplayButton.php:71
 msgid "Delete"
 msgstr ""
 
-#: lib/components/Dashboard/DashboardComponent.php:205, lib/components/Dashboard/DisplayButton/PostDisplayButton.php:73
+#: lib/components/Dashboard/DashboardComponent.php:248, lib/components/Dashboard/DisplayButton/PostDisplayButton.php:73
 msgid "Submit for review"
 msgstr ""
 
-#: lib/components/Dashboard/DashboardComponent.php:342
+#: lib/components/Dashboard/DashboardComponent.php:361
 msgid "Dashboard Settings"
 msgstr ""
 
-#: lib/components/Dashboard/DashboardComponent.php:344
+#: lib/components/Dashboard/DashboardComponent.php:363
 msgid "Dashboard panels"
 msgstr ""
 
-#: lib/components/Dashboard/DashboardComponent.php:361
+#: lib/components/Dashboard/DashboardComponent.php:380
 msgid "Enable accordion effect"
 msgstr ""
 
-#: lib/components/Dashboard/DashboardComponent.php:368
+#: lib/components/Dashboard/DashboardComponent.php:387
 msgid "Show logout button"
 msgstr ""
 
-#: lib/components/FrontendSubmit/FrontendSubmitComponent.php:147
-msgid "Login/Registration"
+#: lib/components/Dashboard/DashboardComponent.php:393
+msgid "Include other user's posts"
+msgstr ""
+
+#: lib/components/Dashboard/DashboardComponent.php:399
+msgid "Enable public dashboard"
 msgstr ""
 
 #: lib/components/FrontendSubmit/FrontendSubmitComponent.php:148
+msgid "Login/Registration"
+msgstr ""
+
+#: lib/components/FrontendSubmit/FrontendSubmitComponent.php:149
 msgid "Login or Register"
 msgstr ""
 
-#: lib/components/FrontendSubmit/FrontendSubmitComponent.php:275
+#: lib/components/FrontendSubmit/FrontendSubmitComponent.php:277
 msgid "Frontend Submit"
 msgstr ""
 
-#: lib/components/FrontendSubmit/FrontendSubmitComponent.php:295
+#: lib/components/FrontendSubmit/FrontendSubmitComponent.php:297
 msgid "Enable frontend submit"
 msgstr ""
 
@@ -149,7 +157,7 @@ msgstr ""
 msgid "Your item has been updated successfully."
 msgstr ""
 
-#: lib/components/Dashboard/Controller/Panel.php:16
+#: lib/components/Dashboard/Controller/Panel.php:20
 msgid "No dashboard panels found."
 msgstr ""
 
@@ -186,6 +194,26 @@ msgctxt "display name"
 msgid "Dashboard Row"
 msgstr ""
 
+#: lib/components/Dashboard/WordPress/AbstractProfile.php:74
+msgid "%s Profile Page Integration"
+msgstr ""
+
+#: lib/components/Dashboard/WordPress/AbstractProfile.php:76
+msgid "Show dashboard panels"
+msgstr ""
+
+#: lib/components/Dashboard/WordPress/AbstractProfile.php:81
+msgid "Check this option to show dashboard panels on the %s profile page."
+msgstr ""
+
+#: lib/components/Dashboard/WordPress/AbstractProfile.php:86
+msgid "Redirect dashboard access"
+msgstr ""
+
+#: lib/components/Dashboard/WordPress/AbstractProfile.php:91
+msgid "Check this option to redirect dashboard access to the %s profile page."
+msgstr ""
+
 #: lib/components/FrontendSubmit/Controller/AbstractAddEntity.php:131
 msgid "Your item has been submitted successfully."
 msgstr ""
@@ -194,11 +222,15 @@ msgstr ""
 msgid "Your item has been submitted successfully. We will review your submission and post it on this site when it is approved."
 msgstr ""
 
-#: lib/components/FrontendSubmit/Controller/AddEntity.php:63
+#: lib/components/FrontendSubmit/Controller/AddEntity.php:32
+msgid "There is no submittable content."
+msgstr ""
+
+#: lib/components/FrontendSubmit/Controller/AddEntity.php:66
 msgid "Select content type"
 msgstr ""
 
-#: lib/components/FrontendSubmit/Controller/AddEntity.php:88
+#: lib/components/FrontendSubmit/Controller/AddEntity.php:91
 msgid "%s: %s"
 msgstr ""
 

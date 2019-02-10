@@ -2,10 +2,11 @@
 namespace SabaiApps\Directories\Component\Dashboard\Panel;
 
 use SabaiApps\Directories\Application;
+use SabaiApps\Framework\User\AbstractIdentity;
 
 abstract class AbstractPanel implements IPanel
 {
-    protected $_application, $_name, $_info, $_links;
+    protected $_application, $_name, $_info, $_links = [];
 
     public function __construct(Application $application, $name)
     {
@@ -22,36 +23,35 @@ abstract class AbstractPanel implements IPanel
     
     public function dashboardPanelOnLoad(){}
     
-    public function dashboardPanelContent($link, array $params)
+    public function dashboardPanelContent($link, array $params, AbstractIdentity $identity = null)
     {
         return print_r($link, true);
     }
     
-    public function dashboardPanelLinks($sort = true)
+    public function dashboardPanelLinks(AbstractIdentity $identity = null)
     {
-        if (!isset($this->_links)) {
-            if ($links = $this->_dashboardPanelLinks()) {
-                if ($sort) {
-                    uasort($links, function ($a, $b) {
-                        if ($a['weight'] === $b['weight']) return strnatcmp($a['title'], $b['title']);
+        $user_id = isset($identity) ? $identity->id : 0;
+        if (!isset($this->_links[$user_id])) {
+            if ($links = $this->_dashboardPanelLinks($identity)) {
+                uasort($links, function ($a, $b) {
+                    if ($a['weight'] === $b['weight']) return strnatcmp($a['title'], $b['title']);
 
-                        return $a['weight'] < $b['weight'] ? -1 : 1;
-                    });
-                }
-                $this->_links = $links;
+                    return $a['weight'] < $b['weight'] ? -1 : 1;
+                });
+                $this->_links[$user_id] = $links;
             } else {
-                $this->_links = [];
+                $this->_links[$user_id] = [];
             }
         }
-        return $this->_links;
+        return $this->_links[$user_id];
     }
 
     abstract protected function _dashboardPanelInfo();
-    abstract protected function _dashboardPanelLinks();
+    abstract protected function _dashboardPanelLinks(AbstractIdentity $identity = null);
     
-    public function panelHtmlLinks($firstActive = true, $badge = false)
+    public function panelHtmlLinks($firstActive = true, $badge = false, AbstractIdentity $identity = null)
     {
-        $links = $this->dashboardPanelLinks();
+        $links = $this->dashboardPanelLinks($identity);
         foreach (array_keys($links) as $link_name) {
             $link =& $links[$link_name];
             $link['title'] = $this->_application->H($link['title']);
@@ -67,7 +67,7 @@ abstract class AbstractPanel implements IPanel
             }
             $link['attr'] = [
                 'class' => 'drts-dashboard-panel-link drts-dashboard-panel-link-' . str_replace('_', '-', $link_name),
-                'data-url' => $this->_application->getComponent('Dashboard')->getPanelUrl($this->_name, $link_name, '', [], true),
+                'data-url' => $this->_application->getComponent('Dashboard')->getPanelUrl($this->_name, $link_name, '', [], true, $identity),
                 'data-panel-name' => $this->_name,
                 'data-link-name' => $link_name,
             ];

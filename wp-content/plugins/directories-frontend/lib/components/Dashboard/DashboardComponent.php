@@ -10,6 +10,7 @@ use SabaiApps\Directories\Context;
 use SabaiApps\Directories\Application;
 use SabaiApps\Directories\Exception;
 use SabaiApps\Directories\Request;
+use SabaiApps\Framework\User\AbstractIdentity;
 
 class DashboardComponent extends AbstractComponent implements
     System\IMainRouter,
@@ -18,7 +19,7 @@ class DashboardComponent extends AbstractComponent implements
     Display\IButtons,
     IPanels
  {
-    const VERSION = '1.2.19', PACKAGE = 'directories-frontend';
+    const VERSION = '1.2.23', PACKAGE = 'directories-frontend';
 
     public static function description()
     {
@@ -61,19 +62,26 @@ class DashboardComponent extends AbstractComponent implements
                 'callback_path' => 'dashboard',
                 'priority' => 3,
             ],
-            $base . '/:panel_name' => [
+            $base  . '/:user_name' => [
+                'controller' => 'Panel',
+                'access_callback' => true,
+                'title_callback' => true,
+                'callback_path' => 'user',
+                'priority' => 4,
+            ],
+            $base  . '/:user_name/:panel_name' => [
                 'controller' => 'Panel',
                 'access_callback' => true,
                 'title_callback' => true,
                 'callback_path' => 'panel',
-                'priority' => 3,
+                'priority' => 4,
             ],
-            $base . '/:panel_name/posts' => [
+            $base . '/:user_name/:panel_name/posts' => [
                 'access_callback' => true,
                 'callback_path' => 'posts',
                 'priority' => 3,
             ],
-            $base . '/:panel_name/posts/:entity_id' => [
+            $base . '/:user_name/:panel_name/posts/:entity_id' => [
                 'format' => array(':entity_id' => '\d+'),
                 'controller' => 'EditPost',
                 'access_callback' => true,
@@ -81,32 +89,22 @@ class DashboardComponent extends AbstractComponent implements
                 'callback_path' => 'edit_post',
                 'priority' => 3,
             ],
-            $base . '/:panel_name/posts/:entity_id/delete' => [
+            $base . '/:user_name/:panel_name/posts/:entity_id/delete' => [
                 'controller' => 'DeletePost',
                 'access_callback' => true,
                 'title_callback' => true,
                 'callback_path' => 'delete_post',
                 'priority' => 3,
             ],
-            $base  . '/:panel_name/posts/:entity_id/submit' => [
+            $base  . '/:user_name/:panel_name/posts/:entity_id/submit' => [
                 'controller' => 'SubmitPost',
                 'access_callback' => true,
                 'title_callback' => true,
                 'callback_path' => 'submit_post',
                 'priority' => 3,
             ],
-        ];
 
-        // Let the first route be the default
-        if (!empty($routes)) {
-            $route_paths = array_keys($routes);
-            $routes[$base] = array(
-                'access_callback' => true,
-                'title_callback' => true,
-                'callback_path' => 'dashboard',
-                'callback_component' => $this->_name,
-            ) + $routes[$route_paths[0]];
-        }
+        ];
 
         return $routes;
     }
@@ -115,14 +113,16 @@ class DashboardComponent extends AbstractComponent implements
     {
         switch ($path) {
             case 'dashboard':
-                if ($this->_application->getUser()->isAnonymous()) {
-                    $context->setUnauthorizedError($route['path']);
-                    return false;
-                }
                 if ($accessType === Application::ROUTE_ACCESS_LINK) {
                     if (!isset($context->is_dashboard)) $context->is_dashboard = true;
                     return true;
                 }
+
+                if ($this->_application->getUser()->isAnonymous()) {
+                    $context->setUnauthorizedError($route['path']);
+                    return false;
+                }
+
                 $panel = $link = null;
                 foreach (array_keys($this->_sortPanels($this->_application->Dashboard_Panels())) as $panel_name) {
                     if ((!$panel = $this->_application->Dashboard_Panels_impl($panel_name, true))
@@ -136,23 +136,58 @@ class DashboardComponent extends AbstractComponent implements
                 $context->dashboard_panel = $panel;
                 $context->dashboard_panel_link = $link;
                 return true;
+            case 'user':
+                if ($accessType === Application::ROUTE_ACCESS_LINK) {
+                    if ((!$user_name = $context->getRequest()->asStr('user_name'))
+                        || (!$identity = $this->_application->getPlatform()->getUserIdentityFetcher()->fetchByUsername(urldecode($user_name)))
+                        || $identity->isAnonymous()
+                        || (empty($this->_config['enable_public']) && (int)$this->_application->getUser()->id !== (int)$identity->id)
+                    ) {
+                        $context->setNotFoundError();
+                        return false;
+                    }
+                    if ($this->_application->getUser()->isAnonymous()
+                        || (int)$this->_application->getUser()->id !== (int)$identity->id
+                    ) {
+                        $context->dashboard_user = $identity;
+                    }
+                }
+                $panel = $link = null;
+                foreach (array_keys($this->_sortPanels($this->_application->Dashboard_Panels())) as $panel_name) {
+                    if ((!$panel = $this->_application->Dashboard_Panels_impl($panel_name, true))
+                        || (!$links = $panel->dashboardPanelLinks(isset($context->dashboard_user) ? $context->dashboard_user : null))
+                    ) continue;
+
+                    $panel = $panel_name;
+                    $link = current(array_keys($links));
+                    break;
+                }
+                $context->dashboard_panel = $panel;
+                $context->dashboard_panel_link = $link;
+                return true;
             case 'panel':
                 if ($accessType === Application::ROUTE_ACCESS_LINK) {
                     if ((!$panel_name = $context->getRequest()->asStr('panel_name'))
                         || (!$panel = $this->_application->Dashboard_Panels_impl($panel_name, true))
+                        || (!$links = $panel->dashboardPanelLinks(isset($context->dashboard_user) ? $context->dashboard_user : null))
                     ) {
-                        $context->setError();
+                        $context->setNotFoundError();
                         return false;
                     }
-                    if (!$link = $context->getRequest()->asStr('link')) {
-                        if (!$links = $panel->dashboardPanelLinks()) {
-                            $context->setError();
-                            return false;
-                        }
+                    if ((!$link = $context->getRequest()->asStr('link'))
+                        || !isset($links[$link])
+                    ) {
                         $link = current(array_keys($links));
                     }
                     $context->dashboard_panel = $panel_name;
                     $context->dashboard_panel_link = $link;
+                }
+
+                if ($this->_application->getUser()->isAnonymous()
+                    && !isset($context->dashboard_user)
+                ) {
+                    $context->setUnauthorizedError($route['path']);
+                    return false;
                 }
                 return true;
             case 'posts':
@@ -161,7 +196,7 @@ class DashboardComponent extends AbstractComponent implements
                     if ((!$panel instanceof \SabaiApps\Directories\Component\Dashboard\Panel\PostsPanel)
                         || (!$bundle = $this->_application->Entity_Bundle($context->dashboard_panel_link))
                     ) {
-                        $context->setError();
+                        $context->setNotFoundError();
                         return false;
                     }
                     $context->bundle = $bundle;
@@ -172,7 +207,13 @@ class DashboardComponent extends AbstractComponent implements
                     if ((!$entity_id = $context->getRequest()->asInt('entity_id'))
                         || (!$entity = $this->_application->Entity_Entity($context->bundle->entitytype_name, $entity_id))
                         || $context->bundle->name !== $entity->getBundleName()
-                        || !$this->_application->Entity_IsAuthor($entity)
+                    ) {
+                        $context->setNotFoundError();
+                        return false;
+                    }
+                    // Do not allow if other user's post and include other users' posts option is not enabled
+                    if ($entity->getAuthorId() !== $this->_application->getUser()->id
+                        && empty($this->_config['show_others'])
                     ) {
                         $context->setError();
                         return false;
@@ -195,8 +236,10 @@ class DashboardComponent extends AbstractComponent implements
     {
         switch ($path) {
             case 'dashboard':
-            case 'panel':
                 return $this->getTitle('dashboard');
+            case 'user':
+            case 'panel':
+                return isset($context->dashboard_user) ? $context->dashboard_user->name : $this->getTitle('dashboard');
             case 'edit_post':
                 return $this->_application->Entity_Title($context->entity);
             case 'delete_post':
@@ -223,31 +266,7 @@ class DashboardComponent extends AbstractComponent implements
         $context->accordion = !empty($this->_config['panel']['accordion']);
 
         // Get panels
-        $panels = [];
-        $panels_available = $this->_application->Dashboard_Panels();
-        if (!empty($this->_config['panel']['panels']['default'])) {
-            foreach ($this->_config['panel']['panels']['default'] as $panel_name) {
-                if (!isset($panels_available[$panel_name])
-                    || (!$panel = $this->_application->Dashboard_Panels_impl($panel_name, true))
-                    || (!$links = $panel->panelHtmlLinks(false, true))
-                ) continue;
-
-                $panel->dashboardPanelOnLoad();
-
-                if ($panel->dashboardPanelInfo('labellable')
-                    && isset($this->_config['panel']['panels']['options'][$panel_name])
-                ) {
-                    $panel_label = $this->_config['panel']['panels']['options'][$panel_name];
-                } else {
-                    $panel_label = $panel->dashboardPanelLabel();
-                }
-                $panels[$panel_name] = array(
-                    'title' => $panel_label,
-                    'links' => $links,
-                );
-            }
-        }
-        if (empty($panels)) {
+        if (!$panels = $this->getActivePanels(isset($context->dashboard_user) ? $context->dashboard_user : null)) {
             $context->panels = [];
             return;
         }
@@ -369,7 +388,31 @@ class DashboardComponent extends AbstractComponent implements
                 '#horizontal' => true,
                 '#default_value' => !empty($this->_config['logout_btn']),
             ],
+            'show_others' => [
+                '#type' => 'checkbox',
+                '#title' => __("Include other user's posts", 'directories-frontend'),
+                '#horizontal' => true,
+                '#default_value' => !empty($this->_config['show_others']),
+            ],
+            'enable_public' => [
+                '#type' => 'checkbox',
+                '#title' => __('Enable public dashboard', 'directories-frontend'),
+                '#horizontal' => true,
+                '#default_value' => !empty($this->_config['enable_public']),
+            ],
         ];
+
+        if ($this->_application->getPlatform()->getName() === 'WordPress') {
+            // 3rd party plugin profile page integration
+            foreach (['BuddyPress', 'UM', 'PeepSo'] as $plugin_class) {
+                if (class_exists($plugin_class, false)) {
+                    $profile_class = __NAMESPACE__ . '\\WordPress\\' . $plugin_class . 'Profile';
+                    $settings = isset($this->_config['wordpress'][$plugin_class]) ? $this->_config['wordpress'][$plugin_class] : [];
+                    $parents = [$this->_name, 'wordpress', $plugin_class];
+                    $form[$this->_name]['wordpress'][$plugin_class] = (new $profile_class($this->_application, $settings))->getSettingsForm($parents);
+                }
+            }
+        }
     }
 
     public function onDirectoryAdminDirectoryAdded($directory, $values)
@@ -438,9 +481,11 @@ class DashboardComponent extends AbstractComponent implements
         return new Panel\PostsPanel($this->_application, $name);
     }
 
-    public function getPanelUrl($panelName, $linkName = '', $path ='', array $params = [], $ajax = false)
+    public function getPanelUrl($panelName, $linkName = '', $path ='', array $params = [], $ajax = false, AbstractIdentity $identity = null)
     {
-        $panel_path = '/' . $this->getSlug('dashboard') . '/' . $panelName;
+        $panel_path = '/' . $this->getSlug('dashboard')
+            . '/' . urlencode(isset($identity) && !$identity->isAnonymous() ? $identity->username : $this->_application->getUser()->username)
+            . '/' . $panelName;
         return $this->_application->Url(
             $this->_application->Filter('dashboard_panel_path', $panel_path, [$panelName, $ajax]) . $path,
             ['link' => $linkName] + $params,
@@ -449,10 +494,10 @@ class DashboardComponent extends AbstractComponent implements
         );
     }
 
-    public function getPostsPanelUrl($entityOrBundle, $path = '', array $params = [], $ajax = false)
+    public function getPostsPanelUrl(Entity\Type\IEntity $entity, $path = '', array $params = [], $ajax = false)
     {
-        if (!$bundle = $this->_application->Entity_Bundle($entityOrBundle)) {
-            throw new Exception\InvalidArgumentException('Invalid bundle: ' . $entityOrBundle);
+        if (!$bundle = $this->_application->Entity_Bundle($entity)) {
+            throw new Exception\InvalidArgumentException('Invalid bundle');
         }
 
         return $this->getPanelUrl('dashboard_posts_' . $bundle->group, $bundle->name, $path, $params, $ajax);
@@ -467,11 +512,106 @@ class DashboardComponent extends AbstractComponent implements
         $url_requested = (string)Request::url(false);
         if (strpos($url_requested, $url) === 0
             && ($_path = substr($url_requested, strlen($url)))
+            && ($_path = trim($_path, '/'))
         ) {
             $ret['path'] = [
-                'path' => $path . '/' . trim($_path, '/'), // add dashboard panel path
+                'path' => $path . '/' . $_path, // add dashboard panel path
                 'params' => empty($_REQUEST) ? [] : $_REQUEST,
             ];
+            // Set user name as title if viewing other user's profile
+            if (($_paths = explode('/', $_path))
+                && urldecode($_paths[0]) !== $this->_application->getUser()->username
+                && ($identity = $this->_application->getPlatform()->getUserIdentityFetcher()->fetchByUsername($_paths[0]))
+                && (!$identity->isAnonymous())
+            ) {
+                $ret['title'] = $identity->name;
+            }
+        }
+    }
+
+    public function getActivePanels(AbstractIdentity $identity = null)
+    {
+        $panels = [];
+        $panels_available = $this->_application->Dashboard_Panels();
+        if (!empty($this->_config['panel']['panels']['default'])) {
+            foreach ($this->_config['panel']['panels']['default'] as $panel_name) {
+                if (!isset($panels_available[$panel_name])
+                    || (!$panel = $this->_application->Dashboard_Panels_impl($panel_name, true))
+                    || (!$links = $panel->panelHtmlLinks(false, true, $identity))
+                ) continue;
+
+                $panel->dashboardPanelOnLoad();
+
+                if ($panel->dashboardPanelInfo('labellable')
+                    && isset($this->_config['panel']['panels']['options'][$panel_name])
+                ) {
+                    $panel_label = $this->_config['panel']['panels']['options'][$panel_name];
+                } else {
+                    $panel_label = $panel->dashboardPanelLabel();
+                }
+                $panels[$panel_name] = array(
+                    'title' => $panel_label,
+                    'links' => $links,
+                    'wp_um_icon' => $panel->dashboardPanelInfo('wp_um_icon'), // WP Ultimate Member profile tab icon
+                );
+            }
+        }
+        return $panels;
+    }
+
+    public function onCorePlatformWordPressInit()
+    {
+        if ($this->_application->getPlatform()->getName() !== 'WordPress'
+            || $this->_application->getPlatform()->isAdmin()
+        ) return;
+
+        // 3rd party plugin profile page integration
+        foreach (['BuddyPress', 'UM', 'PeepSo'] as $plugin_class) {
+            if (class_exists($plugin_class, false)
+                && !empty($this->_config['wordpress'][$plugin_class]['account_show'])
+            ) {
+                $profile_class = __NAMESPACE__ . '\\WordPress\\' . $plugin_class . 'Profile';
+                $settings = ['_own_profile_only' => empty($this->_config['enable_public'])] + $this->_config['wordpress'][$plugin_class];
+                new $profile_class($this->_application, $settings);
+            }
+        }
+    }
+
+    public function onCoreAccessRouteFilter(&$result, Context $context, $route, $paths)
+    {
+        if (!$result
+            || $context->isEmbed()
+            || $this->_application->getPlatform()->getName() !== 'WordPress'
+            || $this->_application->getPlatform()->isAdmin()
+            || Request::isXhr()
+            || Request::isPostMethod()
+            || $paths[0] !== $this->getSlug('dashboard')
+        ) return;
+
+        // Redirect dashboard access to 3rd party plugin profile page?
+        foreach (['BuddyPress', 'UM', 'PeepSo'] as $plugin_class) {
+            if (class_exists($plugin_class, false)
+                && !empty($this->_config['wordpress'][$plugin_class]['account_redirect'])
+                && !empty($this->_config['wordpress'][$plugin_class]['account_show'])
+            ) {
+                $profile_class = __NAMESPACE__ . '\\WordPress\\' . $plugin_class . 'Profile';
+                $settings = ['_own_profile_only' => empty($this->_config['enable_public'])] + $this->_config['wordpress'][$plugin_class];
+                (new $profile_class($this->_application, $settings))->redirectDashboardAccess($context, $paths);
+                if ($context->isRedirect()) {
+                    $result = false;
+                    return;
+                }
+            }
+        }
+    }
+
+    public function onCoreUserLinkAttrFilter(&$attr, $identity)
+    {
+        if (!empty($this->_config['enable_public'])
+            && !$identity->isAnonymous()
+        ) {
+            $attr['href'] = $this->_application->Url('/' . $this->getSlug('dashboard') . '/' . urlencode($identity->username));
+            $attr['target'] = $attr['rel'] = '';
         }
     }
 }

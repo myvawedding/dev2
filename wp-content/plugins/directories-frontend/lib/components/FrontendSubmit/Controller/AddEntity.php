@@ -28,7 +28,10 @@ class AddEntity extends AbstractAddEntity
                 return $this->_redirectGuest($context, $formStorage, $redirect_bundle);
             }
         } else {
-            if (empty($submittable_bundles)) return;
+            if (empty($submittable_bundles)) {
+                $context->setError(__('There is no submittable content.', 'drts'));
+                return;
+            }
         }
 
         $steps = parent::_getSteps($context, $formStorage);
@@ -86,5 +89,13 @@ class AddEntity extends AbstractAddEntity
         $bundle = $this->_getBundle($context, $formStorage);
 
         return sprintf(__('%s: %s'), $bundle->getLabel('add'), $bundle->getGroupLabel());
+    }
+
+    protected function _getRedirectGuestUrlParams(Context $context, array $formStorage)
+    {
+        $ret = parent::_getRedirectGuestUrlParams($context, $formStorage);
+        $ret[] = 'bundle';
+
+        return $ret;
     }
 }

@@ -3,7 +3,7 @@ namespace SabaiApps\Directories\Component\Dashboard\Panel;
 
 use SabaiApps\Directories\Application;
 use SabaiApps\Directories\Exception;
-use SabaiApps\Directories\Request;
+use SabaiApps\Framework\User\AbstractIdentity;
 
 class PostsPanel extends AbstractPanel
 {
@@ -37,7 +37,7 @@ class PostsPanel extends AbstractPanel
         }
     }
 
-    protected function _dashboardPanelLinks()
+    protected function _dashboardPanelLinks(AbstractIdentity $identity = null)
     {
         if (!$bundles = $this->_application->Entity_Bundles(null, 'Directory', $this->_bundleGroup)) return;
 
@@ -45,7 +45,9 @@ class PostsPanel extends AbstractPanel
         $weight = 0;
         $entity_type = null;
         foreach ($bundles as $bundle) {
-            if (!empty($bundle->info['is_taxonomy'])) continue;
+            if (!empty($bundle->info['is_taxonomy'])
+                || (isset($identity) && empty($bundle->info['public']))
+            ) continue;
 
             ++$weight;
             $ret[$bundle->name] = array(
@@ -56,30 +58,69 @@ class PostsPanel extends AbstractPanel
             $entity_type = $bundle->entitytype_name;
         }
 
-        $user_id = $this->_application->getUser()->id;
+        $user_id = isset($identity) ? $identity->id : $this->_application->getUser()->id;
         $language = $this->_application->getPlatform()->getCurrentLanguage();
         $cache_id = 'dashboard_post_counts_' . $this->_bundleGroup . '_' . $user_id . '_' . $language;
+        $show_others = false;
+        if (!isset($identity)
+            && ($show_others = $this->_application->getComponent('Dashboard')->getConfig('show_others'))
+        ) {
+            $cache_id .= '_o' . (int)$show_others;
+        }
         if (!$counts = $this->_application->getPlatform()->getCache($cache_id, 'content')) {
+            $counts = [];
             if (!empty($ret)) {
-                $statuses = array('publish', 'pending', 'draft', 'private');
-                foreach (array_keys($statuses) as $key) {
-                    $statuses[$key] = $this->_application->Entity_Status($entity_type, $statuses[$key]);
+                $statuses = [];
+                $valid_status_keys = isset($identity) ? ['publish'] : ['publish', 'pending', 'draft', 'private'];
+                foreach ($valid_status_keys as $status_key) {
+                    $statuses[$status_key] = $this->_application->Entity_Status($entity_type, $status_key);
                 }
-                $counts = $this->_application->Entity_Query($entity_type)
-                    ->fieldIsIn('bundle_name', array_keys($ret))
-                    ->fieldIsIn('status', $statuses)
-                    ->fieldIs('author', $user_id)
-                    ->groupByField('bundle_name')
-                    ->count();
-            } else {
-                $counts = [];
+
+                foreach (array_keys($ret) as $bundle_name) {
+                    if ($show_others
+                        && ($this->_application->HasPermission('entity_edit_others_' . $bundle_name)
+                            || $this->_application->HasPermission('entity_delete_others_' . $bundle_name))
+                    ) {
+                        $other_statuses = $statuses;
+                        if (!$this->_application->HasPermission('entity_edit_published_' . $bundle_name)
+                            && !$this->_application->HasPermission('entity_delete_published_' . $bundle_name)
+                        ) {
+                            unset($other_statuses['publish']);
+                        }
+                        if (!$this->_application->HasPermission('entity_edit_private_' . $bundle_name)
+                            && !$this->_application->HasPermission('entity_delete_private_' . $bundle_name)
+                        ) {
+                            unset($other_statuses['private']);
+                        }
+                        $counts[$bundle_name] = $this->_application->Entity_Query($entity_type)
+                            ->fieldIs('bundle_name', $bundle_name)
+                            ->startCriteriaGroup('OR')
+                                ->startCriteriaGroup('AND')
+                                    ->fieldIsIn('status', $statuses)
+                                    ->fieldIs('author', $user_id)
+                                ->finishCriteriaGroup()
+                                ->startCriteriaGroup('AND')
+                                    ->fieldIsIn('status', $other_statuses)
+                                    ->fieldIsNot('author', $user_id)
+                                ->finishCriteriaGroup()
+                            ->finishCriteriaGroup()
+                            ->count();
+                    } else {
+                        $counts[$bundle_name] = $this->_application->Entity_Query($entity_type)
+                            ->fieldIs('bundle_name', $bundle_name)
+                            ->fieldIsIn('status', $statuses)
+                            ->fieldIs('author', $user_id)
+                            ->count();
+                    }
+                }
             }
-            $this->_application->getPlatform()->setCache($counts, $cache_id, 600, 'content'); // cache 10 min
+            $this->_application->getPlatform()->setCache($counts, $cache_id, 3600, 'content'); // cache 1 hour
         }
         foreach (array_keys($ret) as $bundle_name) {
             if (empty($counts[$bundle_name])) {
-                // No posts, hide if child bundle or no permission to create posts for the bundle
+                // No posts, hide if child bundle, public profile, or no permission to create posts for the bundle
                 if (!empty($bundles[$bundle_name]->info['parent'])
+                    || isset($identity)
                     || !$this->_application->HasPermission('entity_create_' . $bundle_name)
                 ) {
                     unset($ret[$bundle_name]);
@@ -92,33 +133,35 @@ class PostsPanel extends AbstractPanel
         return $ret;
     }
 
-    public function dashboardPanelContent($link, array $params)
+    public function dashboardPanelContent($link, array $params, AbstractIdentity $identity = null)
     {
         if (!$bundle = $this->_application->Entity_Bundle($link)) {
             throw new Exception\RuntimeException('Invalid bundle: ' . $link);
         }
 
-        $settings = array(
+        $dashboard_config = $this->_application->getComponent('Dashboard')->getConfig();
+
+        $settings = [
             'mode' => 'dashboard_dashboard',
-            'settings' => array(
-                'filter' => array(
+            'settings' => [
+                'filter' => [
                     'show' => false,
-                ),
-                'pagination' => array(
+                ],
+                'pagination' => [
                     'perpage' => 20,
                     'allow_perpage' => true,
-                    'perpages' => array(20, 30, 50),
-                ),
-                'other' => array(
+                    'perpages' => [20, 30, 50],
+                ],
+                'other' => [
                     'add' => [
                         'show' => empty($bundle->info['parent']),
-                        'show_label' => (bool)$this->_application->getComponent('Dashboard')->getConfig('add_show_label'),
+                        'show_label' => !empty($dashboard_config['add_show_label']),
                     ],
                     'num' => true,
-                ),
-                'sort' => array(
+                ],
+                'sort' => [
                     'default' => $default_sort = $bundle->entitytype_name . '_published',
-                    'options' => array(
+                    'options' => [
                         $default_sort,
                         $bundle->entitytype_name . '_title',
                         $bundle->entitytype_name . '_published,asc',
@@ -126,26 +169,49 @@ class PostsPanel extends AbstractPanel
                         'voting_rating',
                         'voting_bookmark',
                         'voting_updown',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+                'query' => [
+                    'user_id' => isset($identity) ? $identity->id : null,
+                ],
+            ],
+        ];
         // Sorting options for non-public bundles can not be configured, therefore force sort by newest/oldest
         if (empty($bundle->info['public'])) {
-            $settings['settings']['sort']['options'] = array(
+            if (isset($identity)) return; // this should not happen but just in case
+
+            $settings['settings']['sort']['options'] = [
                 $default_sort,
                 $bundle->entitytype_name . '_published,asc',
-            );
-        }
+            ];
+        } else {
+            if (!isset($identity)) {
+                $settings['settings']['query']['status'] = ['publish', 'pending', 'draft', 'private'];
 
-        // Set current user ID. No need for non-public bundles as it is done automatically by ViewEntities controller
-        if (!empty($bundle->info['public'])) {
-            $settings['settings']['query']['fields'][$bundle->entitytype_name . '_author'] = $this->_application->getUser()->id;
+                if (!empty($dashboard_config['show_others'])) {
+                    // Set statuses for other user posts if permitted
+                    if ($this->_application->HasPermission('entity_edit_others_' . $bundle->name)
+                        || $this->_application->HasPermission('entity_delete_others_' . $bundle->name)
+                    ) {
+                        $status_others = ['pending', 'draft'];
+                        if ($this->_application->HasPermission('entity_edit_published_' . $bundle->name)
+                            || $this->_application->HasPermission('entity_delete_published_' . $bundle->name)
+                        ) {
+                            $status_others[] = 'publish';
+                        }
+                        if ($this->_application->HasPermission('entity_edit_private_' . $bundle->name)
+                            || $this->_application->HasPermission('entity_delete_private_' . $bundle->name)
+                        ) {
+                            $status_others[] = 'private';
+                        }
+                        $settings['settings']['query']['status_others'] = $status_others;
+                    }
+                }
+            }
         }
-        $settings['settings']['query']['status'] = ['publish', 'pending', 'draft', 'private'];
 
         return $this->_application->getPlatform()->render(
-            $this->_application->Entity_BundlePath($bundle),
+            $bundle->getPath(),
             ['settings' => $settings]
         );
     }

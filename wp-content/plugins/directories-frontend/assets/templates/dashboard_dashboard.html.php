@@ -1,4 +1,4 @@
-<div class="drts-dashboard">
+<div class="drts-dashboard<?php if (isset($dashboard_user)):?> drts-dashboard-user<?php endif;?>">
     <div class="drts-dashboard-aside">
         <div class="drts-dashboard-links<?php if (count($panels) > 1):?> <?php echo DRTS_BS_PREFIX;?>accordion <?php endif;?>" id="<?php echo $dashboard_id;?>-panels">
 <?php foreach ($panels as $panel_name => $panel): $show_panel = !empty($panel['active']) || empty($accordion);?>

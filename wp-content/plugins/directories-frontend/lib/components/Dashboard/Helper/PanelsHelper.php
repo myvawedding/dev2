@@ -3,7 +3,6 @@ namespace SabaiApps\Directories\Component\Dashboard\Helper;
 
 use SabaiApps\Directories\Application;
 use SabaiApps\Directories\Exception;
-use SabaiApps\Directories\Component\Dashboard\Panel\IPanel;
 
 class PanelsHelper
 {

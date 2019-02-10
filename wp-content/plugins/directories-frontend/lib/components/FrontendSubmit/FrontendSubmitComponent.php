@@ -20,7 +20,7 @@ class FrontendSubmitComponent extends AbstractComponent implements
     CSV\IExporters,
     CSV\IImporters
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories-frontend';
+    const VERSION = '1.2.23', PACKAGE = 'directories-frontend';
     
     public static function description()
     {
@@ -29,13 +29,14 @@ class FrontendSubmitComponent extends AbstractComponent implements
     
     public function systemMainRoutes($lang = null)
     {
-        $routes = array(
-            '/' . $this->getSlug('login', $lang) => array(
+        $routes = [];
+        if ($this->hasSlug('login', $lang)) {
+            $routes['/' . $this->getSlug('login', $lang)] = [
                 'controller' => 'LoginOrRegister',
                 'access_callback' => true,
                 'callback_path' => 'login',
-            ),
-        );
+            ];
+        }
         foreach ($this->_application->Entity_Bundles() as $bundle) {
             if (!$this->_application->isComponentLoaded($bundle->component)
                 || !empty($bundle->info['is_taxonomy'])
@@ -147,6 +148,7 @@ class FrontendSubmitComponent extends AbstractComponent implements
                 'admin_title' => __('Login/Registration', 'directories-frontend'),
                 'title' => __('Login or Register', 'directories-frontend'),
                 'wp_shortcode' => 'drts-frontend-login',
+                'required' => false,
             ),
         );
     }

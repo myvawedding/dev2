@@ -56,7 +56,7 @@ class DeletePost extends Form\Controller
                     return $this->Entity_PermalinkUrl($parent_entity);
                 }
             }
-            return $this->Url($this->Entity_BundlePath($bundle));
+            return $this->Url($bundle->getPath());
         }
         
         return $this->getComponent('Dashboard')->getPostsPanelUrl($context->entity);

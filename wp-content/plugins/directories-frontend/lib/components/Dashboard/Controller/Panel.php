@@ -11,7 +11,11 @@ class Panel extends Controller
         $context->clearTemplates();
         if ($context->dashboard_panel) {
             $context->content = $this->Dashboard_Panels_impl($context->dashboard_panel)
-                ->dashboardPanelContent($context->dashboard_panel_link, $context->getRequest()->getParams());
+                ->dashboardPanelContent(
+                    $context->dashboard_panel_link,
+                    $context->getRequest()->getParams(),
+                    isset($context->dashboard_user) ? $context->dashboard_user : null
+                );
         } else {
             $context->content = __('No dashboard panels found.', 'directories-frontend');
         }

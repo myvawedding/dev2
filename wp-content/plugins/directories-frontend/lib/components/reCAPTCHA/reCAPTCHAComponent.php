@@ -7,7 +7,7 @@ use SabaiApps\Directories\Component\Entity;
 
 class reCAPTCHAComponent extends AbstractComponent implements Display\IElements
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories-frontend';
+    const VERSION = '1.2.23', PACKAGE = 'directories-frontend';
 
     public static function description()
     {

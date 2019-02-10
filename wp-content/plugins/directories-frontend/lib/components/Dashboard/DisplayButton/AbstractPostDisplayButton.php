@@ -19,9 +19,14 @@ abstract class AbstractPostDisplayButton extends Display\Button\AbstractButton
     
     public function displayButtonLink(Entity\Model\Bundle $bundle, Entity\Type\IEntity $entity, array $settings, $displayName)
     {
-        if (!$this->_application->Entity_IsAuthor($entity) // dashboard should allow own content only
-            || !$this->_application->Entity_IsRoutable($bundle, $this->_route, $entity)
-        ) return;
+        // Do not show if other user's post and include other users' posts option is not enabled
+        if ($entity->getAuthorId() !== $this->_application->getUser()->id
+            && !$this->_application->getComponent('Dashboard')->getConfig('show_others')
+        ) {
+            return;
+        }
+
+        if (!$this->_application->Entity_IsRoutable($bundle, $this->_route, $entity)) return;
         
         if ($this->_application->getUser()->isAnonymous()) {
             if (!$this->_allowGuest) return;
@@ -64,7 +69,7 @@ abstract class AbstractPostDisplayButton extends Display\Button\AbstractButton
 
         $path = $this->_route === 'edit' ? '/' : '/' . $this->_route;
 
-        return $this->_application->getComponent('Dashboard')->getPostsPanelUrl($bundle, '/posts/' . $entity->getId() . $path, $params, true);
+        return $this->_application->getComponent('Dashboard')->getPostsPanelUrl($entity, '/posts/' . $entity->getId() . $path, $params, true);
     }
     
     protected function _getLabel(Entity\Model\Bundle $bundle, Entity\Type\IEntity $entity, array $settings)

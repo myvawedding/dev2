@@ -13,7 +13,7 @@ class AddEntitySlugHelper
                 throw new RuntimeException('Invalid bundle parameter.');
             }
             if (!empty($bundle->info['parent'])) {
-                $path = trim($application->Entity_BundlePath($bundle, true, $lang), '/');
+                $path = trim($bundle->getPath(true, $lang), '/');
                 return empty($bundle->info['public']) ? $path . '_add' : $path . '/add';
             }
 
