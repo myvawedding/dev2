@@ -22,7 +22,7 @@ class PaymentComponent extends AbstractComponent implements
     CSV\IExporters,
     CSV\IImporters
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories-payments';
+    const VERSION = '1.2.23', PACKAGE = 'directories-payments';
     const FEATURE_STATUS_PENDING = 0, FEATURE_STATUS_APPLIED = 1, FEATURE_STATUS_UNAPPLIED = 2;
     
     protected $_paymentComponentName;
@@ -60,36 +60,36 @@ class PaymentComponent extends AbstractComponent implements
         $routes = [];
         if ($this->_application->isComponentLoaded('Dashboard')) {
             $dashboard_slug = '/' . $this->_application->getComponent('Dashboard')->getSlug('dashboard', $lang);
-            $routes[$dashboard_slug . '/:panel_name/payment_orders'] = [
+            $routes[$dashboard_slug . '/:user_name/:panel_name/payment_orders'] = [
                 'controller' => 'DashboardOrders',
                 'callback_path' => 'dashboard',
             ];
-            $routes[$dashboard_slug . '/:panel_name/payment_subscriptions'] = [
+            $routes[$dashboard_slug . '/:user_name/:panel_name/payment_subscriptions'] = [
                 'controller' => 'DashboardSubscriptions',
                 'callback_path' => 'dashboard',
             ];
-            $routes[$dashboard_slug . '/:panel_name/posts/:entity_id/submit'] = array(
+            $routes[$dashboard_slug . '/:user_name/:panel_name/posts/:entity_id/submit'] = array(
                 'controller' => 'SubmitPost',
                 'access_callback' => true,
                 'title_callback' => true,
                 'callback_path' => 'submit',
                 'priority' => 5,
             );
-            $routes[$dashboard_slug . '/:panel_name/posts/:entity_id/renew'] = array(
+            $routes[$dashboard_slug . '/:user_name/:panel_name/posts/:entity_id/renew'] = array(
                 'controller' => 'SubmitPost',
                 'access_callback' => true,
                 'title_callback' => true,
                 'callback_path' => 'renew',
                 'priority' => 5,
             );
-            $routes[$dashboard_slug . '/:panel_name/posts/:entity_id/upgrade'] = array(
+            $routes[$dashboard_slug . '/:user_name/:panel_name/posts/:entity_id/upgrade'] = array(
                 'controller' => 'SubmitPost',
                 'access_callback' => true,
                 'title_callback' => true,
                 'callback_path' => 'upgrade',
                 'priority' => 5,
             );
-            $routes[$dashboard_slug . '/:panel_name/posts/:entity_id/order_addon'] = array(
+            $routes[$dashboard_slug . '/:user_name/:panel_name/posts/:entity_id/order_addon'] = array(
                 'controller' => 'OrderAddon',
                 'title_callback' => true,
                 'access_callback' => true,
@@ -116,7 +116,7 @@ class PaymentComponent extends AbstractComponent implements
                     'callback_component' => 'FrontendSubmit',
                     'priority' => 5,
                 );
-                $routes[$this->_application->Entity_BundlePath($bundle) . '/pricing'] = array(
+                $routes[$bundle->getPath() . '/pricing'] = array(
                     'controller' => 'PricingTable',
                     'title_callback' => true,
                     'callback_path' => 'pricing',
@@ -416,7 +416,7 @@ class PaymentComponent extends AbstractComponent implements
             if (!count($entities)) continue;
             
             // Group entities expiring and those need deactivated
-            $entities_expiring = $entities_to_deactivate = [];
+            $entities_expiring = $entities_expired = [];
             foreach (array_keys($entities) as $entity_id) {
                 if (!$plan = $entities[$entity_id]->getSingleFieldValue('payment_plan')) { // this should not happen, but just in case
                     unset($entities[$entity_id]);
@@ -430,25 +430,25 @@ class PaymentComponent extends AbstractComponent implements
                 }
             
                 if ($plan['expires_at'] + $grace_period_seconds < time()) { // passed renewal redemption period?
-                    $entities_to_deactivate[$entity_id] = $entities[$entity_id];
+                    $entities_expired[$entity_id] = $entities[$entity_id];
                     unset($entities[$entity_id]);
                     continue;
                 }
             }
         
             // Deactivate and change status to Draft for entities that have passed renewal redemption period
-            if (!empty($entities_to_deactivate)
+            if (!empty($entities_expired)
                 && (!defined('DRTS_PAYMENT_NO_DEACTIVATION') || !DRTS_PAYMENT_NO_DEACTIVATION)
             ) {
-                $progress->set(sprintf(__('Found %d item(s) to be deactivated.', 'directories-payments'), count($entities_to_deactivate)));
-                foreach (array_keys($entities_to_deactivate) as $entity_id) {
-                    $this->_application->Entity_Save($entities_to_deactivate[$entity_id], array(
-                        'status' => $status = $this->_application->Entity_Status($entities_to_deactivate[$entity_id]->getType(), 'draft'),
+                $progress->set(sprintf(__('Found %d item(s) to be deactivated.', 'directories-payments'), count($entities_expired)));
+                foreach (array_keys($entities_expired) as $entity_id) {
+                    $this->_application->Entity_Save($entities_expired[$entity_id], array(
+                        'status' => $status = $this->_application->Entity_Status($entities_expired[$entity_id]->getType(), 'draft'),
                         'payment_plan' => array('deactivated_at' => time()),
                     ));
-                    $progress->set(sprintf(__('Deactivated item: %s', 'directories-payments'), $entities_to_deactivate[$entity_id]->getTitle()));
+                    $progress->set(sprintf(__('Deactivated item: %s', 'directories-payments'), $entities_expired[$entity_id]->getTitle()));
                     // Deactivate translated entities
-                    foreach ($this->_application->Entity_Translations($entities_to_deactivate[$entity_id], false) as $translated_entity) {
+                    foreach ($this->_application->Entity_Translations($entities_expired[$entity_id], false) as $translated_entity) {
                         $this->_application->Entity_Save($translated_entity, array(
                             'status' => $status,
                             'payment_plan' => array('deactivated_at' => time()),
@@ -457,7 +457,7 @@ class PaymentComponent extends AbstractComponent implements
                 }
             
                 // Hook for deactivated entities
-                $this->_application->Action('payment_entities_deactivated', array($entity_type, $entities_to_deactivate, $progress));
+                $this->_application->Action('payment_entities_deactivated', array($entity_type, $entities_expired, $progress));
             }
             
             // Hook for expiring entities
@@ -594,9 +594,10 @@ class PaymentComponent extends AbstractComponent implements
 
                 // Make sure it has expired
                 $expires_at = $entity->getSingleFieldValue('payment_plan', 'expires_at');
+                $grace_period = isset($this->_config['renewal']['grace_period_days']) ? (int)$this->_config['renewal']['grace_period_days'] : 30;
                 if (empty($expires_at) // never expires
                     || $expires_at > time() // has not yet expired
-                    || $expires_at + 86400 * 30 < time() // has passed renewal redemption period
+                    || $expires_at + 86400 * $grace_period < time() // has passed renewal redemption period
                 ) return false;
                 
                 // Check perm

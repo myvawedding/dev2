@@ -2,6 +2,7 @@
 namespace SabaiApps\Directories\Component\Payment\DashboardPanel;
 
 use SabaiApps\Directories\Component\Dashboard;
+use SabaiApps\Framework\User\AbstractIdentity;
 
 class PaymentsDashboardPanel extends Dashboard\Panel\AbstractPanel
 {    
@@ -9,6 +10,7 @@ class PaymentsDashboardPanel extends Dashboard\Panel\AbstractPanel
     {   
         return array(
             'weight' => 10,
+            'wp_um_icon' => 'um-faicon-money',
         );
     }
     
@@ -17,8 +19,10 @@ class PaymentsDashboardPanel extends Dashboard\Panel\AbstractPanel
         return __('Payments', 'directories-payments');
     }
     
-    protected function _dashboardPanelLinks()
+    protected function _dashboardPanelLinks(AbstractIdentity $identity = null)
     {
+        if (isset($identity)) return;
+
         if (!$payment_component = $this->_application->getComponent('Payment')->getPaymentComponent()) return;
         
         $ret = [
@@ -37,8 +41,10 @@ class PaymentsDashboardPanel extends Dashboard\Panel\AbstractPanel
         return $ret;
     }
     
-    public function dashboardPanelContent($link, array $params)
+    public function dashboardPanelContent($link, array $params, AbstractIdentity $identity = null)
     {
+        if (isset($identity)) return;
+
         switch ($link) {
             case 'subscriptions':
                 $path = '/payment_subscriptions';

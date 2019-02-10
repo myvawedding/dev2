@@ -10,7 +10,7 @@ use SabaiApps\Directories\Request;
 
 class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories-payments';
+    const VERSION = '1.2.23', PACKAGE = 'directories-payments';
 
     public static function description()
     {
@@ -377,18 +377,24 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
             }
 
             if ($product->get_sabai_plan_type() !== 'addon') {
+                $values_to_save = [];
                 if (!$entity->isPublished() // may already be published if renew/upgrade/downgrade
                     && !$entity->isPending()
                 ) {
                     // Update post status to pending
+                    $values_to_save['status'] = $this->_application->Entity_Status($entity->getType(), 'pending');
+                }
+                if (!$entity->getAuthorId()
+                    && $order->get_user_id()
+                ) {
+                    // Guest has created an account on checkout
+                    $values_to_save['author'] = $order->get_user_id();
+                }
+                if (!empty($values_to_save)) {
                     try {
-                        $entity = $this->_application->Entity_Save($entity, array(
-                            'status' => $this->_application->Entity_Status($entity->getType(), 'pending'),
-                        ));
+                        $entity = $this->_application->Entity_Save($entity, $values_to_save);
                     } catch (Exception\IException $e) {
-                        $this->_application->logError(
-                            'Failed updating post status to pending. Entity ID: ' . $entity->getId() . '; Error: ' . $e->getMessage()
-                        );
+                        $this->_application->logError($e->getMessage());
                     }
                 }
             }
@@ -521,7 +527,9 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
 
     public function paymentGetPlan($id)
     {
-        if (!$product = wc_get_product($id)) return;
+        if ((!$product = wc_get_product($id))
+            || !$product instanceof \SabaiApps\Directories\Component\WooCommerce\IProduct
+        ) return;
 
         return new PaymentPlan($product);
     }
@@ -890,7 +898,7 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
 
                     $panel->dashboardPanelOnLoad();
                     $container = 'drts-dashboard-main';
-                    $path = '/' . $application->getComponent('Dashboard')->getSlug('dashboard') . '/'. $panel_name;
+                    $path = '/' . $application->getComponent('Dashboard')->getSlug('dashboard') . '/'. urlencode($application->getUser()->username) . '/' . $panel_name;
                     if ($endpoint_extra_path = get_query_var($endpoint)) {
                         $path .= '/' . $endpoint_extra_path;
                         // extract link name if posts panel
@@ -908,7 +916,6 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
                         }
                         echo '</nav></div>';
                     }
-                    echo $application->Dashboard_Panels_js('#' . $container, false, false);
                     echo $application->getPlatform()->render(
                         $path,
                         ['is_dashboard' => false], // attributes
@@ -916,6 +923,7 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
                         false, // title
                         $container
                     );
+                    echo $application->Dashboard_Panels_js('#' . $container, false, false);
                     if (($theme = wp_get_theme())
                         && $theme['Name'] === 'Storefront'
                     ) {
@@ -980,7 +988,8 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
 
     public function onCoreAccessRouteFilter(&$result, $context, $route, $paths)
     {
-        if (!$result
+        if (is_admin()
+            || !$result
             || Request::isXhr()
             || Request::isPostMethod()
             || $context->isEmbed()
@@ -992,17 +1001,22 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
             || (!$url = $this->_getMyAccountPageUrl())
         ) return;
 
+        // Do not redirect if viewing other user's profile
+        if (!empty($paths[1])
+            && (urldecode($paths[1]) !== $this->_application->getUser()->username)
+        ) return;
+
         $result = false;
-        unset($paths[0]);
-        if (isset($paths[1])) {
-            $paths[1] = 'drts-' . $paths[1];
+        unset($paths[0], $paths[1]);
+        if (isset($paths[2])) {
+            $paths[2] = 'drts-' . $paths[2];
             $url = rtrim($url, '/');
             $url .= '/' . implode('/', $paths);
         }
         $params = $context->getRequest()->getParams();
-        // Remove panel_name from params since it is already in the path
-        unset($params['panel_name']);
-        $context->setRedirect($url . '?' . implode('&', $params));
+        // Remove params already in the path
+        unset($params['panel_name'], $params['entity_id']);
+        $context->setRedirect($url . '?' . http_build_query($params, '', '&'));
     }
 
     public function onEntityCreateBundlesCommitted(array $bundles, array $bundleInfo)
@@ -1057,19 +1071,21 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
                     $this->_onSubscriptionStatusUpdated($subscription);
                 }
                 break;
-            case 'cancelled':
             case 'expired':
-                $this->_onSubscriptionStatusUpdated($subscription, true);
+                $this->_onSubscriptionStatusUpdated($subscription, 'expire');
+                break;
+            case 'cancelled':
+                $this->_onSubscriptionStatusUpdated($subscription, 'unapply');
                 break;
             case 'on-hold':
                 if ($oldStatus === 'active') {
-                    $this->_onSubscriptionStatusUpdated($subscription, true);
+                    $this->_onSubscriptionStatusUpdated($subscription, 'unapply');
                 }
                 break;
         }
     }
 
-    protected function _onSubscriptionStatusUpdated($subscription, $unapply = false)
+    protected function _onSubscriptionStatusUpdated($subscription, $action = null)
     {
         if (!$order = $subscription->get_parent()) {
             $this->_application->logError('Failed fetching parent order for subscription ' . $subscription->get_id());
@@ -1090,10 +1106,18 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
             }
 
             try {
-                if ($unapply) {
-                    $this->_application->WooCommerce_Features_unapply($entity, $product, $item);
-                } else {
-                    $this->_application->WooCommerce_Features_apply($entity, $product, $item);
+                switch ($action) {
+                    case 'unapply':
+                        $this->_application->WooCommerce_Features_unapply($entity, $product, $item);
+                        break;
+                    case 'expire':
+                        if ($payment_plan = $entity->getSingleFieldValue('payment_plan')) { // should never fall
+                            $payment_plan['expires_at'] = time(); // Payment component will take care expired entities
+                            $this->_application->Entity_Save($entity, ['payment_plan' => $payment_plan]);
+                        }
+                        break;
+                    default:
+                        $this->_application->WooCommerce_Features_apply($entity, $product, $item);
                 }
             } catch (Exception\IException $e) {
                 $this->_application->logError($e);

@@ -10,7 +10,7 @@ class FeaturesHelper
     /*
      * @throws \SabaiApps\Directories\Exception\IException
      */
-    public function apply(Application $application, Entity\Type\IEntity $entity, IProduct $product, \WC_Order_Item $item, $unapplyCurrent = true)
+    public function apply(Application $application, Entity\Type\IEntity $entity, IProduct $product, \WC_Order_Item $item)
     {
         if ($product->get_sabai_plan_type() !== 'addon') {
             $prev_status = [];
@@ -46,7 +46,7 @@ class FeaturesHelper
                 );
             }
         }
-        $application->Payment_Features_apply($entity, null, $item->get_id(), $unapplyCurrent);
+        $application->Payment_Features_apply($entity, null, $item->get_id());
     }
     
     /*

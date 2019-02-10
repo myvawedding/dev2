@@ -16,6 +16,11 @@ class PaymentPlan implements IPlan
     {
         return $this->_product->get_id();
     }
+
+    public function paymentPlanName()
+    {
+        return $this->_product->get_slug();
+    }
     
     public function paymentPlanBundleName()
     {

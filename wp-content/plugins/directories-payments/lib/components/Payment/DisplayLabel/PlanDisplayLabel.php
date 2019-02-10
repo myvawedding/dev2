@@ -20,6 +20,11 @@ class PlanDisplayLabel extends Display\Label\AbstractLabel
     {
         if (!$plan = $this->_application->Payment_Plan($entity)) return;
 
-        return $plan->paymentPlanTitle();
+        return [
+            'label' => $plan->paymentPlanTitle(),
+            'attr' => [
+                'data-plan-name' => $plan->paymentPlanName(),
+            ],
+        ];
     }
 }

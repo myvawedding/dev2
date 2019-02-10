@@ -198,23 +198,10 @@ class FeaturesHelper
         return $featureGroup;
     }
 
-    public function apply(Application $application, Entity\Type\IEntity $entity, $featureGroupId = null, $orderId = null, $unapplyCurrent = true)
+    public function apply(Application $application, Entity\Type\IEntity $entity, $featureGroupId = null, $orderId = null)
     {
         // Features are applied to claimed item (when claim approved), not to claim itself
         if ($entity->getBundleType() === 'claiming_claim') return;
-
-        // Unapply currently applied features?
-        if ($unapplyCurrent) {
-            $extra_data = $entity->getSingleFieldValue('payment_plan', 'extra_data');
-            if (!empty($extra_data['featuregroup_id'])) {
-                try {
-                    $current_feature_group = $this->group($application, $extra_data['featuregroup_id']);
-                    $this->_unapplyFeatures($application, $entity, $current_feature_group, $features_updated = [], false);
-                } catch (\Exception $e) {
-                    $application->logError($e);
-                }
-            }
-        }
 
         // Init
         $feature_group = $this->group($application, $featureGroupId, $orderId);

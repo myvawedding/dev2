@@ -4,6 +4,7 @@ namespace SabaiApps\Directories\Component\Payment;
 interface IPlan
 {
     public function paymentPlanId();
+    public function paymentPlanName();
     public function paymentPlanBundleName();
     public function paymentPlanType();
     public function paymentPlanTitle();

@@ -33,7 +33,7 @@ msgstr ""
 msgid "Enable payments"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:382, lib/components/Payment/DashboardPanel/PaymentsDashboardPanel.php:26, lib/components/Payment/FieldType/OrdersFieldType.php:11, lib/components/Payment/FieldWidget/OrdersFieldWidget.php:12
+#: lib/components/Payment/PaymentComponent.php:382, lib/components/Payment/DashboardPanel/PaymentsDashboardPanel.php:30, lib/components/Payment/FieldType/OrdersFieldType.php:11, lib/components/Payment/FieldWidget/OrdersFieldWidget.php:12
 msgid "Orders"
 msgstr ""
 
@@ -53,7 +53,7 @@ msgstr ""
 msgid "Found %d expired item(s)."
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:496, lib/components/Payment/PaymentComponent.php:719
+#: lib/components/Payment/PaymentComponent.php:496, lib/components/Payment/PaymentComponent.php:720
 msgid "Payment"
 msgstr ""
 
@@ -65,81 +65,81 @@ msgstr ""
 msgid "Configure features applied to items without any payment plan."
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:679
+#: lib/components/Payment/PaymentComponent.php:680
 msgid "Expiring item notification e-mail messages sent."
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:689
+#: lib/components/Payment/PaymentComponent.php:690
 msgid "Expired item notification e-mail messages sent."
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:699
+#: lib/components/Payment/PaymentComponent.php:700
 msgid "Deactivated item notification e-mail messages sent."
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:749
+#: lib/components/Payment/PaymentComponent.php:750
 msgid "Payment Component Settings"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:752
+#: lib/components/Payment/PaymentComponent.php:753
 msgid "Select payment component"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:753, lib/components/Payment/FieldWidget/PlanFieldWidget.php:69
+#: lib/components/Payment/PaymentComponent.php:754, lib/components/Payment/FieldWidget/PlanFieldWidget.php:69
 msgid "— Select —"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:760
+#: lib/components/Payment/PaymentComponent.php:761
 msgid "Plan Selection Settings"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:762
+#: lib/components/Payment/PaymentComponent.php:763
 msgid "Add \"No payment plan\" option"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:768
+#: lib/components/Payment/PaymentComponent.php:769
 msgid "Label"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:770
+#: lib/components/Payment/PaymentComponent.php:771
 msgid "No payment plan (FREE)"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:780
+#: lib/components/Payment/PaymentComponent.php:781
 msgid "Plan Renewal Settings"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:782
+#: lib/components/Payment/PaymentComponent.php:783
 msgid "Renewal grace period in days"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:793
+#: lib/components/Payment/PaymentComponent.php:794
 msgctxt "currency symbol"
 msgid "Re-activation fee (%s)"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:802
+#: lib/components/Payment/PaymentComponent.php:803
 msgid "Plan Upgrade/Downgrade Settings"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:804
+#: lib/components/Payment/PaymentComponent.php:805
 msgctxt "currency symbol"
 msgid "Switch plan fee (%s)"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:812
+#: lib/components/Payment/PaymentComponent.php:813
 msgid "Enable prorated discount"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:870
+#: lib/components/Payment/PaymentComponent.php:871
 msgid "Show items with a payment plan first"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:879
+#: lib/components/Payment/PaymentComponent.php:880
 msgid "Payment plan sort order"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:905
+#: lib/components/Payment/PaymentComponent.php:906
 msgid "Claim Rejected"
 msgstr ""
 
@@ -147,35 +147,35 @@ msgstr ""
 msgid "Plan Features"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:809
+#: lib/components/WooCommerce/WooCommerceComponent.php:817
 msgid "Purchase type"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:811
+#: lib/components/WooCommerce/WooCommerceComponent.php:819
 msgid "Purchase item"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:833
+#: lib/components/WooCommerce/WooCommerceComponent.php:841
 msgid "WooCommerce \"My account\" Page Integration"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:840
+#: lib/components/WooCommerce/WooCommerceComponent.php:848
 msgid "Show dashboard panels"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:844
+#: lib/components/WooCommerce/WooCommerceComponent.php:852
 msgid "Check this option to show dashboard panels on the WooCommerce \"My account\" page."
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:847
+#: lib/components/WooCommerce/WooCommerceComponent.php:855
 msgid "Redirect dashboard access"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:851
+#: lib/components/WooCommerce/WooCommerceComponent.php:859
 msgid "Check this option to redirect dashboard access to the WooCommerce \"My account\" page."
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:1111
+#: lib/components/WooCommerce/WooCommerceComponent.php:1135
 msgid "(Subscription plan)"
 msgstr ""
 
@@ -249,11 +249,11 @@ msgstr ""
 msgid "Additional Features"
 msgstr ""
 
-#: lib/components/Payment/DashboardPanel/PaymentsDashboardPanel.php:17
+#: lib/components/Payment/DashboardPanel/PaymentsDashboardPanel.php:19
 msgid "Payments"
 msgstr ""
 
-#: lib/components/Payment/DashboardPanel/PaymentsDashboardPanel.php:32
+#: lib/components/Payment/DashboardPanel/PaymentsDashboardPanel.php:36
 msgid "Subscriptions"
 msgstr ""
 
@@ -416,23 +416,23 @@ msgstr ""
 msgid "Prorated discount"
 msgstr ""
 
-#: lib/components/Payment/Helper/FeaturesHelper.php:272
+#: lib/components/Payment/Helper/FeaturesHelper.php:259
 msgid "Feature applied."
 msgstr ""
 
-#: lib/components/Payment/Helper/FeaturesHelper.php:274
+#: lib/components/Payment/Helper/FeaturesHelper.php:261
 msgid "Feature re-applied."
 msgstr ""
 
-#: lib/components/Payment/Helper/FeaturesHelper.php:279
+#: lib/components/Payment/Helper/FeaturesHelper.php:266
 msgid "Failed applying feature."
 msgstr ""
 
-#: lib/components/Payment/Helper/FeaturesHelper.php:317
+#: lib/components/Payment/Helper/FeaturesHelper.php:304
 msgid "Feature unapplied."
 msgstr ""
 
-#: lib/components/Payment/Helper/FeaturesHelper.php:320
+#: lib/components/Payment/Helper/FeaturesHelper.php:307
 msgid "Failed unapplying feature."
 msgstr ""
 

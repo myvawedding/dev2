@@ -154,10 +154,7 @@ class AddEntity extends FrontendSubmit\Controller\AddEntity
     protected function _getRedirectGuestUrlParams(Context $context, array $formStorage)
     {
         $ret = parent::_getRedirectGuestUrlParams($context, $formStorage);
-
-        if ($this->_isPaymentEnabled($context, $formStorage)) {
-            $ret[] = 'plan';
-        }
+        $ret[] = 'plan';
 
         return $ret;
     }
@@ -199,5 +196,15 @@ class AddEntity extends FrontendSubmit\Controller\AddEntity
             $ret['payment_plan'] = $plan;
         }
         return $ret;
+    }
+
+    protected function _getSubmitEntityForm(Context $context, array &$formStorage, $entityOrBundle, $btnLabel = null, $isEdit = null, $wrap = null)
+    {
+        $form = parent::_getSubmitEntityForm($context, $formStorage, $entityOrBundle, $btnLabel, $isEdit, $wrap);
+        $form['_drts_wordpress_skip_page_check'] = [
+            '#type' => 'hidden',
+            '#value' => 1,
+        ];
+        return $form;
     }
 }
