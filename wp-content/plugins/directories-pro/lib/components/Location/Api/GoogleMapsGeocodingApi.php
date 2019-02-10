@@ -25,10 +25,14 @@ class GoogleMapsGeocodingApi extends AbstractGoogleMapsApi implements IGeocoding
         $geocoding_settings = isset($settings['geocoding']) ? $settings['geocoding'] : [];
         $geocoding_settings += [
             'language' => $this->_application->Map_Api_language(),
-            'country' => empty($settings['api']['country']) ? '' : implode(',', $settings['api']['country']),
             'streetNumAfter' => defined('DRTS_LOCATION_GEOCODING_STREET_NUM_AFTER')
                 && DRTS_LOCATION_GEOCODING_STREET_NUM_AFTER,
         ];
+        if (!empty($settings['api']['country'])) {
+            $geocoding_settings['country'] = implode(',', $settings['api']['country']);
+        } else {
+            unset($geocoding_settings['country']);
+        }
         $handle = $this->_load('geocoding', true);
         $this->_application->getPlatform()->addJsInline($handle, sprintf(
             'var DRTS_Location_googlemapsGeocoding = %s;',
@@ -116,22 +120,22 @@ class GoogleMapsGeocodingApi extends AbstractGoogleMapsApi implements IGeocoding
                 switch ($component->types[$i]) {
                     case 'street_address':
                         $ret['street'] = $component->long_name;
-                        continue;
+                        break;
                     case 'locality':
                     case 'sublocality':
                         $ret['city'] = $component->long_name;
-                        continue;
+                        break;
                     case 'administrative_area_level_1':
                         $ret['province'] = $component->long_name;
-                        continue;
+                        break;
                     case 'postal_code':
                         $ret['zip'] = $component->long_name;
-                        continue;
+                        break;
                     case 'country':
                         $ret['country'] = strtoupper($component->short_name);
-                        continue;
+                        break;
                     case 'political':
-                        continue;
+                        break;
                     default:
                         $ret[$component->types[$i]] = $component->long_name;
                 }

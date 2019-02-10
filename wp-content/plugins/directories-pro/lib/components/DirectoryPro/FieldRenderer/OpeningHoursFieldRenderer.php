@@ -70,11 +70,15 @@ class OpeningHoursFieldRenderer extends Field\Renderer\AbstractRenderer
 
         $value_text_align_class = DRTS_BS_PREFIX . ($this->_application->getPlatform()->isRtl() ? 'text-left' : 'text-right');
         $html = ['<div class="' . DRTS_BS_PREFIX . 'list-group ' . DRTS_BS_PREFIX . 'list-group-flush drts-entity-fieldlist drts-directory-opening-hours">'];
+        $closed_label = null;
         foreach ($this->_application->Days() as $day => $day_label) {
             if (!isset($_values[$day])) {
                 if (!$settings['show_closed']) continue;
 
-                $time_label = $settings['closed'];
+                if (!isset($closed_label)) {
+                    $closed_label = $this->_application->getPlatform()->translateString($settings['closed'], 'opening_hours_closed_label', 'directorypro');
+                }
+                $time_label = $closed_label;
                 $is_open = false;
             } elseif (1 === $count = count($_values[$day])) {
                 $_start = current(array_keys($_values[$day]));

@@ -116,19 +116,19 @@ class NominatimGeocodingApi implements IGeocodingApi
             switch ($type) {
                 case 'road':
                     $ret['street'] = $value;
-                    continue;
+                    break;
                 case 'city':
                     $ret['city'] = $value;
-                    continue;
+                    break;
                 case 'state':
                     $ret['province'] = $value;
-                    continue;
+                    break;
                 case 'postcode':
                     $ret['zip'] = $value;
-                    continue;
+                    break;
                 case 'country_code':
                     $ret['country'] = strtoupper($value);
-                    continue;
+                    break;
                 default:
                     $ret[$type] = $value;
             }

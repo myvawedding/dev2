@@ -133,6 +133,11 @@ class AddressFieldWidget extends Field\Widget\AbstractWidget
                 '#type' => 'checkbox',
                 '#title' => __('Allow empty location', 'directories-pro'),
                 '#default_value' => !empty($settings['allow_empty']),
+                '#states' => [
+                    'visible' => [
+                        sprintf('[name="%s[required]"]', $this->_application->Form_FieldName($rootParents)) => ['type' => 'checked', 'value' => false],
+                    ],
+                ],
             ],
         ];
 
@@ -191,7 +196,11 @@ class AddressFieldWidget extends Field\Widget\AbstractWidget
                     if (!isset($hierarchy[$key]) // make sure it is not already selectable via taxonomy select dropdown field
                         && isset($settings['input_fields']['options'][$key])
                     ) {
-                        $ret['location']['address']['#input_fields'][$key] = $settings['input_fields']['options'][$key];
+                        $ret['location']['address']['#input_fields'][$key] = $this->_application->getPlatform()->translateString(
+                            $settings['input_fields']['options'][$key],
+                            'address_field_input_label_' . $key,
+                            'location'
+                        );
                     }
                 }
             }
@@ -213,7 +222,9 @@ class AddressFieldWidget extends Field\Widget\AbstractWidget
             ];
         }
 
-        if (!empty($settings['allow_empty'])) {
+        if (!empty($settings['allow_empty'])
+            && !$field->isFieldRequired()
+        ) {
             $item_label = $field->Bundle->getLabel('singular');
             $ret['location']['no_addr'] = [
                 '#type' => 'checkbox',

@@ -100,7 +100,7 @@ function _inherits(subClass, superClass) {
           DRTS.Location.api.geocode($.trim(address.join(' ')), function(latlng) {
             DRTS.ajaxLoader(e.currentTarget, true);
             console.log('Geocoding results:', latlng);
-            _this.setMarker(latlng).updateFields(latlng).updateTimezoneField(latlng);
+            _this.setMarker(latlng).updateFields(latlng).updateAddressFields(latlng, true).updateTimezoneField(latlng);
             _this.map.draw({
               zoom: _this.map.getZoom()
             });

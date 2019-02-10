@@ -114,8 +114,12 @@ class SliderHelper
             switch ($photo['type']) {
                 case 'image':
                     if (!isset($photo['img'])) {
-                        unset($photos[$k]);
-                        continue;
+                        if (empty($options['photoslider_allow_no_image'])) {
+                            unset($photos[$k]);
+                            continue;
+                        }
+                        if (!isset($no_image)) $no_image = $application->NoImage();
+                        $photo['img'] = $no_image;
                     }
                     $item = '';
                     $title = isset($photo['title']) ? $application->H($photo['title']) : '';
@@ -172,8 +176,8 @@ class SliderHelper
                 if (isset($thumb['img'])) {
                     $img = '<img src="' . $application->H($thumb['img']) . '" alt="" />';
                 } else {
-                    if (!isset($no_image_thumb)) $no_image_thumb = $application->NoImage();
-                    $img = $no_image_thumb;
+                    if (!isset($no_image)) $no_image = $application->NoImage();
+                    $img = $no_image;
                 }
                 $html[] = '<div data-type="' . $photos[$k]['type'] . '">' . $img . '</div>';
             }

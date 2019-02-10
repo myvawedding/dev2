@@ -20,7 +20,7 @@ class GoogleMapsTimezoneApi extends AbstractGoogleMapsApi implements ITimezoneAp
         $handle = $this->_load('timezone');
         $this->_application->getPlatform()->addJsInline(
             $handle,
-            "var DRTS_Location_googlemapsTimezoneApiKey = '" . $this->_application->H($settings['api']['key']) . "';"
+            "var DRTS_Location_googlemapsTimezoneEndpoint = '" . $this->_application->H($this->_application->Url('/_drts/location/timezone.json')) . "';"
         );
     }
 

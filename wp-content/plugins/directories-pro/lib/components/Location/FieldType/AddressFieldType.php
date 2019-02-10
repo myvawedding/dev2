@@ -483,6 +483,36 @@ class AddressFieldType extends Field\Type\AbstractType implements
         }
     }
 
+    public function fieldConditionableMatch(Field\IField $field, array $rule, array $values = null)
+    {
+        switch ($rule['type']) {
+            case 'value':
+            case '!value':
+            case 'one':
+                if (empty($values)) return $rule['type'] === '!value';
+
+                foreach ($values as $input) {
+                    foreach ((array)$rule['value'] as $rule_value) {
+                        if ($input['term_id'] == $rule_value) {
+                            if ($rule['type'] === '!value') return false;
+                            if ($rule['type'] === 'one') return true;
+                            continue 2;
+                        }
+                    }
+                    // One of rule values did not match
+                    if ($rule['type'] === 'value') return false;
+                }
+                // All matched or did not match.
+                return $rule['type'] !== 'one' ? true : false;
+            case 'empty':
+                return empty($values) === $rule['value'];
+            case 'filled':
+                return !empty($values) === $rule['value'];
+            default:
+                return false;
+        }
+    }
+
     protected function _getLocationBundle(Entity\Model\Bundle $bundle)
     {
         return $this->_application->Entity_Bundle('location_location', $bundle->component, $bundle->group);

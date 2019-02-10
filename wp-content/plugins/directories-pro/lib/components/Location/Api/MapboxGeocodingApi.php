@@ -152,16 +152,16 @@ class MapboxGeocodingApi implements IGeocodingApi
             switch ($component_name) {
                 case 'place':
                     $ret['city'] = $component['text'];
-                    continue;
+                    break;
                 case 'region':
                     $ret['province'] = $component['text'];
-                    continue;
+                    break;
                 case 'postcode':
                     $ret['zip'] = $component['text'];
-                    continue;
+                    break;
                 case 'country':
                     $ret['country'] = strtoupper($component['short_code']);
-                    continue;
+                    break;
                 default:
                     $ret[$component_name] = $component['text'];
             }

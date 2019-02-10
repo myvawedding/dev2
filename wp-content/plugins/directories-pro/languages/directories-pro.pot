@@ -69,131 +69,131 @@ msgstr ""
 msgid "Recent Reviews"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:56, lib/components/Location/CSVExporter/LocationCSVExporter.php:22, lib/components/Location/CSVImporter/LocationCSVImporter.php:27, lib/components/Location/CSVImporter/LocationCSVImporter.php:230, lib/components/Location/FieldWidget/AddressFieldWidget.php:60
+#: lib/components/Location/LocationComponent.php:59, lib/components/Location/CSVExporter/LocationCSVExporter.php:22, lib/components/Location/CSVImporter/LocationCSVImporter.php:27, lib/components/Location/CSVImporter/LocationCSVImporter.php:230, lib/components/Location/FieldWidget/AddressFieldWidget.php:60
 msgid "Country"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:57, lib/components/Location/CSVExporter/LocationCSVExporter.php:20, lib/components/Location/CSVImporter/LocationCSVImporter.php:25, lib/components/Location/CSVImporter/LocationCSVImporter.php:220, lib/components/Location/FieldWidget/AddressFieldWidget.php:30
+#: lib/components/Location/LocationComponent.php:60, lib/components/Location/CSVExporter/LocationCSVExporter.php:20, lib/components/Location/CSVImporter/LocationCSVImporter.php:25, lib/components/Location/CSVImporter/LocationCSVImporter.php:220, lib/components/Location/FieldWidget/AddressFieldWidget.php:30
 msgid "State / Province / Region"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:58, lib/components/Location/CSVExporter/LocationCSVExporter.php:19, lib/components/Location/CSVImporter/LocationCSVImporter.php:24, lib/components/Location/CSVImporter/LocationCSVImporter.php:215, lib/components/Location/FieldWidget/AddressFieldWidget.php:29
+#: lib/components/Location/LocationComponent.php:61, lib/components/Location/CSVExporter/LocationCSVExporter.php:19, lib/components/Location/CSVImporter/LocationCSVImporter.php:24, lib/components/Location/CSVImporter/LocationCSVImporter.php:215, lib/components/Location/FieldWidget/AddressFieldWidget.php:29
 msgid "City"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:222, lib/components/Location/LocationComponent.php:370
+#: lib/components/Location/LocationComponent.php:228, lib/components/Location/LocationComponent.php:376
 msgid "Enable full screen mode"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:232, lib/components/Location/LocationComponent.php:356, lib/components/Location/LocationComponent.php:397, lib/components/Location/FormField/TextFormField.php:74, lib/components/Location/SearchField/AddressSearchField.php:48
+#: lib/components/Location/LocationComponent.php:238, lib/components/Location/LocationComponent.php:362, lib/components/Location/LocationComponent.php:403, lib/components/Location/FormField/TextFormField.php:74, lib/components/Location/SearchField/AddressSearchField.php:48
 msgid "Auto"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:233, lib/components/Location/LocationComponent.php:398
+#: lib/components/Location/LocationComponent.php:239, lib/components/Location/LocationComponent.php:404
 msgid "Full screen map top offset"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:246, lib/components/Location/LocationComponent.php:448
+#: lib/components/Location/LocationComponent.php:252, lib/components/Location/LocationComponent.php:454
 msgid "Customize format of address on infobox"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:254, lib/components/Location/LocationComponent.php:461, lib/components/Location/FieldRenderer/AddressFieldRenderer.php:38
+#: lib/components/Location/LocationComponent.php:260, lib/components/Location/LocationComponent.php:467, lib/components/Location/FieldRenderer/AddressFieldRenderer.php:38
 msgid "Available tags: %s"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:284
+#: lib/components/Location/LocationComponent.php:290
 msgid "Show map"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:291
+#: lib/components/Location/LocationComponent.php:297
 msgid "Map coordinates field"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:301
+#: lib/components/Location/LocationComponent.php:307
 msgid "Map position"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:302
+#: lib/components/Location/LocationComponent.php:308
 msgid "Side"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:302
+#: lib/components/Location/LocationComponent.php:308
 msgid "Top"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:313
+#: lib/components/Location/LocationComponent.php:319
 msgid "Map width"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:314, lib/components/Location/LocationComponent.php:382
+#: lib/components/Location/LocationComponent.php:320, lib/components/Location/LocationComponent.php:388
 msgid "The horizontal display ratio (12 being 100% wide) of the map"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:324, lib/components/Location/FieldWidget/AddressFieldWidget.php:101
+#: lib/components/Location/LocationComponent.php:330, lib/components/Location/FieldWidget/AddressFieldWidget.php:101
 msgid "Map height"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:337
+#: lib/components/Location/LocationComponent.php:343
 msgid "Scroll to item on marker click"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:345
+#: lib/components/Location/LocationComponent.php:351
 msgid "Enable sticky map"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:357
+#: lib/components/Location/LocationComponent.php:363
 msgid "Sticky map top offset"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:381
+#: lib/components/Location/LocationComponent.php:387
 msgid "Full screen map width"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:411
+#: lib/components/Location/LocationComponent.php:417
 msgid "Enable map infobox"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:423
+#: lib/components/Location/LocationComponent.php:429
 msgid "Map infobox width"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:436
+#: lib/components/Location/LocationComponent.php:442
 msgid "Open infobox on item hover"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:481
+#: lib/components/Location/LocationComponent.php:487
 msgid "Map marker icon"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:512
+#: lib/components/Location/LocationComponent.php:518
 msgid "Enable locations"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:579, lib/components/DirectoryPro/DirectoryType/directory_listing_displays.php:2984, lib/components/Location/EntityBundleType/LocationEntityBundleType.php:18, lib/components/Location/FieldFilter/AddressFieldFilter.php:12, lib/components/Location/FieldType/AddressFieldType.php:22
+#: lib/components/Location/LocationComponent.php:585, lib/components/DirectoryPro/DirectoryType/directory_listing_displays.php:2984, lib/components/Location/EntityBundleType/LocationEntityBundleType.php:18, lib/components/Location/FieldFilter/AddressFieldFilter.php:12, lib/components/Location/FieldType/AddressFieldType.php:22
 msgid "Location"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:700
+#: lib/components/Location/LocationComponent.php:706
 msgid "Load geolocation data"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:701
+#: lib/components/Location/LocationComponent.php:707
 msgid "This tool will load geolocation data (lat/lng/timezone) of each content item if currently empty."
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:780, lib/components/Location/LocationComponent.php:788, lib/components/Location/LocationComponent.php:796
+#: lib/components/Location/LocationComponent.php:786, lib/components/Location/LocationComponent.php:794, lib/components/Location/LocationComponent.php:802
 msgid "— None —"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:782
+#: lib/components/Location/LocationComponent.php:788
 msgid "Geocoding provider"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:790
+#: lib/components/Location/LocationComponent.php:796
 msgid "Time zone API"
 msgstr ""
 
-#: lib/components/Location/LocationComponent.php:798
+#: lib/components/Location/LocationComponent.php:804
 msgid "Address autocomplete service"
 msgstr ""
 
@@ -423,7 +423,7 @@ msgstr ""
 msgid "Label for closed days"
 msgstr ""
 
-#: lib/components/DirectoryPro/FieldRenderer/OpeningHoursFieldRenderer.php:120
+#: lib/components/DirectoryPro/FieldRenderer/OpeningHoursFieldRenderer.php:124
 msgid "Open Now"
 msgstr ""
 
@@ -493,11 +493,11 @@ msgstr ""
 msgid "API Key"
 msgstr ""
 
-#: lib/components/Location/Api/AlgoliaAutocompleteApi.php:101, lib/components/Location/Api/GoogleMapsAutocompleteApi.php:61, lib/components/Location/Api/GoogleMapsGeocodingApi.php:52, lib/components/Location/Api/MapboxGeocodingApi.php:73
+#: lib/components/Location/Api/AlgoliaAutocompleteApi.php:101, lib/components/Location/Api/GoogleMapsAutocompleteApi.php:68, lib/components/Location/Api/GoogleMapsGeocodingApi.php:56, lib/components/Location/Api/MapboxGeocodingApi.php:73
 msgid "Country code"
 msgstr ""
 
-#: lib/components/Location/Api/AlgoliaAutocompleteApi.php:102, lib/components/Location/Api/GoogleMapsAutocompleteApi.php:62
+#: lib/components/Location/Api/AlgoliaAutocompleteApi.php:102, lib/components/Location/Api/GoogleMapsAutocompleteApi.php:69
 msgid "Enter two-letter ISO 3166-1 Alpha-2 compatible country codes separated by commas to restrict address suggestions to specific countries."
 msgstr ""
 
@@ -517,35 +517,35 @@ msgstr ""
 msgid "Visit the following page to create a GeoNames user account: %s"
 msgstr ""
 
-#: lib/components/Location/Api/GoogleMapsAutocompleteApi.php:9, lib/components/Location/Api/GoogleMapsAutocompleteApi.php:40
+#: lib/components/Location/Api/GoogleMapsAutocompleteApi.php:9, lib/components/Location/Api/GoogleMapsAutocompleteApi.php:47
 msgid "Google Maps Place Autocomplete"
 msgstr ""
 
-#: lib/components/Location/Api/GoogleMapsAutocompleteApi.php:51
+#: lib/components/Location/Api/GoogleMapsAutocompleteApi.php:58
 msgid "Autocomplete place type"
 msgstr ""
 
-#: lib/components/Location/Api/GoogleMapsAutocompleteApi.php:53
+#: lib/components/Location/Api/GoogleMapsAutocompleteApi.php:60
 msgid "Show results with a precise address"
 msgstr ""
 
-#: lib/components/Location/Api/GoogleMapsAutocompleteApi.php:54
+#: lib/components/Location/Api/GoogleMapsAutocompleteApi.php:61
 msgid "Show business results"
 msgstr ""
 
-#: lib/components/Location/Api/GoogleMapsAutocompleteApi.php:55
+#: lib/components/Location/Api/GoogleMapsAutocompleteApi.php:62
 msgid "Show regions"
 msgstr ""
 
-#: lib/components/Location/Api/GoogleMapsAutocompleteApi.php:56
+#: lib/components/Location/Api/GoogleMapsAutocompleteApi.php:63
 msgid "Show cities"
 msgstr ""
 
-#: lib/components/Location/Api/GoogleMapsGeocodingApi.php:9, lib/components/Location/Api/GoogleMapsGeocodingApi.php:43
+#: lib/components/Location/Api/GoogleMapsGeocodingApi.php:9, lib/components/Location/Api/GoogleMapsGeocodingApi.php:47
 msgid "Google Maps Geocoding"
 msgstr ""
 
-#: lib/components/Location/Api/GoogleMapsGeocodingApi.php:53, lib/components/Location/Api/MapboxGeocodingApi.php:74
+#: lib/components/Location/Api/GoogleMapsGeocodingApi.php:57, lib/components/Location/Api/MapboxGeocodingApi.php:74
 msgid "Enter two-letter ISO 3166-1 Alpha-2 compatible country codes separated by commas to restrict geocoding results to specific countries."
 msgstr ""
 
@@ -832,15 +832,15 @@ msgstr ""
 msgid "Allow empty location"
 msgstr ""
 
-#: lib/components/Location/FieldWidget/AddressFieldWidget.php:143
+#: lib/components/Location/FieldWidget/AddressFieldWidget.php:148
 msgid "Hide timezone selection field"
 msgstr ""
 
-#: lib/components/Location/FieldWidget/AddressFieldWidget.php:220
+#: lib/components/Location/FieldWidget/AddressFieldWidget.php:231
 msgid "This %1$s does not have a physical location."
 msgstr ""
 
-#: lib/components/Location/FieldWidget/AddressFieldWidget.php:281
+#: lib/components/Location/FieldWidget/AddressFieldWidget.php:292
 msgid "— Select —"
 msgstr ""
 

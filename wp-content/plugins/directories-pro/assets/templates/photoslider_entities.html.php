@@ -4,11 +4,9 @@ $photos = [];
 $tag_term_field = $this->Entity_BundleTypeInfo($bundle, 'entity_tag');
 if (!empty($settings['photoslider_link'])) $settings['photoslider_zoom'] = false;
 foreach ($entities as $entity) {
-    if (!$photo_url = $this->Entity_Image($entity, $settings['photoslider_image_size'], $settings['photoslider_image_field'])) continue;
-    
     $photos[] = array(
         'url' => empty($settings['photoslider_link']) ? null : $this->Entity_PermalinkUrl($entity),
-        'img' => $photo_url, 
+        'img' => $this->Entity_Image($entity, $settings['photoslider_image_size'], $settings['photoslider_image_field']),
         'tag' => $tag_term_field && ($term = $entity->getSingleFieldValue($tag_term_field)) ? $this->Entity_Title($term) : null,
         'title' => $this->Entity_Title($entity),
         'full_img' => empty($settings['photoslider_link']) ? $this->Entity_Image_url($entity, 'full', $settings['photoslider_image_field']) : null,
@@ -32,5 +30,5 @@ if (!empty($settings['photoslider_thumbs'])
         );
     }
 }
-$settings['photoslider_lazyload'] = true;
+$settings['photoslider_lazyload'] = $settings['photoslider_allow_no_image'] = true;
 echo $this->PhotoSlider_Slider($photos, $settings);

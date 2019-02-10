@@ -24,11 +24,18 @@ class GoogleMapsAutocompleteApi extends AbstractGoogleMapsApi implements IAutoco
     public function locationApiLoad(array $settings)
     {
         $handle = $this->_load('autocomplete', true);
+        if (isset($settings['autocomplete'])) {
+            if (empty($settings['autocomplete']['country'])) {
+                unset($settings['autocomplete']['country']);
+            }
+        } else {
+            $settings['autocomplete'] = [];
+        }
         $this->_application->getPlatform()->addJsInline(
             $handle,
             sprintf(
                 'var DRTS_Location_googlemapsAutocomplete = %s;',
-                $this->_application->JsonEncode(isset($settings['autocomplete']) ? $settings['autocomplete'] : [])
+                $this->_application->JsonEncode($settings['autocomplete'])
             )
         );
     }

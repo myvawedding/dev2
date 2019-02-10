@@ -148,7 +148,8 @@ function _inherits(subClass, superClass) {
               icon: marker.icon.icon || this.options.marker_icon,
               icon_color: marker.icon.icon_color || this.options.marker_icon_color,
               size: marker.icon.size || this.options.marker_size,
-              color: marker.icon.color || this.options.marker_color || '#fff'
+              color: marker.icon.color || this.options.marker_color || '#fff',
+              full: marker.icon.is_full ? true : false
             });
           } else {
             icon = DRTS.Location.leaflet.map.divIcon({
@@ -374,27 +375,33 @@ function _inherits(subClass, superClass) {
 
   DRTS.Location.leaflet.map.divIcon = function(options) {
     var div = document.createElement('div');
-    var size = options.size || 39;
-    div.className = 'drts-map-marker';
-    div.style.width = size + 'px';
-    div.style.height = size + 'px';
-    div.style.marginTop = '-' + (size * Math.sqrt(2) - DRTS.Map.markerHeight(size)) + 'px';
-    var inner = document.createElement('div');
-    if (options.color) {
-      div.style.backgroundColor = div.style.color = inner.style.borderColor = options.color;
+    var cls = 'drts-map-marker';
+    if (options.full) {
+      cls += ' drts-map-marker-full';
+      div.innerHTML = options.html;
+    } else {
+      var size = options.size || 39;
+      var inner = document.createElement('div');
+      if (options.color) {
+        div.style.backgroundColor = div.style.color = inner.style.borderColor = options.color;
+      }
+      div.style.width = size + 'px';
+      div.style.height = size + 'px';
+      div.style.marginTop = '-' + (size * Math.sqrt(2) - DRTS.Map.markerHeight(size)) + 'px';
+      if (options.html) {
+        inner.innerHTML = options.html;
+      } else if (options.icon) {
+        inner.innerHTML = '<i class="' + options.icon + '"></i>';
+        if (options.icon_color) {
+          inner.style.backgroundColor = options.icon_color;
+        }
+      }
+      div.appendChild(inner);
     }
+    div.className = cls;
     if (options.data) {
       div.dataset = options.data;
     }
-    if (options.html) {
-      inner.innerHTML = options.html;
-    } else if (options.icon) {
-      inner.innerHTML = '<i class="' + options.icon + '"></i>';
-      if (options.icon_color) {
-        inner.style.backgroundColor = options.icon_color;
-      }
-    }
-    div.appendChild(inner);
 
     return L.divIcon({
       html: div.outerHTML,

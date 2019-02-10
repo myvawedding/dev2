@@ -5,11 +5,13 @@ use SabaiApps\Directories\Component\AbstractComponent;
 use SabaiApps\Directories\Component\Form;
 use SabaiApps\Directories\Component\Field;
 use SabaiApps\Directories\Component\Entity;
+use SabaiApps\Directories\Component\System;
 use SabaiApps\Directories\Component\View;
 use SabaiApps\Directories\Component\Search;
 use SabaiApps\Directories\Component\CSV;
 use SabaiApps\Directories\Component\Map;
 use SabaiApps\Directories\Application;
+use SabaiApps\Directories\Context;
 
 class LocationComponent extends AbstractComponent implements
     Form\IFields,
@@ -22,11 +24,12 @@ class LocationComponent extends AbstractComponent implements
     CSV\IImporters,
     Search\IFields,
     Map\IApis,
+    System\IMainRouter,
     IAutocompleteApis,
     IGeocodingApis,
     ITimezoneApis
 {
-    const VERSION = '1.2.19', PACKAGE = 'directories-pro';
+    const VERSION = '1.2.23', PACKAGE = 'directories-pro';
 
     public static function interfaces()
     {
@@ -172,7 +175,10 @@ class LocationComponent extends AbstractComponent implements
             return;
         }
 
-        if (empty($settings['map']['show'])) return;
+        if (empty($settings['map']['show'])
+            || empty($bundle->info['location_enable'])
+            || !$view->viewModeInfo('mapable')
+        ) return;
 
         $assets_dir = $this->_application->getPlatform()->getAssetsDir('directories-pro');
         $settings['map']['template'] = $settings['template'];
@@ -861,4 +867,47 @@ class LocationComponent extends AbstractComponent implements
             $address = $this->_application->Location_FormatAddress($value, $settings['infobox_addr_format'], $entity, $location_hierarchy);
         }
     }
+
+    public function onEntityFieldConditionRuleFilter(&$rule, $field, $compare, $value, $name, $type)
+    {
+        if ($type !== 'php'
+            || $field->getFieldType() !== 'location_address'
+            || (!$taxonomy_bundle = $this->_application->Entity_Bundle('location_location', $field->Bundle->component, $field->Bundle->group))
+        ) return;
+
+        $rule['value'] = (array)$rule['value'];
+        // Convert slugs to IDs since terms can be referenced by an ID only
+        $slug_keys = [];
+        foreach (array_keys($rule['value']) as $i) {
+            if (!is_numeric($rule['value'][$i])) {
+                $slug_keys[$rule['value'][$i]] = $i;
+            }
+        }
+        if (!empty($slug_keys)) {
+            $terms = get_terms($taxonomy_bundle->name, ['hide_empty' => false, 'slug' => array_keys($slug_keys), 'fields' => 'id=>slug']);
+            if (!is_wp_error($terms)) {
+                foreach ($terms as $id => $slug) {
+                    $slug = urldecode($slug); // returned slug is URL encoded
+                    if (isset($slug_keys[$slug])) {
+                        $value_key = $slug_keys[$slug];
+                        $rule['value'][$value_key] = (string)$id;
+                    }
+                }
+            }
+        }
+    }
+
+    public function systemMainRoutes($lang = null)
+    {
+        return [
+            '/_drts/location/timezone' => array(
+                'controller' => 'QueryTimezone',
+                'type' => Application::ROUTE_CALLBACK,
+            ),
+        ];
+    }
+
+    public function systemOnAccessMainRoute(Context $context, $path, $accessType, array &$route){}
+
+    public function systemMainRouteTitle(Context $context, $path, $titleType, array $route){}
 }
