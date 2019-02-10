@@ -307,6 +307,10 @@ class WC_Gateway_PPEC_Client {
 			)
 		);
 
+		if ( ! empty( $details['email'] ) ) {
+			$params['EMAIL'] = $details['email'];
+		}
+
 		if ( $args['create_billing_agreement'] ) {
 			$params['L_BILLINGTYPE0']                 = 'MerchantInitiatedBillingSingleAgreement';
 			$params['L_BILLINGAGREEMENTDESCRIPTION0'] = $this->_get_billing_agreement_description();
@@ -432,7 +436,6 @@ class WC_Gateway_PPEC_Client {
 
 		return  array(
 			'name'        => 'Discount',
-			'description' => 'Discount Amount',
 			'quantity'    => 1,
 			'amount'      => '-' . round( $amount, $decimals ),
 		);
@@ -450,6 +453,7 @@ class WC_Gateway_PPEC_Client {
 	 */
 	protected function _get_details_from_cart() {
 		$settings = wc_gateway_ppec()->settings;
+		$old_wc = version_compare( WC_VERSION, '3.0', '<' );
 
 		$decimals      = $settings->get_number_of_decimal_digits();
 		$rounded_total = $this->_get_rounded_total_in_cart();
@@ -461,6 +465,7 @@ class WC_Gateway_PPEC_Client {
 			'shipping'          => round( WC()->cart->shipping_total, $decimals ),
 			'items'             => $this->_get_paypal_line_items_from_cart(),
 			'shipping_address'  => $this->_get_address_from_customer(),
+			'email'             => $old_wc ? WC()->customer->billing_email : WC()->customer->get_billing_email(),
 		);
 
 		return $this->get_details( $details, $discounts, $rounded_total, WC()->cart->total );
@@ -479,7 +484,7 @@ class WC_Gateway_PPEC_Client {
 
 		$items = array();
 		foreach ( WC()->cart->cart_contents as $cart_item_key => $values ) {
-			$amount = round( $values['line_total'] / $values['quantity'] , $decimals );
+			$amount = round( $values['line_subtotal'] / $values['quantity'] , $decimals );
 
 			if ( version_compare( WC_VERSION, '3.0', '<' ) ) {
 				$name = $values['data']->post->post_title;
@@ -572,6 +577,9 @@ class WC_Gateway_PPEC_Client {
 		if ( $details['total_item_amount'] == $discounts ) {
 			// Omit line items altogether.
 			unset( $details['items'] );
+		} else if ( $discounts > 0 && $discounts < $details['total_item_amount'] && ! empty( $details['items'] ) ) {
+			// Else if there is discount, add them to the line-items
+			$details['items'][] = $this->_get_extra_discount_line_item($discounts);
 		}
 
 		$details['ship_discount_amount'] = 0;
@@ -616,7 +624,18 @@ class WC_Gateway_PPEC_Client {
 			$details['items'][] = $this->_get_extra_offset_line_item( $details['total_item_amount'] - $lisum );
 		}
 
-		return $details;
+		/**
+		 * Filter PayPal order details.
+		 *
+		 * Provide opportunity for developers to modify details passed to PayPal.
+		 * This was originally introduced to add a mechanism to allow for
+		 * decimal product quantity support.
+		 *
+		 * @since 1.6.6
+		 *
+		 * @param array $details Current PayPal order details
+		 */
+		return apply_filters( 'woocommerce_paypal_express_checkout_get_details', $details );
 	}
 
 	/**
@@ -690,7 +709,11 @@ class WC_Gateway_PPEC_Client {
 		}
 		$shipping_address->setCountry( $shipping_country );
 
+		$shipping_address->setPhoneNumber( $old_wc ? $order->billing_phone : $order->get_billing_phone() );
+
 		$details['shipping_address'] = $shipping_address;
+
+		$details['email'] = $old_wc ? $order->billing_email : $order->get_billing_email();
 
 		return $details;
 	}
@@ -708,8 +731,8 @@ class WC_Gateway_PPEC_Client {
 		$old_wc = version_compare( WC_VERSION, '3.0', '<' );
 
 		if ( $customer->get_shipping_address() || $customer->get_shipping_address_2() ) {
-			$shipping_first_name = $old_wc ? '' : $customer->get_shipping_first_name();
-			$shipping_last_name  = $old_wc ? '' : $customer->get_shipping_last_name();
+			$shipping_first_name = $old_wc ? $customer->shipping_first_name : $customer->get_shipping_first_name();
+			$shipping_last_name  = $old_wc ? $customer->shipping_last_name  : $customer->get_shipping_last_name();
 			$shipping_address_1  = $customer->get_shipping_address();
 			$shipping_address_2  = $customer->get_shipping_address_2();
 			$shipping_city       = $customer->get_shipping_city();
@@ -719,14 +742,14 @@ class WC_Gateway_PPEC_Client {
 		} else {
 			// Fallback to billing in case no shipping methods are set. The address returned from PayPal
 			// will be stored in the order as billing.
-			$shipping_first_name = $old_wc ? ''                         : $customer->get_billing_first_name();
-			$shipping_last_name  = $old_wc ? ''                         : $customer->get_billing_last_name();
-			$shipping_address_1  = $old_wc ? $customer->get_address()   : $customer->get_billing_address_1();
-			$shipping_address_2  = $old_wc ? $customer->get_address_2() : $customer->get_billing_address_2();
-			$shipping_city       = $old_wc ? $customer->get_city()      : $customer->get_billing_city();
-			$shipping_state      = $old_wc ? $customer->get_state()     : $customer->get_billing_state();
-			$shipping_postcode   = $old_wc ? $customer->get_postcode()  : $customer->get_billing_postcode();
-			$shipping_country    = $old_wc ? $customer->get_country()   : $customer->get_billing_country();
+			$shipping_first_name = $old_wc ? $customer->billing_first_name : $customer->get_billing_first_name();
+			$shipping_last_name  = $old_wc ? $customer->billing_last_name  : $customer->get_billing_last_name();
+			$shipping_address_1  = $old_wc ? $customer->get_address()      : $customer->get_billing_address_1();
+			$shipping_address_2  = $old_wc ? $customer->get_address_2()    : $customer->get_billing_address_2();
+			$shipping_city       = $old_wc ? $customer->get_city()         : $customer->get_billing_city();
+			$shipping_state      = $old_wc ? $customer->get_state()        : $customer->get_billing_state();
+			$shipping_postcode   = $old_wc ? $customer->get_postcode()     : $customer->get_billing_postcode();
+			$shipping_country    = $old_wc ? $customer->get_country()      : $customer->get_billing_country();
 		}
 
 		$shipping_address->setName( $shipping_first_name . ' ' . $shipping_last_name );
@@ -736,6 +759,7 @@ class WC_Gateway_PPEC_Client {
 		$shipping_address->setState( $shipping_state );
 		$shipping_address->setZip( $shipping_postcode );
 		$shipping_address->setCountry( $shipping_country );
+		$shipping_address->setPhoneNumber( $old_wc ? $customer->billing_phone : $customer->get_billing_phone() );
 
 		return $shipping_address;
 	}
