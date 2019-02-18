@@ -70,12 +70,6 @@ class PlanFeature extends AbstractFeature
     {        
         if (!$plan_id = $feature->getMeta('plan_id')) return false;
 
-        // Below 3 lines are for bug where payment_plan feature was added to add-on orders
-        $plans = $this->_application->Payment_Plans($entity->getBundleName());
-        if (!isset($plans[$plan_id])
-            || $plans[$plan_id]->paymentPlanType() === 'addon'
-        ) return false;
-
         if ($duration = $feature->getMeta('duration')) {
             if (($prev_value = $feature->getMeta('prev_value'))
                 && isset($prev_value['expires_at'])

@@ -29,153 +29,161 @@ msgstr ""
 msgid "Pricing Table"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:329
+#: lib/components/Payment/PaymentComponent.php:342
 msgid "Enable payments"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:382, lib/components/Payment/DashboardPanel/PaymentsDashboardPanel.php:30, lib/components/Payment/FieldType/OrdersFieldType.php:11, lib/components/Payment/FieldWidget/OrdersFieldWidget.php:12
+#: lib/components/Payment/PaymentComponent.php:395, lib/components/Payment/DashboardPanel/PaymentsDashboardPanel.php:30, lib/components/Payment/FieldType/OrdersFieldType.php:11, lib/components/Payment/FieldWidget/OrdersFieldWidget.php:12
 msgid "Orders"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:443
+#: lib/components/Payment/PaymentComponent.php:456
 msgid "Found %d item(s) to be deactivated."
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:449
+#: lib/components/Payment/PaymentComponent.php:462
 msgid "Deactivated item: %s"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:465
+#: lib/components/Payment/PaymentComponent.php:478
 msgid "Found %d expiring item(s)."
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:471
+#: lib/components/Payment/PaymentComponent.php:484
 msgid "Found %d expired item(s)."
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:496, lib/components/Payment/PaymentComponent.php:720
+#: lib/components/Payment/PaymentComponent.php:509, lib/components/Payment/PaymentComponent.php:733
 msgid "Payment"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:500
+#: lib/components/Payment/PaymentComponent.php:513
 msgid "Default Feature Settings"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:501
+#: lib/components/Payment/PaymentComponent.php:514
 msgid "Configure features applied to items without any payment plan."
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:680
+#: lib/components/Payment/PaymentComponent.php:693
 msgid "Expiring item notification e-mail messages sent."
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:690
+#: lib/components/Payment/PaymentComponent.php:703
 msgid "Expired item notification e-mail messages sent."
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:700
+#: lib/components/Payment/PaymentComponent.php:713
 msgid "Deactivated item notification e-mail messages sent."
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:750
+#: lib/components/Payment/PaymentComponent.php:763
 msgid "Payment Component Settings"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:753
+#: lib/components/Payment/PaymentComponent.php:766
 msgid "Select payment component"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:754, lib/components/Payment/FieldWidget/PlanFieldWidget.php:69
+#: lib/components/Payment/PaymentComponent.php:767, lib/components/Payment/FieldWidget/PlanFieldWidget.php:83
 msgid "— Select —"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:761
+#: lib/components/Payment/PaymentComponent.php:774
 msgid "Plan Selection Settings"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:763
+#: lib/components/Payment/PaymentComponent.php:776
 msgid "Add \"No payment plan\" option"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:769
+#: lib/components/Payment/PaymentComponent.php:782
 msgid "Label"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:771
+#: lib/components/Payment/PaymentComponent.php:784
 msgid "No payment plan (FREE)"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:781
+#: lib/components/Payment/PaymentComponent.php:794
 msgid "Plan Renewal Settings"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:783
+#: lib/components/Payment/PaymentComponent.php:796
 msgid "Renewal grace period in days"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:794
+#: lib/components/Payment/PaymentComponent.php:807
 msgctxt "currency symbol"
 msgid "Re-activation fee (%s)"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:803
+#: lib/components/Payment/PaymentComponent.php:816
 msgid "Plan Upgrade/Downgrade Settings"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:805
+#: lib/components/Payment/PaymentComponent.php:818
 msgctxt "currency symbol"
 msgid "Switch plan fee (%s)"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:813
+#: lib/components/Payment/PaymentComponent.php:826
 msgid "Enable prorated discount"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:871
+#: lib/components/Payment/PaymentComponent.php:884
 msgid "Show items with a payment plan first"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:880
+#: lib/components/Payment/PaymentComponent.php:893
 msgid "Payment plan sort order"
 msgstr ""
 
-#: lib/components/Payment/PaymentComponent.php:906
+#: lib/components/Payment/PaymentComponent.php:919
 msgid "Claim Rejected"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:205
+#: lib/components/Payment/PaymentComponent.php:1010
+msgid "Sync payment plan"
+msgstr ""
+
+#: lib/components/Payment/PaymentComponent.php:1011
+msgid "This tool will synchronize the payment plan associated among translated items."
+msgstr ""
+
+#: lib/components/WooCommerce/WooCommerceComponent.php:192
 msgid "Plan Features"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:817
+#: lib/components/WooCommerce/WooCommerceComponent.php:810
 msgid "Purchase type"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:819
+#: lib/components/WooCommerce/WooCommerceComponent.php:812
 msgid "Purchase item"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:841
+#: lib/components/WooCommerce/WooCommerceComponent.php:834
 msgid "WooCommerce \"My account\" Page Integration"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:848
+#: lib/components/WooCommerce/WooCommerceComponent.php:841
 msgid "Show dashboard panels"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:852
+#: lib/components/WooCommerce/WooCommerceComponent.php:845
 msgid "Check this option to show dashboard panels on the WooCommerce \"My account\" page."
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:855
+#: lib/components/WooCommerce/WooCommerceComponent.php:848
 msgid "Redirect dashboard access"
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:859
+#: lib/components/WooCommerce/WooCommerceComponent.php:852
 msgid "Check this option to redirect dashboard access to the WooCommerce \"My account\" page."
 msgstr ""
 
-#: lib/components/WooCommerce/WooCommerceComponent.php:1135
+#: lib/components/WooCommerce/WooCommerceComponent.php:1128
 msgid "(Subscription plan)"
 msgstr ""
 
@@ -183,7 +191,7 @@ msgstr ""
 msgid "%s: %s"
 msgstr ""
 
-#: lib/components/Payment/Controller/AddEntity.php:149, lib/components/Payment/Controller/ClaimEntity.php:88, lib/components/Payment/Controller/OrderAddon.php:34, lib/components/Payment/Controller/SubmitPost.php:44
+#: lib/components/Payment/Controller/AddEntity.php:150, lib/components/Payment/Controller/ClaimEntity.php:102, lib/components/Payment/Controller/OrderAddon.php:34, lib/components/Payment/Controller/SubmitPost.php:44
 msgid "Add to cart"
 msgstr ""
 
@@ -237,7 +245,7 @@ msgstr ""
 msgid "Choose Plan"
 msgstr ""
 
-#: lib/components/Payment/CSVExporter/PaymentCSVExporter.php:14, lib/components/Payment/CSVImporter/PaymentCSVImporter.php:14, lib/components/Payment/FieldType/PlanFieldType.php:197, lib/components/Payment/FieldWidget/PlanFieldWidget.php:47, lib/components/Payment/FieldWidget/PlanFieldWidget.php:73
+#: lib/components/Payment/CSVExporter/PaymentCSVExporter.php:14, lib/components/Payment/CSVImporter/PaymentCSVImporter.php:14, lib/components/Payment/FieldType/PlanFieldType.php:203, lib/components/Payment/FieldWidget/PlanFieldWidget.php:55, lib/components/Payment/FieldWidget/PlanFieldWidget.php:87
 msgid "Expiration Date"
 msgstr ""
 
@@ -372,19 +380,19 @@ msgstr ""
 msgid "Payment Plan"
 msgstr ""
 
-#: lib/components/Payment/FieldType/PlanFieldType.php:168
+#: lib/components/Payment/FieldType/PlanFieldType.php:174
 msgid "Enter payment plan IDs separated with commas. Enter 1 only to query items with a payment plan, 0 only to query items without any payment plan, -1 only to query expired items, -2 only to query deactivated items, or -3 only to query expiring items."
 msgstr ""
 
-#: lib/components/Payment/FieldType/PlanFieldType.php:215
+#: lib/components/Payment/FieldType/PlanFieldType.php:221
 msgid "Show all expired"
 msgstr ""
 
-#: lib/components/Payment/FieldType/PlanFieldType.php:216
+#: lib/components/Payment/FieldType/PlanFieldType.php:222
 msgid "Show all deactivated"
 msgstr ""
 
-#: lib/components/Payment/FieldType/PlanFieldType.php:217
+#: lib/components/Payment/FieldType/PlanFieldType.php:223
 msgid "Show all expiring"
 msgstr ""
 
@@ -396,11 +404,11 @@ msgstr ""
 msgid "Action"
 msgstr ""
 
-#: lib/components/Payment/FieldWidget/PlanFieldWidget.php:35, lib/components/Payment/FieldWidget/PlanFieldWidget.php:78, lib/components/Payment/WordPressNotification/PaymentWordPressNotification.php:19
+#: lib/components/Payment/FieldWidget/PlanFieldWidget.php:43, lib/components/Payment/FieldWidget/PlanFieldWidget.php:92, lib/components/Payment/WordPressNotification/PaymentWordPressNotification.php:19
 msgid "Expired"
 msgstr ""
 
-#: lib/components/Payment/FieldWidget/PlanFieldWidget.php:38
+#: lib/components/Payment/FieldWidget/PlanFieldWidget.php:46
 msgid "None"
 msgstr ""
 

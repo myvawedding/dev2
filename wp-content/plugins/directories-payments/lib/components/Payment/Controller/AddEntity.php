@@ -78,7 +78,8 @@ class AddEntity extends FrontendSubmit\Controller\AddEntity
         if (!empty($form['plan']['#options'])) {
             $this->_submitable = true;
             if ($this->getComponent('Payment')->getConfig('selection', 'allow_none')) {
-                $form['plan']['#options'][0] = $this->getComponent('Payment')->getConfig('selection', 'none_label');
+                $none_label = $this->getComponent('Payment')->getConfig('selection', 'none_label');
+                $form['plan']['#options'][0] = $this->getPlatform()->translateString($none_label, 'no_payment_plan_label', 'payment');
             }
         } else {
             $this->_submitable = false;

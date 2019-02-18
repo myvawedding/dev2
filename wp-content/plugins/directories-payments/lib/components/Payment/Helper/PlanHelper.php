@@ -49,7 +49,7 @@ class PlanHelper
     
     protected function _getPlan(Application $application, $bundleName, $planId)
     {
-        $plans = $application->Payment_Plans($bundleName);
+        $plans = $application->Payment_Plans($bundleName, null, false);
         return isset($plans[$planId]) ? $plans[$planId] : false;
     }
     

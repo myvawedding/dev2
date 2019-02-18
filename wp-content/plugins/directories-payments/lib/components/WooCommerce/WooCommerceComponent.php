@@ -10,7 +10,7 @@ use SabaiApps\Directories\Request;
 
 class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
 {
-    const VERSION = '1.2.23', PACKAGE = 'directories-payments';
+    const VERSION = '1.2.24', PACKAGE = 'directories-payments';
 
     public static function description()
     {
@@ -85,22 +85,9 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
         return "' . $type . '";
     }
 
-    public function get_sabai_entity_bundle_name()
-    {
-        $plan_type = $this->get_sabai_plan_type();
-        return $plan_type === "base" ?
-            substr($this->get_type(), strlen("drts_")) : // remove prefix
-            substr($this->get_type(), strlen("drts_"), -1 * (strlen($plan_type) + 2)); // remove prefix and "__{$plan_type}" suffix      
-    }
-
     public function get_sabai_plan_type()
     {
         return "' . $plan_type . '";
-    }
-
-    public function get_sabai_entity_features()
-    {
-        return (array)get_post_meta($this->get_id(), "_drts_entity_features", true);
     }
     
     public function get_reviews_allowed($context = "view") {
@@ -498,7 +485,7 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
         return $symbol ? get_woocommerce_currency_symbol() : get_woocommerce_currency();
     }
 
-    public function paymentGetPlanIds($bundleName)
+    public function paymentGetPlanIds($bundleName, $lang = null)
     {
         $base = 'drts_' . $bundleName;
         $terms = [$base];
@@ -514,6 +501,7 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
             'posts_per_page' => -1,
             'orderby' => 'menu_order',
             'order' => 'ASC',
+            'suppress_filters' => $lang === false ? true : false, // $lang === false for all languages
             'tax_query' => [
                 [
                     'taxonomy' => 'product_type',
@@ -778,6 +766,11 @@ class WooCommerceComponent extends AbstractComponent implements Payment\IPayment
     public function paymentRefundOrder($orderId, $reason = '')
     {
         $this->_application->WooCommerce_RefundOrder($orderId, $reason);
+    }
+
+    public function paymentGetPlanId($planId, $lang)
+    {
+        return $this->_application->getPlatform()->getTranslatedId('post', 'product', $planId, $lang);
     }
 
     protected function _isEntityInCart(Entity\Type\IEntity $entity)

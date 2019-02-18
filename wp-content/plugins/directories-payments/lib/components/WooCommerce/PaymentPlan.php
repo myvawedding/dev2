@@ -24,7 +24,10 @@ class PaymentPlan implements IPlan
     
     public function paymentPlanBundleName()
     {
-        return $this->_product->get_sabai_entity_bundle_name();
+        $plan_type = $this->paymentPlanType();
+        return $plan_type === 'base' ?
+            substr($this->_product->get_type(), strlen('drts_')) : // remove prefix
+            substr($this->_product->get_type(), strlen('drts_'), -1 * (strlen($plan_type) + 2)); // remove prefix and "__{$plan_type}" suffix
     }
         
     public function paymentPlanType()
@@ -44,7 +47,14 @@ class PaymentPlan implements IPlan
     
     public function paymentPlanFeatures()
     {
-        return $this->_product->get_sabai_entity_features();
+        $post_id = $this->_product->get_id();
+        if (defined('WPML_PLUGIN_BASENAME')
+            && ($lang = apply_filters('wpml_default_language', null))
+            && ($original_post_id = apply_filters('wpml_object_id', $post_id, 'product', false, $lang))
+        ) {
+            $post_id = $original_post_id;
+        }
+        return (array)get_post_meta($post_id, '_drts_entity_features', true);
     }
     
     public function paymentPlanIsFeatured()

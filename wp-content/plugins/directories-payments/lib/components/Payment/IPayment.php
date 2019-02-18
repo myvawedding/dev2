@@ -11,7 +11,7 @@ interface IPayment
      * @return string
      */
     public function paymentGetCurrency($symbol = false);
-    public function paymentGetPlanIds($bundleName);
+    public function paymentGetPlanIds($bundleName, $lang = null);
     /*
      * @return IPlan|null
      */
@@ -64,4 +64,6 @@ interface IPayment
     public function paymentGetClaimOrderId($claimId);
 
     public function paymentRefundOrder($orderId, $reason = '');
+
+    public function paymentGetPlanId($planId, $lang);
 }

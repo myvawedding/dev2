@@ -32,8 +32,16 @@ class ClaimEntity extends FrontendSubmit\Controller\AddChildEntity
             $parent_bundle->name,
             $this->Filter('payment_base_plan_types', ['base'], [$parent_bundle])
         );
-        $form['#action'] = $this->_getFormAction($context);
-        $this->_submitable = !empty($form['plan']['#options']);
+        if (!empty($form['plan']['#options'])) {
+            $this->_submitable = true;
+            if ($this->getComponent('Payment')->getConfig('selection', 'allow_none')) {
+                $none_label = $this->getComponent('Payment')->getConfig('selection', 'none_label');
+                $form['plan']['#options'][0] = $this->getPlatform()->translateString($none_label, 'no_payment_plan_label', 'payment');
+            }
+            $form['#action'] = $this->_getFormAction($context);
+        } else {
+            $this->_submitable = false;
+        }
         $this->_cancelUrl = $this->Entity_Url($context->entity);
         return $form;
     }
@@ -42,18 +50,20 @@ class ClaimEntity extends FrontendSubmit\Controller\AddChildEntity
     {
         parent::_submitFormForStepAdd($context, $form);
 
-        if (!$this->_isPaymentEnabled($context, $form->storage)) return;
+        if (!$this->_isPaymentEnabled($context, $form->storage)
+            || (!$plan = $this->_getSelectedPlan($context, $form->storage))
+        ) return;
 
-        if ((!$plan = $this->_getSelectedPlan($context, $form->storage))
-            || (!$entity = $this->_getEntity($context, $form->storage))
-        ) return false; // this should not happen
+        if (!$entity = $this->_getEntity($context, $form->storage)) return false; // this should not happen
 
         $this->_getPaymentComponent(true)->paymentOnSubmit($entity, $plan, 'claim');
     }
 
     protected function _complete(Context $context, array $formStorage)
     {
-        if (!$this->_isPaymentEnabled($context, $formStorage)) {
+        if (!$this->_isPaymentEnabled($context, $formStorage)
+            || !$this->_getSelectedPlan($context, $formStorage)
+        ) {
             parent::_complete($context, $formStorage);
             return;
         }
@@ -63,7 +73,9 @@ class ClaimEntity extends FrontendSubmit\Controller\AddChildEntity
 
     protected function _getEntityStatus(Context $context, Form\Form $form, Entity\Model\Bundle $bundle)
     {
-        if (!$this->_isPaymentEnabled($context, $form->storage)) {
+        if (!$this->_isPaymentEnabled($context, $form->storage)
+            || !$this->_getSelectedPlan($context, $form->storage)
+        ) {
             return parent::_getEntityStatus($context, $form, $bundle);
         }
         return $this->Entity_Status($bundle->entitytype_name, 'draft');
@@ -79,7 +91,9 @@ class ClaimEntity extends FrontendSubmit\Controller\AddChildEntity
 
     protected function _getSubmitButtonForStepAdd(Context $context, array &$formStorage)
     {
-        if (!$this->_isPaymentEnabled($context, $formStorage)) {
+        if (!$this->_isPaymentEnabled($context, $formStorage)
+            || !$this->_getSelectedPlan($context, $formStorage)
+        ) {
             return parent::_getSubmitButtonForStepAdd($context, $formStorage);
         }
 
@@ -93,10 +107,7 @@ class ClaimEntity extends FrontendSubmit\Controller\AddChildEntity
     protected function _getRedirectGuestUrlParams(Context $context, array $formStorage)
     {
         $ret = parent::_getRedirectGuestUrlParams($context, $formStorage);
-
-        if ($this->_isPaymentEnabled($context, $formStorage)) {
-            $ret[] = 'plan';
-        }
+        $ret[] = 'plan';
 
         return $ret;
     }

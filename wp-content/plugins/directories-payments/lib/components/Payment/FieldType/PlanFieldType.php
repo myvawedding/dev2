@@ -115,6 +115,12 @@ class PlanFieldType extends Field\Type\AbstractType implements
             $value['plan_id'] = $currentValues[0]['plan_id'];
         } elseif (empty($value['plan_id'])) {
             return array(false); // delete
+        } else {
+            if ($default_lang = $this->_application->getPlatform()->getDefaultLanguage()) {
+                $value['plan_id'] = $this->_application->getComponent('Payment')
+                    ->getPaymentComponent()
+                    ->paymentGetPlanId($value['plan_id'], $default_lang);
+            }
         }
 
         // Add or keep addon features

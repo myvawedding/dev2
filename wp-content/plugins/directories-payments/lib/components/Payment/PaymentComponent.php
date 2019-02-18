@@ -22,7 +22,7 @@ class PaymentComponent extends AbstractComponent implements
     CSV\IExporters,
     CSV\IImporters
 {
-    const VERSION = '1.2.23', PACKAGE = 'directories-payments';
+    const VERSION = '1.2.24', PACKAGE = 'directories-payments';
     const FEATURE_STATUS_PENDING = 0, FEATURE_STATUS_APPLIED = 1, FEATURE_STATUS_UNAPPLIED = 2;
     
     protected $_paymentComponentName;
@@ -289,7 +289,6 @@ class PaymentComponent extends AbstractComponent implements
         
         // Limit by taxonomy terms 
         if (!empty($bundle->info['taxonomies'])) {
-            
             // Limit number of allowed taxonomies
             foreach (array_keys($bundle->info['taxonomies']) as $taxonomy_bundle_type) {
                 if (isset($features[0]['payment_taxonomy_terms'][$taxonomy_bundle_type])) {
@@ -313,6 +312,20 @@ class PaymentComponent extends AbstractComponent implements
                     $entity->setFieldValue($taxonomy_bundle_type, array_slice($taxonomy_terms, 0, $max_num_allowed));
                 }
             }
+        }
+
+        // Load translated payment plan ID
+        if (empty($bundle->info['is_taxonomy'])
+            && ($payment_plan = $entity->getSingleFieldValue('payment_plan'))
+            && $this->_application->getPlatform()->isTranslatable($entity->getType(), $entity->getBundleName())
+            && ($default_lang = $this->_application->getPlatform()->getDefaultLanguage())
+            && ($lang = $this->_application->getPlatform()->getLanguageFor($entity->getType(), $entity->getBundleName(), $entity->getId()))
+            && ($default_lang !== $lang)
+            && ($plan_id = $this->getPaymentComponent()->paymentGetPlanId($payment_plan['plan_id'], $lang))
+            && ($plan_id !== $payment_plan['plan_id'])
+        ) {
+            $payment_plan['plan_id'] = $plan_id;
+            $entity->setFieldValue('payment_plan', [$payment_plan]);
         }
     }
     
@@ -904,5 +917,109 @@ class PaymentComponent extends AbstractComponent implements
             return;
         }
         $this->getPaymentComponent()->paymentRefundOrder($order_id, __('Claim Rejected', 'directories-payments'));
+    }
+
+    public function onEntityCreateEntitySuccess($bundle, $entity, $values, $extraArgs)
+    {
+        if (!empty($bundle->info['is_taxonomy'])
+            || !$this->_application->getPlatform()->isTranslatable($entity->getType(), $entity->getBundleName())
+            || (!$default_lang = $this->_application->getPlatform()->getDefaultLanguage())
+        ) return;
+
+        if ((!$default_entity_id = $this->_application->getPlatform()->getTranslatedId($entity->getType(), $entity->getBundleName(), $entity->getId(), $default_lang))
+            || $default_entity_id == $entity->getId()
+        ) {
+            // Saving translated item but no default item or saving default item
+
+            // Get payment plan already assigned to translated items if any
+            if (!$translated_entities = $this->_application->Entity_Translations($entity)) return;
+
+            foreach ($translated_entities as $translated_entity) {
+                if ($payment_plan = $translated_entity->getSingleFieldValue('payment_plan')) {
+                    break;
+                }
+            }
+            if (empty($payment_plan)) {
+                // No payment plan assigned to any translated item, so make sure no payment plan is assigned
+
+                if (!$entity->getSingleFieldValue('payment_plan')) return; // already empty
+
+                // Remove payment plan
+                $payment_plan = false;
+            }
+        } else {
+            // Saving translated item and original exists
+
+            if (!$default_entity = $this->_application->Entity_Entity($entity->getType(), $default_entity_id)) return;
+
+            // Remove payment plan if default item does not have any
+            if ((!$payment_plan = $default_entity->getSingleFieldValue('payment_plan'))
+                || empty($payment_plan['plan_id'])
+            ) {
+                // Default item does not have a payment plan
+
+                if (!$entity->getSingleFieldValue('payment_plan')) return; // already empty
+
+                // Remove payment plan from translated item
+                $payment_plan = false;
+            }
+        }
+
+        $this->_application->Entity_Save(
+            $entity,
+            ['payment_plan' => $payment_plan],
+            ['payment_skip_plan_sync' => true] // prevents loop
+        );
+    }
+
+    public function onEntityUpdateEntitySuccess($bundle, $entity, $oldEntity, $values, $extraArgs)
+    {
+        if (!empty($extraArgs['payment_skip_plan_sync'])
+            || !empty($bundle->info['is_taxonomy'])
+            || !isset($values['payment_plan'])
+            || !$this->_application->getPlatform()->isTranslatable($entity->getType(), $entity->getBundleName())
+            || (!$default_lang = $this->_application->getPlatform()->getDefaultLanguage())
+            || (!$default_entity_id = $this->_application->getPlatform()->getTranslatedId($entity->getType(), $entity->getBundleName(), $entity->getId(), $default_lang))
+            || $default_entity_id != $entity->getId()
+            || (!$translated_entities = $this->_application->Entity_Translations($entity))
+        ) return;
+
+        // Payment plan of default item modified, update payment plan of translated items
+
+        if ((!$payment_plan = $entity->getSingleFieldValue('payment_plan'))
+            || empty($payment_plan['plan_id'])
+        ) {
+            $payment_plan = false;
+        }
+        foreach (array_keys($translated_entities) as $lang) {
+            $this->_application->Entity_Save(
+                $translated_entities[$lang],
+                ['payment_plan' => $payment_plan],
+                ['payment_skip_plan_sync' => true] // prevents loop
+            );
+        }
+    }
+
+    public function onSystemAdminSystemToolsFilter(&$tools)
+    {
+        if ((!$default_lang = $this->_application->getPlatform()->getDefaultLanguage())
+            || $default_lang !== $this->_application->getPlatform()->getCurrentLanguage()
+        ) return;
+
+        $tools['payment_sync_plan'] = [
+            'label' => __('Sync payment plan', 'directories-payments'),
+            'description' => __('This tool will synchronize the payment plan associated among translated items.', 'directories-payments'),
+            'with_progress' => true,
+            'weight' => 90,
+        ];
+    }
+
+    public function onSystemAdminRunTool($tool, $progress, $values)
+    {
+        switch ($tool) {
+            case 'payment_sync_plan':
+                $this->_application->Payment_Tools_syncPaymentPlan($progress);
+                break;
+        }
     }
 }

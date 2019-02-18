@@ -8,13 +8,13 @@ class PlansHelper
 {
     protected $_plans = [];
     
-    public function help(Application $application, $bundleName, $type = null, $throwError = false)
+    public function help(Application $application, $bundleName, $type = null, $lang = null, $throwError = false)
     {        
         if (!isset($this->_plans[$bundleName])) {
             $this->_plans[$bundleName] = [];
             
             if ($payment_component = $application->getComponent('Payment')->getPaymentComponent($throwError)) {
-                foreach ($payment_component->paymentGetPlanIds($bundleName) as $plan_id) {
+                foreach ($payment_component->paymentGetPlanIds($bundleName, $lang) as $plan_id) {
                     if (!$plan = $payment_component->paymentGetPlan($plan_id)) continue;
                 
                     $this->_plans[$bundleName][$plan_id] = $plan;

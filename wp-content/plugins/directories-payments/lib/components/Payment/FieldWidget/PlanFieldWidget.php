@@ -21,12 +21,20 @@ class PlanFieldWidget extends Field\Widget\AbstractWidget
         if (empty($field->Bundle->info['payment_enable'])) return;
 
         if (!$this->_application->IsAdministrator()
-            || (isset($entity) && $this->_application->getPlatform()->isTranslated($entity->getType(), $entity->getBundleName(), $entity->getId())) // translated entity?
+            || (isset($entity)
+                    && ($default_entity_id = $this->_application->getPlatform()->getTranslatedId($entity->getType(), $entity->getBundleName(), $entity->getId(), $this->_application->getPlatform()->getDefaultLanguage()))
+                    && $default_entity_id != $entity->getId())
             || (!isset($entity) && $this->_application->getPlatform()->isAdminAddTranslation())
         ) {
-            if (!isset($value['plan_id'])) return; // do not show for new content
+            if (empty($value['plan_id'])) return; // do not show for new content
 
-            if (!$plan = $this->_application->Payment_Plan($field->Bundle->name, $value['plan_id'])) return;
+            $current_plan_id = $value['plan_id'];
+            if ($current_lang = $this->_application->getPlatform()->getCurrentLanguage()) {
+                $current_plan_id = $this->_application->getComponent('Payment')
+                    ->getPaymentComponent()
+                    ->paymentGetPlanId($current_plan_id, $current_lang);
+            }
+            if (!$plan = $this->_application->Payment_Plan($field->Bundle->name, $current_plan_id)) return;
 
             if (!empty($value['expires_at'])) {
                 $expires_at = $this->_application->System_Date_datetime($value['expires_at']);
@@ -58,10 +66,16 @@ class PlanFieldWidget extends Field\Widget\AbstractWidget
             && $this->_application->Payment_Util_hasPendingOrder($entity, ['add', 'submit'])
         ) return;
 
-
+        if (($current_plan_id = empty($value['plan_id']) ? null : $value['plan_id'])
+            && ($current_lang = $this->_application->getPlatform()->getCurrentLanguage())
+        ) {
+            $current_plan_id = $this->_application->getComponent('Payment')
+                ->getPaymentComponent()
+                ->paymentGetPlanId($current_plan_id, $current_lang);
+        }
         $plan_id_field_selector = sprintf('[name="%s[plan_id]"]', $this->_application->Form_FieldName($parents));
         if (!isset($entity)
-            || (!$plan = $this->_application->Payment_Plan($entity))
+            || (!$plan = $this->_application->Payment_Plan($entity->getBundleName()))
             || $plan->paymentPlanType() === 'base'
         ) {
             if (!$plans = $this->_application->Payment_Plans($field->Bundle->name, 'base')) return;
@@ -77,11 +91,12 @@ class PlanFieldWidget extends Field\Widget\AbstractWidget
                 $expires_at_title .= ' <span class="' . DRTS_BS_PREFIX . 'badge ' . DRTS_BS_PREFIX . 'badge-danger">'
                     . $this->_application->H(__('Expired', 'directories-payments')) . '</span>';
             }
+
             $form = [
                 'plan_id' => [
                     '#type' => 'select',
                     '#options' => $plan_options,
-                    '#default_value' => empty($value['plan_id']) ? null : $value['plan_id'],
+                    '#default_value' => $current_plan_id,
                     '#weight' => 1,
                 ],
                 'expires_at' => [
@@ -102,7 +117,7 @@ class PlanFieldWidget extends Field\Widget\AbstractWidget
             $form = [
                 'plan_id' => [
                     '#type' => 'hidden',
-                    '#default_value' => $value['plan_id'],
+                    '#default_value' => $current_plan_id,
                     '#render_hidden_inline' => true,
                 ],
                 'plan_name' => [
@@ -111,7 +126,7 @@ class PlanFieldWidget extends Field\Widget\AbstractWidget
                     '#weight' => 1,
                 ],
             ];
-            $plans = [$value['plan_id'] => $plan];
+            $plans = [$current_plan_id => $plan];
         }
 
         $features_orderable = [];
