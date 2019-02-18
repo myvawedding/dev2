@@ -19,7 +19,7 @@ class EntityComponent extends AbstractComponent implements
     System\IMainRouter,
     System\IAdminRouter
 {
-    const VERSION = '1.2.23', PACKAGE = 'directories';
+    const VERSION = '1.2.24', PACKAGE = 'directories';
     const FIELD_REALM_ALL = 0, FIELD_REALM_ENTITY_TYPE_DEFAULT = 1, FIELD_REALM_BUNDLE_DEFAULT = 2;
 
     protected $_system = true;
@@ -48,8 +48,7 @@ class EntityComponent extends AbstractComponent implements
             ->setHelper('Entity_Status', array(__CLASS__, 'statusHelper'))
             ->setHelper('Entity_Author', array(__CLASS__, 'authorHelper'))
             ->setHelper('Entity_IsAuthor', array(__CLASS__, 'isAuthorHelper'))
-            ->setHelper('Entity_HtmlClass', array(__CLASS__, 'htmlClassHelper'))
-            ->setHelper('Entity_IsTranslated', array(__CLASS__, 'isTranslatedHelper'));
+            ->setHelper('Entity_HtmlClass', array(__CLASS__, 'htmlClassHelper'));
     }
 
     public static function titleHelper(Application $application, Type\IEntity $entity)
@@ -132,10 +131,14 @@ class EntityComponent extends AbstractComponent implements
 
     public static function entityHelper(Application $application, $entityType, $entityId, $loadEntityFields = true)
     {
-        if ($entity = $application->Entity_Types_impl($entityType)->entityTypeEntityById($entityId)) {
-            if ($loadEntityFields) $application->Entity_LoadFields($entity);
+        try {
+            if ($entity = $application->Entity_Types_impl($entityType)->entityTypeEntityById($entityId)) {
+                if ($loadEntityFields) $application->Entity_LoadFields($entity);
+            }
+            return $entity;
+        } catch (Exception\IException $e) {
+            $application->logError($e);
         }
-        return $entity;
     }
 
     public static function pathHelper(Application $application, Type\IEntity $entity, $lang = null)
@@ -194,14 +197,6 @@ class EntityComponent extends AbstractComponent implements
             return $ret;
         }
         return isset($info[$status]) ? $info[$status] : $status;
-    }
-
-    public static function isTranslatedHelper(Application $application, Type\IEntity $entity)
-    {
-        return ($application->getPlatform()->isTranslatable($entity->getType(), $entity->getBundleName())
-            && ($original_entity_id = $application->getPlatform()->isTranslated($entity->getType(), $entity->getBundleName(), $entity->getId()))
-            && ($translated_entity = $application->Entity_Entity($entity->getType(), $original_entity_id))
-        ) ? $translated_entity : false;
     }
 
     public function onEntityITypesInstalled(AbstractComponent $component)
@@ -1601,17 +1596,6 @@ class EntityComponent extends AbstractComponent implements
             }
         }
 
-        // Copy over content level settings of the original
-        if ($this->_application->getPlatform()->isTranslatable($entity->getType(), $entity->getBundleName())
-            && ($original_entity = $this->_application->Entity_IsTranslated($entity))
-        ) {
-            $this->_application->Entity_Save(
-                $entity,
-                array('payment_plan' => $original_entity->getSingleFieldValue('payment_plan')),
-                array('entity_skip_level_sync' => true) // prevents loop
-            );
-        }
-
         if ($reference_field_names = $entity->getFieldNamesByType('entity_reference')) {
             foreach ($reference_field_names as $field_name) {
                 if (!isset($values[$field_name])) continue;
@@ -1720,22 +1704,6 @@ class EntityComponent extends AbstractComponent implements
                     foreach (array_keys($terms_updated) as $taxonomy) {
                         $this->_application->Entity_UpdateTermContentCount($taxonomy, $terms_updated[$taxonomy], $bundle);
                     }
-                }
-            }
-        }
-
-        if (empty($extraArgs['entity_skip_level_sync'])) {
-            // Sync content level settings with all translated items
-            if (isset($values['payment_plan']) // payment plan settings modified?
-                && $this->_application->getPlatform()->isTranslatable($entity->getType(), $entity->getBundleName())
-                && ($translated_entities = $this->_application->Entity_Translations($entity))
-            ) {
-                foreach ($translated_entities as $translated_entity) {
-                    $this->_application->Entity_Save(
-                        $translated_entity,
-                        array('payment_plan' => $entity->getSingleFieldValue('payment_plan')),
-                        array('entity_skip_level_sync' => true) // prevents loop
-                    );
                 }
             }
         }

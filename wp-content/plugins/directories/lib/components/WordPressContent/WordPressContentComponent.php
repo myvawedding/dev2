@@ -20,7 +20,7 @@ class WordPressContentComponent extends AbstractComponent implements
     Display\IElements,
     Display\IStatistics
 {
-    const VERSION = '1.2.23', PACKAGE = 'directories';
+    const VERSION = '1.2.24', PACKAGE = 'directories';
 
     protected $_system = true;
 
@@ -400,54 +400,59 @@ class WordPressContentComponent extends AbstractComponent implements
 
     public function getPostMetadataFilter($value, $postId, $metaKey, $single)
     {
-        return ($post_type = get_post_type($postId)) && $this->hasPostType($post_type) ?
-            $this->_getMetadata('post', $postId, $metaKey, $single, $value) :
-            $value;
+        if ((!$post_type = get_post_type($postId))
+            || !$this->hasPostType($post_type)
+        ) return $value;
+
+        if (!empty($metaKey)) {
+            if (in_array($metaKey, ['_wp_page_template',
+                '_et_pb_page_layout', '_et_pb_use_builder', '_et_pb_post_hide_nav', // Divi theme
+                '_extra_sidebar', '_extra_sidebar_location', // Extra theme
+                'sbg_selected_sidebar_replacement', 'sbg_selected_sidebar_2_replacement', 'pyre_sidebar_position', 'pyre_sidebar_sticky' // Avada theme
+            ])) {
+                // Fetch page layout setting configured for the custom single item page.
+                if (isset($GLOBALS['drts_entity'])
+                    && $postId === $GLOBALS['drts_entity']->getId()
+                    && ($page_id = $this->getBundleSingleItemPageId($GLOBALS['drts_entity']->getBundleName()))
+                ) {
+                    remove_filter('get_post_metadata', [$this, 'getPostMetadataFilter'], 10); // prevent loop
+                    $value = get_post_meta($page_id, $metaKey, $single);
+                    if ($single) $value = [$value];  // WordPress looks for index 0 if single value returned by get_metadata filter is array
+                    add_filter('get_post_metadata', [$this, 'getPostMetadataFilter'], 10, 4);
+                }
+                return $value;
+            }
+        }
+
+        return $this->_getMetadata('post', $postId, $metaKey, $single, $value);
     }
 
     public function getTermMetadataFilter($value, $termId, $metaKey, $single)
     {
-        return ($taxonomy = self::getTermTaxonomy($termId)) && $this->hasTaxonomy($taxonomy) ?
-            $this->_getMetadata('term', $termId, $metaKey, $single, $value) :
-            $value;
+        if ((!$taxonomy = self::getTermTaxonomy($termId))
+            || !$this->hasTaxonomy($taxonomy)
+        ) return $value;
+
+        return $this->_getMetadata('term', $termId, $metaKey, $single, $value);
     }
 
     protected function _getMetadata($entityType, $entityId, $metaKey, $single, $value)
     {
         if (!empty($metaKey)) {
-            if (strpos($metaKey, '_drts_') === 0) {
-                if (!$field_name = substr($metaKey, strlen('_drts_'))) {
-                    return $value; // meta key must start with _drts_ when requesting for a specific field
-                }
-            } elseif (in_array($metaKey, ['_et_pb_page_layout', '_et_pb_use_builder', '_et_pb_post_hide_nav', '_extra_sidebar', '_extra_sidebar_location'])) {
-                // Fetch page layout setting configured for the custom single item page.
-                if (isset($GLOBALS['drts_entity'])
-                    && $entityId === $GLOBALS['drts_entity']->getId()
-                    && ($page_id = $this->getBundleSingleItemPageId($GLOBALS['drts_entity']->getBundleName()))
-                ) {
-                    return get_post_meta($page_id, $metaKey, true);
-                }
-                return $value;
-            } else {
-                return $value;
-            }
-        } else {
-            if ($entityType === 'post') {
-                if ((!$post_type = get_post_type($entityId))
-                    || !$this->hasPostType($post_type)
-                ) return $value;
+            if (strpos($metaKey, '_drts_') !== 0
+                || (!$field_name = substr($metaKey, strlen('_drts_')))
+            ) {
+                return $value; // meta key must start with _drts_ when requesting for a specific field
             }
         }
 
         if ($entity = $this->_application->Entity_Entity($entityType, $entityId)) {
             if (isset($field_name)) {
                 if ($single) {
-                    $value = $entity->getSingleFieldValue($field_name);
-                    if (is_array($value)) {
-                        $value = [$value]; // WordPress looks for index 0 if single value is array
-                    } elseif ($value === null) {
+                    if (null === $value = $entity->getSingleFieldValue($field_name)) {
                         $value = '';
                     }
+                    $value = [$value]; // WordPress looks for index 0 if single value returned by get_metadata filter is array
                 } else {
                     $value = $entity->getFieldValue($field_name);
                     if ($value === null

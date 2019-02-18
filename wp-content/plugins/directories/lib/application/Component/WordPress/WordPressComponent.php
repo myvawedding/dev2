@@ -11,7 +11,7 @@ class WordPressComponent extends AbstractComponent implements
     Form\IFields,
     System\IMainRouter
 {
-    const VERSION = '1.2.23', PACKAGE = 'directories';
+    const VERSION = '1.2.24', PACKAGE = 'directories';
 
     protected $_system = true;
 
@@ -58,28 +58,25 @@ class WordPressComponent extends AbstractComponent implements
         foreach (array_keys($slugs) as $component) {
             foreach (array_keys($slugs[$component]) as $slug_name) {
                 if (!empty($slugs[$component][$slug_name]['parent'])
-                    || empty($page_slugs[1][$component][$slug_name])
+                    || (!$real_slug = @$page_slugs[1][$component][$slug_name])
                 ) continue;
 
                 $error = false;
-                if (!isset($slugs[$component][$slug_name]['required'])
-                    || $slugs[$component][$slug_name]['required']
+                if ((!$page_id = @$page_slugs[2][$real_slug])
+                    || (!$permalink = get_permalink($page_id))
                 ) {
-                    $real_slug = $page_slugs[1][$component][$slug_name];
-                    if (empty($page_slugs[2][$real_slug])) {
-                        $error = '';
-                    } else {
-                        $page_id = $page_slugs[2][$real_slug];
-                        if (!$permalink = get_permalink($page_id)) {
-                            $error = 'Permalink failure for page #' . $page_id;
-                        }
-                    }
+                    if (isset($slugs[$component][$slug_name]['required'])
+                        && !$slugs[$component][$slug_name]['required']
+                    ) continue;
+
+                    $error = true;
                 }
+
                 $info['wordpress']['info']['page_' . $slug_name] = [
                     'name' => 'Page - ' . $slugs[$component][$slug_name]['admin_title'],
-                    'value' => $error ? $error : '<a href="' . $permalink . '">' . $this->_application->H(get_the_title($page_id)) . '</a>',
-                    'no_escape' => $error === false,
-                    'error' => $error !== false,
+                    'value' => $error ? '' : '<a href="' . $permalink . '">' . $this->_application->H(get_the_title($page_id)) . '</a>',
+                    'no_escape' => !$error,
+                    'error' => $error,
                 ];
             }
         }

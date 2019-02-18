@@ -70,10 +70,6 @@ var DRTS = {
         $('.drts-grow,.drts-sm-grow,.drts-md-grow,.drts-lg-grow,.drts-xl-grow', context).removeClass('drts-grow drts-sm-grow drts-md-grow drts-lg-grow drts-xl-grow');
       }
 
-      if (!DRTS.isMobile()) {
-        $('a[data-phone-number]', context).contents().unwrap();
-      }
-
       $(DRTS).trigger('drts_init.sabai', {
         context: context
       });
@@ -1086,10 +1082,6 @@ var DRTS = {
       });
     }
     return loc;
-  };
-
-  DRTS.isMobile = function() {
-    return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
   };
 
   $.fn.sabaiAlert = $.fn.alert.noConflict();

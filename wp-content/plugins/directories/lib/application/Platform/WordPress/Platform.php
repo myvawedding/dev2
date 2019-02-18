@@ -15,7 +15,7 @@ use Monolog\Handler\ErrorLogHandler;
 
 class Platform extends AbstractPlatform
 {
-    const VERSION = '1.2.23';
+    const VERSION = '1.2.24';
     private $_mainContent, $_singlePageId, $_singlePageContent, $_userToBeDeleted,
         $_jqueryUiCoreLoaded, $_jqueryUiCssLoaded,
         $_moLoaded, $_i18n, $_flash = [], $_bsHandle, $_flushRewriteRules, $_pluginsUrl;
@@ -2205,25 +2205,11 @@ class %s extends \SabaiApps\Directories\Platform\WordPress\Widget {
         }
     }
 
-    public function isTranslated($entityType, $bundleName, $id)
-    {
-        switch ($this->_i18n) {
-            case 'wpml':
-                $original_entity_id = apply_filters('wpml_original_element_id', null, $id, ($entityType === 'term' ? 'tax_' : 'post_') . $bundleName);
-                return !$original_entity_id || $original_entity_id == $id ? false : $original_entity_id;
-            //case 'polylang':
-            //    if (!$original_entity_id = $entityType === 'term' ? pll_get_term($id) : pll_get_post($id)) return;
-            //    return $original_entity_id == $id ? false : $original_entity_id;
-            default:
-                return;
-        }
-    }
-
     public function getLanguageFor($entityType, $bundleName, $id)
     {
         switch ($this->_i18n) {
             case 'wpml':
-                return $GLOBALS['sitepress']->get_language_for_element($id, ($entityType === 'term' ? 'tax_' : 'post_') . $bundleName);
+                return apply_filters('wpml_element_language_code', null, ['element_id' => $id, 'element_type' => $bundleName]);
             //case 'polylang':
             //    retun $entityType === 'term' ? pll_get_term_language($id)) : pll_get_post_language($id);
             default:

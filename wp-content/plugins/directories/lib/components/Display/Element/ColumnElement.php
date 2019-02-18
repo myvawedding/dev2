@@ -3,6 +3,7 @@ namespace SabaiApps\Directories\Component\Display\Element;
 
 use SabaiApps\Directories\Component\Entity;
 use SabaiApps\Directories\Component\Display;
+use SabaiApps\Directories\Component\Form;
 
 class ColumnElement extends AbstractElement
 {
@@ -31,7 +32,6 @@ class ColumnElement extends AbstractElement
     
     public function displayElementSettingsForm(Entity\Model\Bundle $bundle, array $settings, Display\Model\Display $display, array $parents = [], $tab = null, $isEdit = false, array $submitValues = [])
     {
-        $default = 'sm';
         $widths = $this->_getWidthOptions();
         $form = array(
             'width' => array(
@@ -49,6 +49,20 @@ class ColumnElement extends AbstractElement
                         sprintf('select[name="%s"]', $this->_application->Form_FieldName(array_merge($parents, array('width')))) => array('value' => 'responsive'),
                     ),
                 ),
+                '#element_validate' => [function(Form\Form $form, &$value, $element) {
+                    foreach (array('xl', 'lg', 'md', 'sm', 'xs') as $key) {
+                        if (!empty($value[$key]['width'])
+                            && $value[$key]['width'] !== 'inherit'
+                        ) {
+                            $width = $value[$key]['width'];
+
+                            break;
+                        }
+                    }
+                    if (empty($width)) {
+                        $form->setError(__('Please select at least one non-empty width.', 'directories'), $element);
+                    }
+                }],
             ),
         );
         foreach ($this->_getResponsiveWidthOptions() as $key => $title) {
@@ -109,7 +123,9 @@ class ColumnElement extends AbstractElement
             $grow = 0;
         } else {
             foreach (array('xl', 'lg', 'md', 'sm', 'xs') as $key) {
-                if (!empty($settings['responsive'][$key]['width'])) {
+                if (!empty($settings['responsive'][$key]['width'])
+                    && $settings['responsive'][$key]['width'] !== 'inherit'
+                ) {
                     $width = $settings['responsive'][$key]['width'];
                     
                     break;

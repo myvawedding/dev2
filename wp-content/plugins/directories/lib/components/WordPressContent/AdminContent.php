@@ -600,7 +600,9 @@ class AdminContent
             $values = $this->_application->Filter('wordpress_admin_save_post_values', $values, [$post, $this->_oldPostEntity]);
         }
 
-        if ($this->_oldPostEntity->getStatus() === 'auto-draft') {
+        if ($this->_oldPostEntity->getStatus() === 'auto-draft'
+            || ($this->_oldPostEntity->getStatus() === 'draft' && !$this->_oldPostEntity->getSlug())
+        ) {
             // Force Create events otherwise Update events will be called since WP has already created the entity
             $extra_args['force_create_events'] = true;
         }

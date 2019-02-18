@@ -84,11 +84,11 @@ msgstr[1] ""
 msgid "Number of columns"
 msgstr ""
 
-#: lib/application/Helper/GridColumnSettingsFormHelper.php:20, lib/components/Display/Element/ColumnElement.php:41, lib/components/Display/Element/ColumnElement.php:174
+#: lib/application/Helper/GridColumnSettingsFormHelper.php:20, lib/components/Display/Element/ColumnElement.php:41, lib/components/Display/Element/ColumnElement.php:190
 msgid "Responsive"
 msgstr ""
 
-#: lib/application/Helper/GridColumnSettingsFormHelper.php:34, lib/components/Display/Element/ColumnElement.php:57, lib/components/Display/Element/ColumnElement.php:176, lib/components/Display/Element/ColumnElement.php:182
+#: lib/application/Helper/GridColumnSettingsFormHelper.php:34, lib/components/Display/Element/ColumnElement.php:71, lib/components/Display/Element/ColumnElement.php:192, lib/components/Display/Element/ColumnElement.php:198
 msgid "Inherit from smaller"
 msgstr ""
 
@@ -152,7 +152,7 @@ msgstr ""
 msgid "Thumbnail (small)"
 msgstr ""
 
-#: lib/application/Helper/UserIdentityHtmlHelper.php:28, lib/components/WordPressContent/AdminContent.php:1218, lib/components/Field/Renderer/AbstractRenderer.php:162, lib/components/View/Mode/AbstractMode.php:65
+#: lib/application/Helper/UserIdentityHtmlHelper.php:28, lib/components/WordPressContent/AdminContent.php:1220, lib/components/Field/Renderer/AbstractRenderer.php:162, lib/components/View/Mode/AbstractMode.php:65
 msgid "Thumbnail"
 msgstr ""
 
@@ -164,7 +164,7 @@ msgstr ""
 msgid "Thumbnail with link"
 msgstr ""
 
-#: lib/application/Helper/UserIdentityHtmlHelper.php:107, lib/components/WordPressContent/WordPressContentComponent.php:1006, lib/components/WordPressContent/Helper/PermissionSettingsFormHelper.php:24
+#: lib/application/Helper/UserIdentityHtmlHelper.php:107, lib/components/WordPressContent/WordPressContentComponent.php:1011, lib/components/WordPressContent/Helper/PermissionSettingsFormHelper.php:24
 msgid "Guest"
 msgstr ""
 
@@ -251,55 +251,55 @@ msgstr ""
 msgid "Check this option to completely remove all directory data when the Directories plugin is deleted."
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:64, lib/application/Platform/WordPress/Template.php:127
+#: lib/components/Entity/EntityComponent.php:63, lib/application/Platform/WordPress/Template.php:127
 msgid "(no title)"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:1183, lib/components/Entity/Helper/BundleHelper.php:102
+#: lib/components/Entity/EntityComponent.php:1178, lib/components/Entity/Helper/BundleHelper.php:102
 msgid "Edit"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:1186, lib/components/Entity/Helper/BundleHelper.php:109
+#: lib/components/Entity/EntityComponent.php:1181, lib/components/Entity/Helper/BundleHelper.php:109
 msgid "Manage Fields"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:1188, lib/components/Entity/Helper/BundleHelper.php:118
+#: lib/components/Entity/EntityComponent.php:1183, lib/components/Entity/Helper/BundleHelper.php:118
 msgid "Manage Displays"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2017
+#: lib/components/Entity/EntityComponent.php:1985
 msgid "Unfeatured item: %s"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2049
+#: lib/components/Entity/EntityComponent.php:2017
 msgid "Clear and reload field cache"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2050
+#: lib/components/Entity/EntityComponent.php:2018
 msgid "Clear and reload taxonomy term cache"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2057
+#: lib/components/Entity/EntityComponent.php:2025
 msgid "Recount posts"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2058
+#: lib/components/Entity/EntityComponent.php:2026
 msgid "This tool will recount the number of posts associated with each content item."
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2065
+#: lib/components/Entity/EntityComponent.php:2033
 msgid "Recount term posts"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2073
+#: lib/components/Entity/EntityComponent.php:2041
 msgid "Recount child posts"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2077
+#: lib/components/Entity/EntityComponent.php:2045
 msgid "Sync taxonomy terms"
 msgstr ""
 
-#: lib/components/Entity/EntityComponent.php:2078
+#: lib/components/Entity/EntityComponent.php:2046
 msgid "This tool will sync taxonomy terms assigned to each content item in WP with taxonomy term data in Directories Pro."
 msgstr ""
 
@@ -488,7 +488,7 @@ msgstr ""
 msgid "Please correct the error(s) below."
 msgstr ""
 
-#: lib/components/WordPressContent/AdminContent.php:944
+#: lib/components/WordPressContent/AdminContent.php:946
 msgid "Select %s"
 msgstr ""
 
@@ -505,35 +505,35 @@ msgstr ""
 msgid "Page Settings"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1009
+#: lib/components/WordPressContent/WordPressContentComponent.php:1014
 msgid "Visible to selected roles only"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1120
+#: lib/components/WordPressContent/WordPressContentComponent.php:1125
 msgid "Content"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1147
+#: lib/components/WordPressContent/WordPressContentComponent.php:1152
 msgid "Permissions"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1163
+#: lib/components/WordPressContent/WordPressContentComponent.php:1168
 msgid "Single Item Page Settings"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1174
+#: lib/components/WordPressContent/WordPressContentComponent.php:1179
 msgid "Enable featured image (post thumbnail)"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1180
+#: lib/components/WordPressContent/WordPressContentComponent.php:1185
 msgid "Automatically generate featured image"
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1188
+#: lib/components/WordPressContent/WordPressContentComponent.php:1193
 msgid "Check this option to automatically generate a featured image using the first image when submitted from the frontend."
 msgstr ""
 
-#: lib/components/WordPressContent/WordPressContentComponent.php:1256, lib/components/Search/Field/KeywordField.php:82
+#: lib/components/WordPressContent/WordPressContentComponent.php:1261, lib/components/Search/Field/KeywordField.php:82
 msgid "Search taxonomy term names"
 msgstr ""
 
@@ -638,15 +638,15 @@ msgstr ""
 msgid "WordPress environment"
 msgstr ""
 
-#: lib/application/Component/WordPress/WordPressComponent.php:220
+#: lib/application/Component/WordPress/WordPressComponent.php:217
 msgid "Licenses"
 msgstr ""
 
-#: lib/application/Component/WordPress/WordPressComponent.php:284
+#: lib/application/Component/WordPress/WordPressComponent.php:281
 msgid "Code"
 msgstr ""
 
-#: lib/application/Component/WordPress/WordPressComponent.php:287, lib/components/View/Controller/Admin/Views.php:26, lib/components/View/Controller/Admin/Views.php:160
+#: lib/application/Component/WordPress/WordPressComponent.php:284, lib/components/View/Controller/Admin/Views.php:26, lib/components/View/Controller/Admin/Views.php:160
 msgid "Shortcode"
 msgstr ""
 
@@ -662,7 +662,7 @@ msgstr ""
 msgid "Remember Me"
 msgstr ""
 
-#: lib/application/Platform/WordPress/Platform.php:327
+#: lib/application/Platform/WordPress/Platform.php:327, lib/components/Field/Renderer/DefaultRenderer.php:455, lib/components/Field/Renderer/DefaultRenderer.php:456
 msgid "E-mail Address"
 msgstr ""
 
@@ -866,7 +866,7 @@ msgstr ""
 msgid "Create non-existent terms"
 msgstr ""
 
-#: lib/components/CSV/Importer/EntityImporter.php:320, lib/components/Field/Renderer/DefaultRenderer.php:21, lib/components/Field/Type/BooleanType.php:82, lib/application/Component/Form/Field/CheckboxField.php:67, lib/application/Component/Form/Field/CheckboxField.php:110
+#: lib/components/CSV/Importer/EntityImporter.php:320, lib/components/Field/Renderer/DefaultRenderer.php:19, lib/components/Field/Type/BooleanType.php:82, lib/application/Component/Form/Field/CheckboxField.php:67, lib/application/Component/Form/Field/CheckboxField.php:110
 msgid "Yes"
 msgstr ""
 
@@ -886,7 +886,7 @@ msgstr ""
 msgid "Low"
 msgstr ""
 
-#: lib/components/CSV/Importer/EntityImporter.php:336, lib/components/Field/Renderer/DefaultRenderer.php:22, lib/components/Field/Type/BooleanType.php:82, lib/application/Component/Form/Field/CheckboxField.php:70, lib/application/Component/Form/Field/CheckboxField.php:114
+#: lib/components/CSV/Importer/EntityImporter.php:336, lib/components/Field/Renderer/DefaultRenderer.php:20, lib/components/Field/Type/BooleanType.php:82, lib/application/Component/Form/Field/CheckboxField.php:70, lib/application/Component/Form/Field/CheckboxField.php:114
 msgid "No"
 msgstr ""
 
@@ -1310,28 +1310,32 @@ msgstr ""
 msgid "Buttons"
 msgstr ""
 
-#: lib/components/Display/Element/ColumnElement.php:13
+#: lib/components/Display/Element/ColumnElement.php:14
 msgctxt "display element name"
 msgid "Column"
 msgstr ""
 
-#: lib/components/Display/Element/ColumnElement.php:38, lib/components/Display/Element/ColumnElement.php:169
+#: lib/components/Display/Element/ColumnElement.php:38, lib/components/Display/Element/ColumnElement.php:185
 msgid "Column width"
 msgstr ""
 
-#: lib/components/Display/Element/ColumnElement.php:55, lib/components/Display/Element/ColumnElement.php:175
+#: lib/components/Display/Element/ColumnElement.php:63
+msgid "Please select at least one non-empty width."
+msgstr ""
+
+#: lib/components/Display/Element/ColumnElement.php:69, lib/components/Display/Element/ColumnElement.php:191
 msgid "Hidden"
 msgstr ""
 
-#: lib/components/Display/Element/ColumnElement.php:70
+#: lib/components/Display/Element/ColumnElement.php:84
 msgid "Select the display width of this column when the container of the column is %s."
 msgstr ""
 
-#: lib/components/Display/Element/ColumnElement.php:80, lib/components/Display/Element/ColumnElement.php:191
+#: lib/components/Display/Element/ColumnElement.php:94, lib/components/Display/Element/ColumnElement.php:207
 msgid "Stretch to fill space"
 msgstr ""
 
-#: lib/components/Display/Element/ColumnElement.php:101
+#: lib/components/Display/Element/ColumnElement.php:115
 msgid "Full width"
 msgstr ""
 
@@ -1459,7 +1463,7 @@ msgstr ""
 msgid "Statistics of current content"
 msgstr ""
 
-#: lib/components/Display/Element/StatisticsElement.php:63, lib/components/Entity/FieldRenderer/AuthorFieldRenderer.php:24, lib/components/Entity/FieldRenderer/AuthorFieldRenderer.php:77, lib/components/Field/Renderer/DefaultRenderer.php:101, lib/components/Field/Renderer/DefaultRenderer.php:131, lib/components/Field/Renderer/DefaultRenderer.php:184, lib/components/Field/Renderer/DefaultRenderer.php:462, lib/components/Field/Renderer/DefaultRenderer.php:489, lib/components/Field/Renderer/DefaultRenderer.php:527, lib/components/Field/Renderer/WhatsAppRenderer.php:29, lib/components/Field/Renderer/WhatsAppRenderer.php:124, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:27, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:86
+#: lib/components/Display/Element/StatisticsElement.php:63, lib/components/Entity/FieldRenderer/AuthorFieldRenderer.php:24, lib/components/Entity/FieldRenderer/AuthorFieldRenderer.php:77, lib/components/Field/Renderer/DefaultRenderer.php:106, lib/components/Field/Renderer/DefaultRenderer.php:136, lib/components/Field/Renderer/DefaultRenderer.php:189, lib/components/Field/Renderer/DefaultRenderer.php:218, lib/components/Field/Renderer/DefaultRenderer.php:497, lib/components/Field/Renderer/DefaultRenderer.php:524, lib/components/Field/Renderer/DefaultRenderer.php:562, lib/components/Field/Renderer/DefaultRenderer.php:577, lib/components/Field/Renderer/WhatsAppRenderer.php:29, lib/components/Field/Renderer/WhatsAppRenderer.php:124, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:27, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:86
 msgid "Display format"
 msgstr ""
 
@@ -1650,7 +1654,7 @@ msgstr ""
 msgid "Gradient"
 msgstr ""
 
-#: lib/components/Display/Helper/ElementLabelSettingsFormHelper.php:11, lib/components/Display/Helper/ElementLabelSettingsFormHelper.php:12, lib/components/Display/Helper/ElementLabelSettingsFormHelper.php:41, lib/components/Display/Label/CustomLabel.php:11, lib/components/Field/Renderer/DefaultRenderer.php:107, lib/components/Field/Renderer/DefaultRenderer.php:137, lib/components/Field/Renderer/DefaultRenderer.php:431, lib/components/Field/Renderer/DefaultRenderer.php:440, lib/components/Field/Renderer/DefaultRenderer.php:468, lib/components/Field/Renderer/DefaultRenderer.php:495, lib/components/Field/Renderer/WhatsAppRenderer.php:35, lib/components/Field/Renderer/WhatsAppRenderer.php:78, lib/components/Field/Renderer/WhatsAppRenderer.php:130, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:33, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:55, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:92
+#: lib/components/Display/Helper/ElementLabelSettingsFormHelper.php:11, lib/components/Display/Helper/ElementLabelSettingsFormHelper.php:12, lib/components/Display/Helper/ElementLabelSettingsFormHelper.php:41, lib/components/Display/Label/CustomLabel.php:11, lib/components/Field/Renderer/DefaultRenderer.php:112, lib/components/Field/Renderer/DefaultRenderer.php:142, lib/components/Field/Renderer/DefaultRenderer.php:224, lib/components/Field/Renderer/DefaultRenderer.php:457, lib/components/Field/Renderer/DefaultRenderer.php:466, lib/components/Field/Renderer/DefaultRenderer.php:475, lib/components/Field/Renderer/DefaultRenderer.php:503, lib/components/Field/Renderer/DefaultRenderer.php:530, lib/components/Field/Renderer/DefaultRenderer.php:568, lib/components/Field/Renderer/WhatsAppRenderer.php:35, lib/components/Field/Renderer/WhatsAppRenderer.php:78, lib/components/Field/Renderer/WhatsAppRenderer.php:130, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:33, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:55, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:92
 msgid "Custom label"
 msgstr ""
 
@@ -1714,7 +1718,7 @@ msgstr ""
 msgid "Number of child terms to display"
 msgstr ""
 
-#: lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:41, lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:220, lib/components/Entity/DisplayElement/FormDisplayElement.php:409, lib/components/Entity/DisplayElement/FormDisplayElement.php:469, lib/components/Entity/DisplayElement/FormDisplayElement.php:692, lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:115, lib/components/Entity/FieldWidget/TermListFieldWidget.php:60, lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:53, lib/components/Field/Renderer/AbstractRenderer.php:38, lib/components/Field/Renderer/AbstractRenderer.php:116, lib/components/Field/Renderer/DefaultRenderer.php:149, lib/components/Field/Renderer/DefaultRenderer.php:501, lib/components/Search/Field/KeywordField.php:223, lib/components/Search/Field/TermField.php:51, lib/components/View/FieldFilter/AbstractTermFieldFilter.php:65
+#: lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:41, lib/components/Entity/DisplayElement/ChildTermsDisplayElement.php:220, lib/components/Entity/DisplayElement/FormDisplayElement.php:409, lib/components/Entity/DisplayElement/FormDisplayElement.php:469, lib/components/Entity/DisplayElement/FormDisplayElement.php:692, lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:115, lib/components/Entity/FieldWidget/TermListFieldWidget.php:60, lib/components/Entity/FieldWidget/TermSelectFieldWidget.php:53, lib/components/Field/Renderer/AbstractRenderer.php:38, lib/components/Field/Renderer/AbstractRenderer.php:116, lib/components/Field/Renderer/DefaultRenderer.php:154, lib/components/Field/Renderer/DefaultRenderer.php:536, lib/components/Search/Field/KeywordField.php:223, lib/components/Search/Field/TermField.php:51, lib/components/View/FieldFilter/AbstractTermFieldFilter.php:65
 msgid "Unlimited"
 msgstr ""
 
@@ -1930,7 +1934,7 @@ msgstr ""
 msgid "Link type"
 msgstr ""
 
-#: lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:39, lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:286, lib/components/Field/Renderer/DefaultRenderer.php:117, lib/components/Field/Renderer/DefaultRenderer.php:158, lib/components/Field/Renderer/DefaultRenderer.php:475, lib/components/Field/Renderer/DefaultRenderer.php:480, lib/components/Field/Renderer/DefaultRenderer.php:507, lib/components/Field/Renderer/WhatsAppRenderer.php:45, lib/components/Field/Renderer/WhatsAppRenderer.php:136, lib/components/Social/FieldRenderer/AccountsFieldRenderer.php:34, lib/components/Social/FieldRenderer/AccountsFieldRenderer.php:137, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:43, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:98
+#: lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:39, lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:286, lib/components/Field/Renderer/DefaultRenderer.php:122, lib/components/Field/Renderer/DefaultRenderer.php:163, lib/components/Field/Renderer/DefaultRenderer.php:510, lib/components/Field/Renderer/DefaultRenderer.php:515, lib/components/Field/Renderer/DefaultRenderer.php:542, lib/components/Field/Renderer/WhatsAppRenderer.php:45, lib/components/Field/Renderer/WhatsAppRenderer.php:136, lib/components/Social/FieldRenderer/AccountsFieldRenderer.php:34, lib/components/Social/FieldRenderer/AccountsFieldRenderer.php:137, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:43, lib/components/Social/FieldRenderer/FacebookMessengerLinkFieldRenderer.php:98
 msgid "Open link in"
 msgstr ""
 
@@ -1962,7 +1966,7 @@ msgstr ""
 msgid "Link to URL of another field (fallback to post URL)"
 msgstr ""
 
-#: lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:280, lib/components/Field/Renderer/DefaultRenderer.php:169, lib/components/Field/Renderer/DefaultRenderer.php:517, lib/components/Social/FieldRenderer/AccountsFieldRenderer.php:41, lib/components/Social/FieldRenderer/AccountsFieldRenderer.php:148
+#: lib/components/Entity/FieldRenderer/TitleFieldRenderer.php:280, lib/components/Field/Renderer/DefaultRenderer.php:174, lib/components/Field/Renderer/DefaultRenderer.php:552, lib/components/Social/FieldRenderer/AccountsFieldRenderer.php:41, lib/components/Social/FieldRenderer/AccountsFieldRenderer.php:148
 msgid "Link \"rel\" attribute"
 msgstr ""
 
@@ -2491,6 +2495,10 @@ msgstr ""
 msgid "Large size"
 msgstr ""
 
+#: lib/components/Field/Renderer/AbstractRenderer.php:166, lib/components/Field/Renderer/ImageRenderer.php:110
+msgid "Original size"
+msgstr ""
+
 #: lib/components/Field/Renderer/ChecklistRenderer.php:12
 msgid "Checklist"
 msgstr ""
@@ -2527,48 +2535,44 @@ msgstr ""
 msgid "Custom date format"
 msgstr ""
 
-#: lib/components/Field/Renderer/DefaultRenderer.php:88, lib/components/Field/Renderer/DefaultRenderer.php:450
+#: lib/components/Field/Renderer/DefaultRenderer.php:93, lib/components/Field/Renderer/DefaultRenderer.php:485
 msgid "ON label"
 msgstr ""
 
-#: lib/components/Field/Renderer/DefaultRenderer.php:94, lib/components/Field/Renderer/DefaultRenderer.php:454
+#: lib/components/Field/Renderer/DefaultRenderer.php:99, lib/components/Field/Renderer/DefaultRenderer.php:489
 msgid "OFF label"
 msgstr ""
 
-#: lib/components/Field/Renderer/DefaultRenderer.php:147, lib/components/Field/Renderer/DefaultRenderer.php:500
+#: lib/components/Field/Renderer/DefaultRenderer.php:152, lib/components/Field/Renderer/DefaultRenderer.php:535
 msgid "Max URL display length"
 msgstr ""
 
-#: lib/components/Field/Renderer/DefaultRenderer.php:195, lib/components/Field/Renderer/DefaultRenderer.php:215, lib/components/Field/Renderer/DefaultRenderer.php:534, lib/components/Field/Renderer/DefaultRenderer.php:545
+#: lib/components/Field/Renderer/DefaultRenderer.php:200, lib/components/Field/Renderer/DefaultRenderer.php:239, lib/components/Field/Renderer/DefaultRenderer.php:584, lib/components/Field/Renderer/DefaultRenderer.php:595
 msgid "Decimal point"
 msgstr ""
 
-#: lib/components/Field/Renderer/DefaultRenderer.php:201, lib/components/Field/Renderer/DefaultRenderer.php:221, lib/components/Field/Renderer/DefaultRenderer.php:538, lib/components/Field/Renderer/DefaultRenderer.php:549
+#: lib/components/Field/Renderer/DefaultRenderer.php:206, lib/components/Field/Renderer/DefaultRenderer.php:245, lib/components/Field/Renderer/DefaultRenderer.php:588, lib/components/Field/Renderer/DefaultRenderer.php:599
 msgid "Thousands separator"
 msgstr ""
 
-#: lib/components/Field/Renderer/DefaultRenderer.php:206
+#: lib/components/Field/Renderer/DefaultRenderer.php:211
 msgid "Remove trailing zeros"
 msgstr ""
 
-#: lib/components/Field/Renderer/DefaultRenderer.php:226, lib/components/Field/Renderer/DefaultRenderer.php:553
+#: lib/components/Field/Renderer/DefaultRenderer.php:250, lib/components/Field/Renderer/DefaultRenderer.php:603
 msgid "Range separator"
 msgstr ""
 
-#: lib/components/Field/Renderer/DefaultRenderer.php:429
-msgid "E-mail address"
+#: lib/components/Field/Renderer/DefaultRenderer.php:456, lib/components/Field/Renderer/DefaultRenderer.php:465, lib/components/Field/Renderer/DefaultRenderer.php:474
+msgid "%s (without link)"
 msgstr ""
 
-#: lib/components/Field/Renderer/DefaultRenderer.php:430
-msgid "E-mail address (without link)"
-msgstr ""
-
-#: lib/components/Field/Renderer/DefaultRenderer.php:438, lib/components/Field/Type/UrlType.php:12
+#: lib/components/Field/Renderer/DefaultRenderer.php:464, lib/components/Field/Renderer/DefaultRenderer.php:465, lib/components/Field/Type/UrlType.php:12
 msgid "URL"
 msgstr ""
 
-#: lib/components/Field/Renderer/DefaultRenderer.php:439
-msgid "URL (without link)"
+#: lib/components/Field/Renderer/DefaultRenderer.php:473, lib/components/Field/Renderer/DefaultRenderer.php:474, lib/components/Field/Type/PhoneType.php:11
+msgid "Phone Number"
 msgstr ""
 
 #: lib/components/Field/Renderer/ImageRenderer.php:30, lib/components/Field/Renderer/ImageRenderer.php:227, lib/components/View/Mode/AbstractMode.php:62, lib/components/WordPressContent/FieldRenderer/GalleryFieldRenderer.php:34, lib/components/WordPressContent/FieldRenderer/GalleryFieldRenderer.php:71
@@ -2597,10 +2601,6 @@ msgstr ""
 
 #: lib/components/Field/Renderer/ImageRenderer.php:101
 msgid "Single image"
-msgstr ""
-
-#: lib/components/Field/Renderer/ImageRenderer.php:110
-msgid "Original size"
 msgstr ""
 
 #: lib/components/Field/Renderer/TextRenderer.php:28, lib/components/Field/Renderer/TextRenderer.php:104
@@ -2797,10 +2797,6 @@ msgstr ""
 
 #: lib/components/Field/Type/NumberType.php:181
 msgid "Enter a single numeric value"
-msgstr ""
-
-#: lib/components/Field/Type/PhoneType.php:11
-msgid "Phone Number"
 msgstr ""
 
 #: lib/components/Field/Type/QueryableStringTrait.php:14

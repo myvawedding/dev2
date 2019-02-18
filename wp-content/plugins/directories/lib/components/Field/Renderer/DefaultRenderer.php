@@ -6,8 +6,6 @@ use SabaiApps\Directories\Component\Field\IField;
 
 class DefaultRenderer extends AbstractRenderer
 {
-    protected static $_phoneJsAdded;
-
     protected function _fieldRendererInfo()
     {
         $info = array(
@@ -58,6 +56,13 @@ class DefaultRenderer extends AbstractRenderer
                     'label' => null,
                     'target' => '_blank',
                     'rel' => array('nofollow', 'external'),
+                    '_separator' => ', ',
+                );
+                break;
+            case 'phone':
+                $info['default_settings'] = array(
+                    'type' => 'default',
+                    'label' => null,
                     '_separator' => ', ',
                 );
                 break;
@@ -207,6 +212,25 @@ class DefaultRenderer extends AbstractRenderer
                         '#default_value' => $settings['trim_zeros'],
                     ],
                 );
+            case 'phone':
+                return array(
+                    'type' => array(
+                        '#title' => __('Display format', 'directories'),
+                        '#type' => 'select',
+                        '#options' => $this->_getPhoneDisplayFormatOptions(),
+                        '#default_value' => $settings['type'],
+                    ),
+                    'label' => array(
+                        '#title' => __('Custom label', 'directories'),
+                        '#type' => 'textfield',
+                        '#default_value' => $settings['label'],
+                        '#states' => array(
+                            'visible' => array(
+                                sprintf('select[name="%s[type]"]', $this->_application->Form_FieldName($parents)) => array('value' => 'label'),
+                            ),
+                        ),
+                    ),
+                );
             case 'range':
                 return array(
                     'dec_point' => array(
@@ -316,18 +340,20 @@ class DefaultRenderer extends AbstractRenderer
 
     protected function phone(IField $field, array $settings, array $values, Entity\Type\IEntity $entity)
     {
-        if (!self::$_phoneJsAdded) {
-            self::$_phoneJsAdded = true;
-            $this->_application->getPlatform()->addJs('if (!DRTS.isMobile()) {
-    $("a[data-phone-number]").contents().unwrap();
-}');
-        }
-        foreach (array_keys($values) as $key) {
-            $values[$key] = sprintf(
-                '<a data-phone-number="%1$s" href="tel:%1$s">%2$s</a>',
-                preg_replace('/[^0-9\+]/','', $values[$key]),
-                $this->_application->H($values[$key])
-            );
+        if ($settings['type'] === 'nolink') {
+            foreach (array_keys($values) as $key) {
+                $values[$key] = $this->_application->H($values[$key]);
+            }
+        } else {
+            foreach (array_keys($values) as $key) {
+                $values[$key] = sprintf(
+                    '<a data-phone-number="%1$s" href="tel:%1$s">%2$s</a>',
+                    preg_replace('/[^0-9\+]/','', $values[$key]),
+                    $settings['type'] === 'label'
+                        ? $this->_application->H($settings['label'])
+                        : $this->_application->H($values[$key])
+                );
+            }
         }
         return implode($settings['_separator'], $values);
     }
@@ -426,8 +452,8 @@ class DefaultRenderer extends AbstractRenderer
     protected function _getEmailDisplayFormatOptions()
     {
         return [
-            'default' => __('E-mail address', 'directories'),
-            'nolink' => __('E-mail address (without link)', 'directories'),
+            'default' => __('E-mail Address', 'directories'),
+            'nolink' => sprintf(__('%s (without link)', 'directories'), __('E-mail Address', 'directories')),
             'label' => __('Custom label', 'directories'),
         ];
     }
@@ -436,7 +462,16 @@ class DefaultRenderer extends AbstractRenderer
     {
         return [
             'default' => __('URL', 'directories'),
-            'nolink' => __('URL (without link)', 'directories'),
+            'nolink' => sprintf(__('%s (without link)', 'directories'), __('URL', 'directories')),
+            'label' => __('Custom label', 'directories')
+        ];
+    }
+
+    protected function _getPhoneDisplayFormatOptions()
+    {
+        return [
+            'default' => __('Phone Number', 'directories'),
+            'nolink' => sprintf(__('%s (without link)', 'directories'), __('Phone Number', 'directories')),
             'label' => __('Custom label', 'directories')
         ];
     }
@@ -518,6 +553,21 @@ class DefaultRenderer extends AbstractRenderer
                             'value' => implode(', ', $value),
                         ];
                     }
+                }
+                return $ret;
+            case 'phone':
+                $formats = $this->_getPhoneDisplayFormatOptions();
+                $ret =[
+                    'type' => [
+                        'label' => __('Display format', 'directories'),
+                        'value' => $formats[$settings['type']],
+                    ],
+                ];
+                if ($settings['type'] === 'label') {
+                    $ret['label'] = [
+                        'label' => __('Custom label', 'directories'),
+                        'value' => $settings['label'],
+                    ];
                 }
                 return $ret;
             case 'user':

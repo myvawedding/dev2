@@ -13,7 +13,7 @@ class SearchComponent extends AbstractComponent implements
     System\IMainRouter,
     IFields
 {
-    const VERSION = '1.2.23', PACKAGE = 'directories',
+    const VERSION = '1.2.24', PACKAGE = 'directories',
         FORM_PARAM_PREFIX = 'search_', FORM_SEARCH_PARAM_NAME = 'drts-search';
     
     public static function description()

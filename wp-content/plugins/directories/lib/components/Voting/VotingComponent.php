@@ -19,7 +19,7 @@ class VotingComponent extends AbstractComponent implements
     Display\IStatistics,
     ITypes
 {
-    const VERSION = '1.2.23', PACKAGE = 'directories';
+    const VERSION = '1.2.24', PACKAGE = 'directories';
 
     protected static $_types = [];
     

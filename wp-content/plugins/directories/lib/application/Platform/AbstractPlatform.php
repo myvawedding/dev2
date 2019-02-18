@@ -506,7 +506,6 @@ abstract class AbstractPlatform
     abstract public function getCurrentLanguage();
     abstract public function isTranslatable($entityType, $bundleName);
     abstract public function getTranslatedId($entityType, $bundleName, $id, $lang);
-    abstract public function isTranslated($entityType, $bundleName, $id);
     abstract public function getLanguageFor($entityType, $bundleName, $id);
     abstract public function isAdminAddTranslation();
     abstract public function isDebugEnabled();

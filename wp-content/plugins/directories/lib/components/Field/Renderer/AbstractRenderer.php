@@ -163,6 +163,7 @@ abstract class AbstractRenderer implements IRenderer
             'thumbnail_scaled' => __('Thumbnail (scaled)', 'directories'),
             'medium' => __('Medium size', 'directories'),
             'large' => __('Large size', 'directories'),
+            'full' => __('Original size', 'directories'),
         ];
     }
 }
