@@ -16,7 +16,7 @@ class DirectoryProComponent extends AbstractComponent
                System\IWidgets,
                Display\ILabels
 {
-    const VERSION = '1.2.23', PACKAGE = 'directories-pro';
+    const VERSION = '1.2.24', PACKAGE = 'directories-pro';
     
     public static function interfaces()
     {

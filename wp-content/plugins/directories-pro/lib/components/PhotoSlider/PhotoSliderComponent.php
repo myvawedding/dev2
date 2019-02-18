@@ -9,7 +9,7 @@ class PhotoSliderComponent extends AbstractComponent implements
     View\IModes,
     Field\IRenderers
 {
-    const VERSION = '1.2.23', PACKAGE = 'directories-pro';
+    const VERSION = '1.2.24', PACKAGE = 'directories-pro';
     
     public static function description()
     {
