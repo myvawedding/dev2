@@ -19,7 +19,7 @@ class DashboardComponent extends AbstractComponent implements
     Display\IButtons,
     IPanels
  {
-    const VERSION = '1.2.23', PACKAGE = 'directories-frontend';
+    const VERSION = '1.2.24', PACKAGE = 'directories-frontend';
 
     public static function description()
     {
